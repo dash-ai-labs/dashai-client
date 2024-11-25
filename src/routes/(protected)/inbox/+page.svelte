@@ -4,8 +4,6 @@
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
 	import PrimaryButton from '$lib/components/PrimaryButton.svelte';
 	import Widgets from '$lib/components/Widgets.svelte';
-
-	export let user;
 </script>
 
 <div class="mx-[40px]">

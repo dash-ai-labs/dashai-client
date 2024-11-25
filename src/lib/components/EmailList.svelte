@@ -9,7 +9,6 @@
 	let options: any[] = [{ label: 'All Emails' }];
 	$: if (get(user)?.id) {
 		emailAccount.subscribe(($emailAccount) => {
-			console.log($emailAccount);
 			loadEmails($emailAccount, get(user)?.id.toString());
 		});
 	}
