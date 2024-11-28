@@ -5,7 +5,7 @@
 	console.log('layout');
 	user.subscribe(($user) => {
 		console.log($user);
-		if (!$user) {
+		if (!$user.id) {
 			goto('/auth');
 		}
 	});

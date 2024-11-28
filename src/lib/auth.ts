@@ -7,7 +7,7 @@ export interface EmailAccount {
 	profile_pic: string;
 }
 export async function initiateGoogleLogin() {
-	const response = await fetch(`${PUBLIC_API_URL}/auth/google/url`);
+	const response = await fetch(`${PUBLIC_API_URL}/auth/google/url`, { credentials: 'include' });
 	const { url } = await response.json();
 	window.location.href = url;
 }
