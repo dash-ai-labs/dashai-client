@@ -13,8 +13,12 @@
 		: 'hover:bg-secondary-active-button-background'}"
 >
 	<div class="flex items-center justify-between">
-		<div class="text-body font-medium">
-			{email.sender_name.length > 0 ? email.sender_name.join(', ') : email.sender.join(', ')}
+		<div class="max-w-[210px] truncate text-body font-medium">
+			{#if email.sender_name && email.sender_name.length > 0}
+				{email.sender_name.join(', ')}
+			{:else if email.sender && email.sender.length > 0}
+				{email.sender.join(', ')}
+			{/if}
 		</div>
 		<div class="flex items-center">
 			<div class="px-2 text-subheader">
@@ -28,6 +32,6 @@
 		</div>
 	</div>
 	<div>
-		<div class="text-subheader">{email.subject}</div>
+		<div class="truncate text-subheader">{email.subject}</div>
 	</div>
 </div>
