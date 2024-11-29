@@ -5,21 +5,20 @@
 	import EmailListItem from './EmailListItem.svelte';
 
 	let emails: Email[] = [];
-	let selectedEmail: number = 0;
-	let options: any[] = [{ label: 'All Emails' }];
+
 	$: if (get(user)?.id) {
 		emailAccount.subscribe(($emailAccount) => {
-			loadEmails($emailAccount, get(user)?.id.toString());
+			loadEmails($emailAccount.email, get(user)?.id.toString());
 		});
 	}
-	async function loadEmails(emailAccount: string, user: string) {
-		if (emailAccount === 'All Emails') {
+	async function loadEmails(email: string, user: string) {
+		if (email === 'All Emails') {
 			emails = await getEmailList({ user });
-		} else emails = await getEmailList({ user, account: emailAccount });
+		} else emails = await getEmailList({ user, account: email });
 	}
 </script>
 
-<div class="bg-primary-container no-scrollbar max-h-[760px] w-80 overflow-y-scroll rounded-lg">
+<div class="no-scrollbar max-h-[760px] w-80 overflow-y-scroll rounded-lg bg-primary-container">
 	{#each emails as email}
 		<svelte:component
 			this={EmailListItem}

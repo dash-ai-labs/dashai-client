@@ -32,11 +32,7 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 	return store;
 }
 
-export const user: Writable<User> = persistentWritable('user', {
-	id: null,
-	email: null,
-	name: null
-});
+export const user: Writable<User> = persistentWritable('user', null);
 
 export const emailAccount: Writable<any> = persistentWritable('emailAccount', {
 	email: 'All Emails'

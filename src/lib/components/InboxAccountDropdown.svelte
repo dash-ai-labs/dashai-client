@@ -37,6 +37,6 @@
 <Dropdown
 	{options}
 	bind:selectedOption
-	onSelectOption={(option: number) => emailAccount.set(options[option].label)}
+	onSelectOption={(option: number) => emailAccount.set({ email: options[option].label })}
 	{addAccount}
 />

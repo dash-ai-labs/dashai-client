@@ -3,11 +3,11 @@ export const formatDate = (date: Date): string => {
 	const oneYearAgo = new Date();
 	oneYearAgo.setFullYear(now.getFullYear() - 1);
 
-	const dateObj = new Date(date);
+	const dateObj = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
 
 	// Check if the date is within the last 24 hours
 	if (dateObj.getTime() > Date.now() - 24 * 60 * 60 * 1000) {
-		return dateObj.toLocaleTimeString(); // Show time if within 24 hours
+		return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 	}
 
 	// Check if the date is within the last year
