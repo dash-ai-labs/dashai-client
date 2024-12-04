@@ -1,18 +1,16 @@
 <script>
 	$: SearchBarClasses = `
-        h-[56px]
-        rounded-xl
-        bg-primary-container
+        rounded-lg
+        bg-secondary-container
         max-w-[720px]
-        min-w-[380px]
         align-center
-        p-[10px]
+        m-[10px]
         flex
+		p-[4px]
     `;
 </script>
 
 <div class={SearchBarClasses}>
-	<input type="text" placeholder="Search Inbox" class="flex-grow border-0 bg-transparent" />
 	<button class="align-center items-center px-[2px]">
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path
@@ -21,4 +19,9 @@
 			/>
 		</svg></button
 	>
+	<input
+		type="text"
+		placeholder="Search Inbox"
+		class="flex-grow border-0 bg-transparent focus:outline-none focus:ring-0"
+	/>
 </div>

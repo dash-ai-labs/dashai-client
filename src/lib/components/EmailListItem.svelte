@@ -2,15 +2,21 @@
 	import RightChevron from '$lib/assets/RightChevron.svelte';
 	import type { Email } from '$lib/email';
 	import { formatDate } from '$lib/utils/dateTime';
+	import { createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
 
 	export let email: Email = {};
 	export let selected: boolean = false;
+	const onClick = () => {
+		dispatch('handleEmailSelect', email);
+	};
 </script>
 
 <div
 	class="p-4 hover:cursor-pointer {selected
 		? 'bg-secondary-active-button-background text-primary-active-button-highlight hover:bg-secondary-active-button-background-hover'
 		: 'hover:bg-secondary-active-button-background'}"
+	on:click={onClick}
 >
 	<div class="flex items-center justify-between">
 		<div class="max-w-[210px] truncate text-body font-medium">
@@ -32,6 +38,6 @@
 		</div>
 	</div>
 	<div>
-		<div class="truncate text-subheader">{email.subject}</div>
+		<div class="max-w-[250px] truncate text-subheader">{email.subject}</div>
 	</div>
 </div>

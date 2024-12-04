@@ -1,11 +1,18 @@
 <script lang="ts">
+	import type { Email } from '$lib/email';
+	import EmailDetailView from './EmailDetailView.svelte';
 	import EmailList from './EmailList.svelte';
+
+	let email: Email | undefined = undefined;
+
+	const selectEmail = (event) => {
+		email = event.detail;
+	};
 </script>
 
 <div>
-	<div class="text-h3">Emails</div>
-	<div class="flex flex-row py-[20px]">
-		<EmailList />
-		<!-- <div>Email Detail</div> -->
+	<div class="flex flex-row gap-[20px] py-[20px]">
+		<EmailList on:selectEmail={selectEmail} />
+		<EmailDetailView {email} />
 	</div>
 </div>

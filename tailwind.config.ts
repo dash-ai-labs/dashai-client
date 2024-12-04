@@ -23,7 +23,8 @@ export default {
 					container: '#282A2F',
 					'active-button-highlight': '#ecf2f8',
 					'inactive-button-highlight': '#c6cdd5',
-					brighter: 'hsl(204, 70%, 63%)'
+					brighter: 'hsl(204, 70%, 63%)',
+					gray: '#89929B'
 				},
 				font: {
 					'dark-gray': '#89929b',
@@ -43,7 +44,8 @@ export default {
 						DEFAULT: '#3E4759',
 						hover: 'hsl(219, 19%, 44%)'
 					},
-					'inactive-button-highlight': '#C4C6D0'
+					'inactive-button-highlight': '#C4C6D0',
+					separator: '#4D4D4D'
 				}
 			},
 			fontFamily: {
@@ -53,6 +55,7 @@ export default {
 				h1: '36px',
 				h2: '30px',
 				h3: '24px',
+				h4: '20px',
 				'section-header': '16px',
 				body: '14px',
 				subheader: '12px'

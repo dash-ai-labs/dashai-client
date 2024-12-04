@@ -32,7 +32,25 @@
 	},
 	"dependencies": {
 		"@material/web": "^2.2.0",
+		"@tiptap/core": "^2.10.3",
+		"@tiptap/extension-blockquote": "^2.10.3",
+		"@tiptap/extension-color": "^2.10.3",
+		"@tiptap/extension-highlight": "^2.10.3",
+		"@tiptap/extension-horizontal-rule": "^2.10.3",
+		"@tiptap/extension-image": "^2.10.3",
+		"@tiptap/extension-link": "^2.10.3",
+		"@tiptap/extension-list-item": "^2.10.3",
+		"@tiptap/extension-table": "^2.10.3",
+		"@tiptap/extension-table-cell": "^2.10.3",
+		"@tiptap/extension-table-header": "^2.10.3",
+		"@tiptap/extension-table-row": "^2.10.3",
+		"@tiptap/extension-text-align": "^2.10.3",
+		"@tiptap/extension-text-style": "^2.10.3",
+		"@tiptap/extension-underline": "^2.10.3",
+		"@tiptap/pm": "^2.10.3",
+		"@tiptap/starter-kit": "^2.10.3",
 		"date-fns": "^4.1.0",
-		"date-fns-tz": "^3.2.0"
+		"date-fns-tz": "^3.2.0",
+		"dompurify": "^3.2.2"
 	}
 }
