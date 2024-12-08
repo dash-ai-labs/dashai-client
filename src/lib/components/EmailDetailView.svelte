@@ -25,6 +25,8 @@
 	onMount(() => {
 		if (element) element.innerHTML = email?.raw_content;
 	});
+	let backgroundColor = 'bg-primary-container'; // Default background color
+
 	// Cleanup the old editor instance if it exists
 	// if (editor) {
 	// 	editor.destroy();
@@ -34,29 +36,49 @@
 	// Create a new editor instance when email changes
 	$: if (element) {
 		element.innerHTML = DOMPurify.sanitize(email?.raw_content);
-		// editor = new Editor({
-		// 	element: element,
-		// 	extensions: [
-		// 		StarterKit,
-		// 		Image,
-		// 		Link,
-		// 		Table,
-		// 		TableRow,
-		// 		TableCell,
-		// 		TableHeader,
-		// 		TextStyle,
-		// 		Color,
-		// 		Underline,
-		// 		Highlight,
-		// 		HorizontalRule
-		// 	],
-		// 	content: email.raw_content,
-		// 	onTransaction: () => {
-		// 		// force re-render so `editor.isActive` works as expected
-		// 		editor = editor;
-		// 	}
-		// });
+		adjustBackground();
 	}
+	function adjustBackground() {
+		if (element) {
+			const computedStyles = getComputedStyle(element);
+			const bgColor = computedStyles.backgroundColor;
+			console.log(bgColor);
+			if (bgColor && (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent')) {
+				backgroundColor = bgColor; // Use the defined background color
+				element.classList.add('text-font-dark-gray'); // Adjust text color for high contrast
+
+				return;
+			}
+			const rgb = computedStyles.color.match(/\d+/g).slice(0, 3).map(Number); // Extract RGB values
+
+			// Calculate luminance
+			const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+			backgroundColor = luminance > 0.5 ? 'bg-font-light-gray' : 'bg-primary-container'; // Adjust for contrast
+			element.classList.add(luminance > 0.5 ? 'text-primary-black' : 'text-font-light-gray'); // Adjust text color for high contrast
+		}
+	}
+	// editor = new Editor({
+	// 	element: element,
+	// 	extensions: [
+	// 		StarterKit,
+	// 		Image,
+	// 		Link,
+	// 		Table,
+	// 		TableRow,
+	// 		TableCell,
+	// 		TableHeader,
+	// 		TextStyle,
+	// 		Color,
+	// 		Underline,
+	// 		Highlight,
+	// 		HorizontalRule
+	// 	],
+	// 	content: email.raw_content,
+	// 	onTransaction: () => {
+	// 		// force re-render so `editor.isActive` works as expected
+	// 		editor = editor;
+	// 	}
+	// });
 
 	// Ensure editor instance is destroyed when the component is unmounted
 	// onDestroy(() => {
@@ -166,9 +188,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="p-6">
+		<div class="no-scrollbar max-h-[760px] overflow-auto p-6">
 			<div class="mt-4 space-y-4">
-				<div bind:this={element} />
+				<div bind:this={element} class="{backgroundColor} max-w-[900px] text-wrap p-1" />
 			</div>
 		</div>
 		<!-- Reply Box -->
@@ -186,3 +208,9 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	div {
+		transition: background-color 0.3s ease;
+	}
+</style>

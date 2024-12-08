@@ -8,6 +8,20 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		extend: {
+			keyframes: {
+				zoom: {
+					from: { transform: 'scale(0.95)' },
+					to: { transform: 'scale(1)' }
+				},
+				fade: {
+					from: { opacity: '0' },
+					to: { opacity: '1' }
+				}
+			},
+			animation: {
+				zoom: 'zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+				fade: 'fade 0.2s ease-out'
+			},
 			colors: {
 				primary: {
 					red: '#ff453a',
@@ -21,10 +35,12 @@ export default {
 					pink: '#ff375f',
 					black: '#141414',
 					container: '#282A2F',
+					button: '#AAC7FF',
 					'active-button-highlight': '#ecf2f8',
 					'inactive-button-highlight': '#c6cdd5',
 					brighter: 'hsl(204, 70%, 63%)',
-					gray: '#89929B'
+					gray: '#89929B',
+					'dark-gray': '#3D4249'
 				},
 				font: {
 					'dark-gray': '#89929b',

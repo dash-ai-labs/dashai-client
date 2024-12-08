@@ -11,9 +11,9 @@
         py-[10px] 
         h-[40px] 
         gap-2
-        bg-primary-green 
+        bg-primary-button 
         rounded-[10px]
-        text-font-light-gray
+        text-secondary-active-button-background
         ${fullWidth ? 'w-full' : ''}
     `;
 </script>

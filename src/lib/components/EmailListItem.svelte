@@ -7,9 +7,16 @@
 
 	export let email: Email = {};
 	export let selected: boolean = false;
+	let unread: boolean = false;
 	const onClick = () => {
 		dispatch('handleEmailSelect', email);
 	};
+
+	$: {
+		if (email && email.labels.includes('UNREAD')) {
+			unread = true;
+		}
+	}
 </script>
 
 <div
@@ -19,11 +26,26 @@
 	on:click={onClick}
 >
 	<div class="flex items-center justify-between">
-		<div class="max-w-[210px] truncate text-body font-medium">
-			{#if email.sender_name && email.sender_name.length > 0}
-				{email.sender_name.join(', ')}
-			{:else if email.sender && email.sender.length > 0}
-				{email.sender.join(', ')}
+		<div class="flex w-[210px] flex-row truncate text-body font-medium">
+			<div class="px-1">
+				{#if email.sender_name && email.sender_name.length > 0}
+					{email.sender_name.join(', ')}
+				{:else if email.sender && email.sender.length > 0}
+					{email.sender.join(', ')}
+				{/if}
+			</div>
+			{#if unread}
+				<div class="justify-center self-center">
+					<svg
+						width="9"
+						height="9"
+						viewBox="0 0 10 10"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<circle cx="4.5" cy="4.5" r="4.5" fill="#45A8FF" />
+					</svg>
+				</div>
 			{/if}
 		</div>
 		<div class="flex items-center">
@@ -37,7 +59,7 @@
 			/>
 		</div>
 	</div>
-	<div>
+	<div class="px-1">
 		<div class="max-w-[250px] truncate text-subheader">{email.subject}</div>
 	</div>
 </div>
