@@ -63,7 +63,7 @@
 	{#if email.summary}
 		<div class="flex px-1">
 			<div class="px-1">
-				<Summary color="primary-gray" width={15} height={18} />
+				<Summary width={15} height={18} />
 			</div>
 			<div class="max-w-[250px] truncate text-wrap text-subheader">{email.summary}</div>
 		</div>
