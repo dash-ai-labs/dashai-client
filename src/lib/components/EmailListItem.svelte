@@ -1,5 +1,6 @@
 <script lang="ts">
 	import RightChevron from '$lib/assets/RightChevron.svelte';
+	import Summary from '$lib/assets/Summary.svelte';
 	import type { Email } from '$lib/email';
 	import { formatDate } from '$lib/utils/dateTime';
 	import { createEventDispatcher } from 'svelte';
@@ -20,8 +21,8 @@
 </script>
 
 <div
-	class="p-4 hover:cursor-pointer {selected
-		? 'bg-secondary-active-button-background text-primary-active-button-highlight hover:bg-secondary-active-button-background-hover'
+	class="mx-[12px] border-b-[1px] border-primary-dark-gray py-4 text-primary-active-button-highlight hover:cursor-pointer {selected
+		? 'bg-secondary-active-button-background  hover:bg-secondary-active-button-background-hover'
 		: 'hover:bg-secondary-active-button-background'}"
 	on:click={onClick}
 >
@@ -59,7 +60,16 @@
 			/>
 		</div>
 	</div>
-	<div class="px-1">
-		<div class="max-w-[250px] truncate text-subheader">{email.subject}</div>
-	</div>
+	{#if email.summary}
+		<div class="flex px-1">
+			<div class="px-1">
+				<Summary color="primary-gray" width={15} height={18} />
+			</div>
+			<div class="max-w-[250px] truncate text-wrap text-subheader">{email.summary}</div>
+		</div>
+	{:else}
+		<div class="px-1">
+			<div class="max-w-[250px] truncate text-subheader">{email.subject}</div>
+		</div>
+	{/if}
 </div>

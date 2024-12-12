@@ -1,9 +1,9 @@
-<script>
-	export let options = []; // Array of option labels
+<script lang="ts">
+	export let options: string[] = []; // Array of option labels
 	export let activeIndex = 0; // Index of the currently active option
-	export let onChange = null; // Callback function to notify parent of selection
+	export let onChange: (index: number) => void = () => {}; // Callback function to notify parent of selection
 
-	const handleClick = (index) => {
+	const handleClick = (index: number) => {
 		activeIndex = index;
 		if (onChange) onChange(index); // Invoke callback with the selected index
 	};

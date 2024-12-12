@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Email } from '$lib/email';
+	import { type Email } from '$lib/email';
 	import EmailDetailView from './EmailDetailView.svelte';
 	import EmailList from './EmailList.svelte';
 
@@ -11,7 +11,7 @@
 </script>
 
 <div>
-	<div class="flex flex-row gap-[20px] py-[20px]">
+	<div class="flex h-[800px] flex-row gap-[20px] py-[20px]">
 		<EmailList on:selectEmail={selectEmail} />
 		<EmailDetailView {email} />
 	</div>

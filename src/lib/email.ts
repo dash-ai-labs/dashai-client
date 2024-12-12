@@ -52,3 +52,19 @@ export const getEmailList = async ({
 		return [];
 	}
 };
+
+export const markEmailAsRead = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/read`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};

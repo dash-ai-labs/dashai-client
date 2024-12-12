@@ -1,26 +1,12 @@
 <script lang="ts">
 	import Inbox from '$lib/assets/Inbox.svelte';
-	import type { Email } from '$lib/email';
-	import StarterKit from '@tiptap/starter-kit';
-	import Image from '@tiptap/extension-image';
-	import Link from '@tiptap/extension-link';
-	import TextStyle from '@tiptap/extension-text-style';
-	import Color from '@tiptap/extension-color';
-	import Underline from '@tiptap/extension-underline';
-	import Table from '@tiptap/extension-table';
-	import TableRow from '@tiptap/extension-table-row';
-	import TableCell from '@tiptap/extension-table-cell';
-	import TableHeader from '@tiptap/extension-table-header';
-	import Blockquote from '@tiptap/extension-blockquote';
-	import Highlight from '@tiptap/extension-highlight';
-	import HorizontalRule from '@tiptap/extension-horizontal-rule';
-	import { Editor } from '@tiptap/core';
+	import { type Email } from '$lib/email';
 	import { onMount } from 'svelte';
 	import DOMPurify from 'dompurify';
+	import Trash from '$lib/assets/Trash.svelte';
 
 	export let email: Email | undefined = undefined;
 	let element;
-	let editor: Editor | null = null;
 
 	onMount(() => {
 		if (element) element.innerHTML = email?.raw_content;
@@ -38,15 +24,14 @@
 		element.innerHTML = DOMPurify.sanitize(email?.raw_content);
 		adjustBackground();
 	}
+
 	function adjustBackground() {
 		if (element) {
 			const computedStyles = getComputedStyle(element);
 			const bgColor = computedStyles.backgroundColor;
-			console.log(bgColor);
 			if (bgColor && (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent')) {
 				backgroundColor = bgColor; // Use the defined background color
 				element.classList.add('text-font-dark-gray'); // Adjust text color for high contrast
-
 				return;
 			}
 			const rgb = computedStyles.color.match(/\d+/g).slice(0, 3).map(Number); // Extract RGB values
@@ -105,64 +90,16 @@
 	};
 </script>
 
-<div class=" w-full min-w-[400px] max-w-[1000px] rounded-lg bg-primary-container">
+<div class=" w-full min-w-[740px] max-w-[1000px] rounded-lg bg-primary-container">
 	{#if email}
 		<!-- Header -->
 		<header class="justify-betweenp-4 flex h-[60px] items-center border-b border-primary-gray">
 			<div class="flex gap-4">
-				<button class="rounded p-2 hover:bg-gray-800">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<rect width="18" height="14" x="3" y="5" rx="2" />
-						<path d="M21 5v14" />
-					</svg>
-				</button>
-				<button class="rounded p-2 hover:bg-gray-800">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<rect width="14" height="14" x="5" y="5" rx="2" />
-					</svg>
-				</button>
-				<button class="rounded p-2 hover:bg-gray-800">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<rect width="10" height="16" x="7" y="4" rx="2" />
-					</svg>
+				<button class="rounded p-2 hover:bg-primary-dark-gray" aria-label="Delete" title="Delete">
+					<Trash />
 				</button>
 			</div>
-			<div class="flex gap-4">
-				<button class="rounded p-2 hover:bg-gray-800">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M19 12H5M12 19l-7-7 7-7" />
-					</svg>
-				</button>
-				<button class="rounded p-2 hover:bg-gray-800">⋮</button>
-			</div>
+			<div class="flex gap-4"></div>
 		</header>
 
 		<!-- Message Content -->
@@ -188,9 +125,12 @@
 				</div>
 			</div>
 		</div>
-		<div class="no-scrollbar max-h-[760px] overflow-auto p-6">
+		<div class="no-scrollbar max-h-[600px] overflow-auto p-6">
 			<div class="mt-4 space-y-4">
-				<div bind:this={element} class="{backgroundColor} max-w-[900px] text-wrap p-1" />
+				<div
+					bind:this={element}
+					class="mx-auto w-full justify-center justify-items-center text-wrap p-1"
+				/>
 			</div>
 		</div>
 		<!-- Reply Box -->

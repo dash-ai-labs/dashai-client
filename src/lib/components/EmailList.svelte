@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { emailAccount, user } from '$lib/store';
 	import { get } from 'svelte/store';
-	import { getEmailList, type Email } from '$lib/email';
+	import { getEmailList, markEmailAsRead, type Email } from '$lib/email';
 	import EmailListItem from './EmailListItem.svelte';
 	import ToggleOptions from './ToggleOptions.svelte';
 	import InboxSearchBar from './InboxSearchBar.svelte';
@@ -18,7 +18,8 @@
 	let toggleOptions = ['All Mail', 'Unread'];
 	let selectedToggleOption = 0;
 	let isToggleLoading = false; // Loading state for toggle change
-	let lastFilter = '';
+	let lastFilter = ['INBOX'];
+	let disableTransition = false; // New state variable to disable transition
 
 	// Load initial emails when user changes
 	$: if (get(user)?.id) {
@@ -33,52 +34,54 @@
 	const handleScroll = () => {
 		if (!container || isLoading) return; // Prevent duplicate calls while loading
 		const { scrollTop, scrollHeight, clientHeight } = container;
-		if (scrollTop + clientHeight >= scrollHeight - 50) {
+		if (scrollTop + clientHeight >= scrollHeight - 70) {
 			// Trigger slightly before the end
 			loadNextPage();
 		}
 	};
 
 	// Function to load emails based on the selected toggle option and filter
-	const loadEmails = async (email: string, user: string, limit: number = 30, page: number = 1) => {
-		const filter = ['INBOX'];
-		if (selectedToggleOption !== 0) {
-			filter.push(toggleOptions[selectedToggleOption].toUpperCase());
-		}
-
+	const loadEmails = async (
+		email: string,
+		user: string,
+		limit: number = 30,
+		page: number = 1,
+		filter: string[] = []
+	) => {
 		// Only load emails if the filter has changed
-		if (lastFilter !== filter.join(',')) {
-			isLoading = true;
-			let newEmails;
 
-			if (email === 'All Emails') {
-				newEmails = await getEmailList({
-					user,
-					limit,
-					page,
-					filter
-				});
-			} else {
-				newEmails = await getEmailList({
-					user,
-					account: email,
-					limit,
-					page,
-					filter
-				});
-			}
+		isLoading = true;
+		let newEmails;
 
-			// Append the new emails to the existing ones, avoiding duplicates
-			emails = [...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))];
-			isLoading = false;
-			lastFilter = filter.join(',');
+		if (email === 'All Emails') {
+			newEmails = await getEmailList({
+				user,
+				limit,
+				page,
+				filter
+			});
+		} else {
+			newEmails = await getEmailList({
+				user,
+				account: email,
+				limit,
+				page,
+				filter
+			});
 		}
+
+		// Append the new emails to the existing ones, avoiding duplicates
+		emails = [
+			...emails,
+			...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
+		];
+		isLoading = false;
 	};
 
 	// Function to load the next page of emails
 	const loadNextPage = async () => {
 		if (isLoading) return; // Prevent concurrent calls
-		await loadEmails($emailAccount.email, get(user)?.id.toString(), limit, pageNumber);
+		await loadEmails($emailAccount.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
 		pageNumber++; // Increment after a successful fetch
 	};
 
@@ -86,6 +89,25 @@
 	const handleEmailSelect = (event) => {
 		selectedEmail = event.detail;
 		dispatch('selectEmail', selectedEmail);
+
+		// Disable transition before updating the email as read
+		disableTransition = true;
+
+		const updateEmailAsRead = async () => {
+			const newEmail = await markEmailAsRead({
+				user: get(user)?.id.toString(),
+				email_id: selectedEmail?.email_id
+			});
+			const index = emails.findIndex((item) => item.id === selectedEmail.id);
+			if (index !== -1 && newEmail) {
+				// Update the object directly
+				emails[index] = newEmail; // Ensure reactivity by creating a new object
+			}
+		};
+		if (selectedEmail?.labels.includes('UNREAD')) updateEmailAsRead();
+
+		// After the update, reset the transition state
+		disableTransition = false;
 	};
 
 	// Handle toggle change and load emails based on selected option
@@ -94,7 +116,13 @@
 		pageNumber = 1; // Reset page number for new filter
 		isToggleLoading = true; // Set loading state to true when toggling
 		emails = []; // Clear the email list to reload for the new filter
-		await loadEmails($emailAccount.email, get(user)?.id.toString(), limit, pageNumber);
+		if (selectedToggleOption !== 0) {
+			lastFilter.push(toggleOptions[selectedToggleOption].toUpperCase());
+		} else {
+			lastFilter.pop();
+		}
+
+		await loadEmails($emailAccount.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
 		isToggleLoading = false; // Set loading state to false after emails are loaded
 	};
 </script>
@@ -113,25 +141,34 @@
 
 	<InboxSearchBar />
 	<div
-		class="no-scrollbar h-[760px] max-h-[760px] overflow-y-scroll"
+		class="no-scrollbar max-h-[630px] overflow-y-scroll"
 		bind:this={container}
 		on:scroll={handleScroll}
 	>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
-			<div class="py-4 text-center" transition:fade={{ duration: 300 }}>Loading...</div>
+			<div class="w-[300px] py-4 text-center" transition:fade={{ duration: 500 }}>Loading...</div>
 		{:else}
 			{#key emails}
-				<div transition:fade={{ duration: 300 }}>
-					{#each emails as email (email.id)}
+				{#each emails as email (email.id)}
+					{#if !disableTransition}
+						<div transition:fade={{ duration: 300 }}>
+							<svelte:component
+								this={EmailListItem}
+								{email}
+								on:handleEmailSelect={handleEmailSelect}
+								selected={selectedEmail ? selectedEmail.id === email.id : false}
+							/>
+						</div>
+					{:else}
 						<svelte:component
 							this={EmailListItem}
 							{email}
 							on:handleEmailSelect={handleEmailSelect}
 							selected={selectedEmail ? selectedEmail.id === email.id : false}
 						/>
-					{/each}
-				</div>
+					{/if}
+				{/each}
 			{/key}
 		{/if}
 	</div>
