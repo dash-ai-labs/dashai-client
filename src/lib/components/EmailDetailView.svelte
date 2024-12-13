@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 	import DOMPurify from 'dompurify';
 	import Trash from '$lib/assets/Trash.svelte';
+	import UnreadMail from '$lib/assets/UnreadMail.svelte';
+	import Archive from '$lib/assets/Archive.svelte';
 
 	export let email: Email | undefined = undefined;
 	let element;
@@ -21,7 +23,7 @@
 
 	// Create a new editor instance when email changes
 	$: if (element) {
-		element.innerHTML = DOMPurify.sanitize(email?.raw_content);
+		element.srcdoc = DOMPurify.sanitize(email?.raw_content);
 		adjustBackground();
 	}
 
@@ -93,13 +95,26 @@
 <div class=" w-full min-w-[740px] max-w-[1000px] rounded-lg bg-primary-container">
 	{#if email}
 		<!-- Header -->
-		<header class="justify-betweenp-4 flex h-[60px] items-center border-b border-primary-gray">
-			<div class="flex gap-4">
+		<header class="flex h-[60px] items-center gap-2 border-b border-primary-gray px-3">
+			<div class="flex gap-1">
+				<button class="rounded p-2 hover:bg-primary-dark-gray" aria-label="Archive" title="Archive">
+					<Archive />
+				</button>
 				<button class="rounded p-2 hover:bg-primary-dark-gray" aria-label="Delete" title="Delete">
 					<Trash />
 				</button>
 			</div>
-			<div class="flex gap-4"></div>
+			<div
+				class="border-r-red flex gap-2 border-l-[1px] border-secondary-inactive-button-highlight px-2"
+			>
+				<button
+					class="rounded p-2 hover:bg-primary-dark-gray"
+					aria-label="Mark as Unread"
+					title="Mark as unread"
+				>
+					<UnreadMail />
+				</button>
+			</div>
 		</header>
 
 		<!-- Message Content -->
@@ -127,10 +142,7 @@
 		</div>
 		<div class="no-scrollbar max-h-[600px] overflow-auto p-6">
 			<div class="mt-4 space-y-4">
-				<div
-					bind:this={element}
-					class="mx-auto w-full justify-center justify-items-center text-wrap p-1"
-				/>
+				<iframe bind:this={element} class="h-[800px] w-full bg-white"></iframe>
 			</div>
 		</div>
 		<!-- Reply Box -->
