@@ -6,6 +6,7 @@
 	import '@material/web/button/filled-tonal-button';
 	import '@material/web/button/text-button';
 	import '@material/web/icon/icon';
+	import LogoutButton from './LogoutButton.svelte';
 
 	export let handleNavigation = (path: string) => {};
 	const navItems = [
@@ -38,14 +39,17 @@
 
 <div class={navDrawerClasses}>
 	<div class={'h-[60px] p-[16px] text-font-gray'}>Dash AI</div>
-	{#each navItems as item}
-		<SideBarButton
-			{handleNavigation}
-			path={item.path}
-			active={isActive(item.path)}
-			icon={item.icon}
-		>
-			{item.label}</SideBarButton
-		>
-	{/each}
+	<div class="h-full">
+		{#each navItems as item}
+			<SideBarButton
+				{handleNavigation}
+				path={item.path}
+				active={isActive(item.path)}
+				icon={item.icon}
+			>
+				{item.label}</SideBarButton
+			>
+		{/each}
+	</div>
+	<LogoutButton />
 </div>

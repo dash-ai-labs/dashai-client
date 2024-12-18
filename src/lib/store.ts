@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import type { Email, User } from './types';
+import type { User } from './types';
 
 // Define the type for the user store with optional initial value
 function persistentWritable(key: string, initialValue: any): Writable<any> {
@@ -28,10 +28,8 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 	return store;
 }
 
-export const user: Writable<User> = persistentWritable('user', null);
+export const user: Writable<User | null> = persistentWritable('user', null);
 
 export const emailAccount: Writable<any> = persistentWritable('emailAccount', {
 	email: 'All Emails'
 });
-
-export const emails: Writable<Email[]> = persistentWritable('emails', []);

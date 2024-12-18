@@ -59,7 +59,7 @@ export const getUser = async (): Promise<any> => {
 };
 
 export async function logout(): Promise<void> {
-	await fetch(`${PUBLIC_API_URL}/api/auth/logout`, {
+	await fetch(`${PUBLIC_API_URL}/auth/logout`, {
 		method: 'POST',
 		credentials: 'include'
 	});
