@@ -52,7 +52,7 @@
 
 	$effect(() => {
 		const unsubscribe = emailAccount.subscribe((value) => {
-			if (value && value.email !== previousAccountValue.email) {
+			if (!previousAccountValue.email || value.email !== previousAccountValue.email) {
 				pageNumber = 1; // Reset page number for new account
 				emails = []; // Clear existing emails
 				loadNextPage();

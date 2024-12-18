@@ -11,6 +11,7 @@
 	let options: any[] = [{ label: 'All Emails' }];
 	$: if (get(user)?.id) {
 		loadEmailAccounts();
+		emailAccount.set({ email: options[selectedOption].label });
 	}
 	async function loadEmailAccounts() {
 		const currentUser = get(user); // Access current user value

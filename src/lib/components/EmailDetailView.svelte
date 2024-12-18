@@ -149,10 +149,12 @@
 				</div>
 			</div>
 		</div>
-		<div class="no-scrollbar max-h-[600px] overflow-auto p-6">
-			<div class="mt-4 space-y-4">
-				<iframe bind:this={element} class="h-[800px] w-full bg-white"></iframe>
-			</div>
+		<div class="no-scrollbar mt-4 max-h-[600px] space-y-4 overflow-auto p-6">
+			<iframe
+				bind:this={element}
+				title={email.subject}
+				class="no-scrollbar h-[500px] w-full overflow-auto bg-white"
+			></iframe>
 		</div>
 		<!-- Reply Box -->
 		<!-- <div class="fixed bottom-0 left-0 right-0 border-t border-gray-700 bg-gray-800 p-4">
