@@ -1,11 +1,8 @@
 import { goto } from '$app/navigation';
 import { PUBLIC_API_URL } from '$env/static/public';
 import { user } from '$lib/store';
+import type { EmailAccount } from './types';
 
-export interface EmailAccount {
-	email: string;
-	profile_pic: string;
-}
 export async function initiateGoogleLogin() {
 	const response = await fetch(`${PUBLIC_API_URL}/auth/google/url`, { credentials: 'include' });
 	const { url } = await response.json();

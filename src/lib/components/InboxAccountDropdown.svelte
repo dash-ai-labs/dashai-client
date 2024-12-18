@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Dropdown from './Dropdown.svelte';
-	import { getEmailAccounts, type EmailAccount } from '$lib/auth';
+	import { getEmailAccounts } from '$lib/auth';
 	import { user, emailAccount } from '$lib/store';
 	import { get } from 'svelte/store';
 	import AccountDropdownButton from './AccountDropdownButton.svelte';
+	import type { EmailAccount } from '$lib/types';
 
 	let emailAccounts: EmailAccount[] = [];
 	let selectedOption: number = 0;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import RightChevron from '$lib/assets/RightChevron.svelte';
 	import Summary from '$lib/assets/Summary.svelte';
-	import type { Email } from '$lib/email';
+	import type { Email } from '$lib/types';
 	import { formatDate } from '$lib/utils/dateTime';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();

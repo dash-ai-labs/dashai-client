@@ -1,17 +1,26 @@
 <script lang="ts">
 	import Inbox from '$lib/assets/Inbox.svelte';
-	import { type Email } from '$lib/email';
 	import { onMount } from 'svelte';
 	import DOMPurify from 'dompurify';
 	import Trash from '$lib/assets/Trash.svelte';
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
 	import Archive from '$lib/assets/Archive.svelte';
+	import EmailButton from './EmailButton.svelte';
 
-	export let email: Email | undefined = undefined;
-	let element;
+	const { removeEmail, archiveEmail, markEmailAsUnread, email } = $props();
+	let element = $state<HTMLIFrameElement | null>(null);
+
+	$effect(() => {
+		if (element && email?.raw_content) {
+			element.srcdoc = DOMPurify.sanitize(email.raw_content);
+			adjustBackground();
+		}
+	});
 
 	onMount(() => {
-		if (element) element.innerHTML = email?.raw_content;
+		if (element && email?.raw_content) {
+			element.srcdoc = DOMPurify.sanitize(email.raw_content);
+		}
 	});
 	let backgroundColor = 'bg-primary-container'; // Default background color
 
@@ -21,11 +30,7 @@
 	// 	editor = null;
 	// }
 
-	// Create a new editor instance when email changes
-	$: if (element) {
-		element.srcdoc = DOMPurify.sanitize(email?.raw_content);
-		adjustBackground();
-	}
+	// Create a new effect to update the element when email changes
 
 	function adjustBackground() {
 		if (element) {
@@ -96,24 +101,28 @@
 	{#if email}
 		<!-- Header -->
 		<header class="flex h-[60px] items-center gap-2 border-b border-primary-gray px-3">
-			<div class="flex gap-1">
-				<button class="rounded p-2 hover:bg-primary-dark-gray" aria-label="Archive" title="Archive">
+			<div class="mx-[24px] flex gap-[24px]">
+				<EmailButton
+					onclick={() => email && archiveEmail(email)}
+					ariaLabel="Archive"
+					title="Archive"
+				>
 					<Archive />
-				</button>
-				<button class="rounded p-2 hover:bg-primary-dark-gray" aria-label="Delete" title="Delete">
+				</EmailButton>
+				<EmailButton onclick={() => email && removeEmail(email)} ariaLabel="Delete" title="Delete">
 					<Trash />
-				</button>
+				</EmailButton>
 			</div>
 			<div
-				class="border-r-red flex gap-2 border-l-[1px] border-secondary-inactive-button-highlight px-2"
+				class="border-r-red flex border-l-[1px] border-secondary-inactive-button-highlight px-[24px]"
 			>
-				<button
-					class="rounded p-2 hover:bg-primary-dark-gray"
-					aria-label="Mark as Unread"
+				<EmailButton
+					onclick={() => markEmailAsUnread(email)}
+					ariaLabel="Mark as Unread"
 					title="Mark as unread"
 				>
 					<UnreadMail />
-				</button>
+				</EmailButton>
 			</div>
 		</header>
 

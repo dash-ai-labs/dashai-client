@@ -2,34 +2,68 @@
 	import { fade } from 'svelte/transition';
 	import { emailAccount, user } from '$lib/store';
 	import { get } from 'svelte/store';
-	import { getEmailList, markEmailAsRead, type Email } from '$lib/email';
+	import { archive, getEmailList, markAsUnread, markEmailAsRead, remove } from '$lib/email';
 	import EmailListItem from './EmailListItem.svelte';
 	import ToggleOptions from './ToggleOptions.svelte';
 	import InboxSearchBar from './InboxSearchBar.svelte';
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
+	import type { Email } from '$lib/types';
 
-	let emails: Email[] = [];
-	let container;
-	let pageNumber = 1;
-	let limit = 30;
-	let selectedEmail: Email | undefined = undefined;
-	let isLoading = false; // Track if data is being fetched
-	let toggleOptions = ['All Mail', 'Unread'];
-	let selectedToggleOption = 0;
-	let isToggleLoading = false; // Loading state for toggle change
-	let lastFilter = ['INBOX'];
-	let disableTransition = false; // New state variable to disable transition
+	export const markEmailAsUnread = (email: Email) => {
+		const _markAsUnread = async () => {
+			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
+			if (res) {
+				emails = [...emails.map((e) => (e.email_id === email.email_id ? res : e))];
+			}
+		};
+		_markAsUnread();
+	};
+	export const removeEmail = (email: Email) => {
+		const _remove = async () => {
+			const res = await remove({ user: get(user)?.id.toString(), email_id: email.email_id });
+			if (res) {
+				emails = [...emails.filter((e) => e.email_id !== email.email_id)];
+			}
+		};
+		_remove();
+	};
+	export const archiveEmail = (email: Email) => {
+		const _archive = async () => {
+			const res = await archive({ user: get(user)?.id.toString(), email_id: email.email_id });
+			if (res) {
+				emails = [...emails.filter((e) => e.email_id !== email.email_id)];
+			}
+		};
+		_archive();
+	};
+	const { selectEmail } = $props();
+	let emails = $state<Email[]>([]);
+	let container = $state<HTMLElement | null>(null);
+	let pageNumber = $state(1);
+	let limit = $state(30);
+	let selectedEmail = $state<Email | undefined>(undefined);
+	let isLoading = $state(false); // Track if data is being fetched
+	let toggleOptions = $state(['All Mail', 'Unread']);
+	let selectedToggleOption = $state(0);
+	let isToggleLoading = $state(false); // Loading state for toggle change
+	let lastFilter = $state(['INBOX']);
+	let disableTransition = $state(false); // New state variable to disable transition
 
-	// Load initial emails when user changes
-	$: if (get(user)?.id) {
-		emailAccount.subscribe(() => {
-			pageNumber = 1; // Reset page number for new account
-			emails = []; // Clear existing emails
-			loadNextPage();
+	let previousAccountValue = $state({ email: '' });
+
+	$effect(() => {
+		const unsubscribe = emailAccount.subscribe((value) => {
+			if (value && value.email !== previousAccountValue.email) {
+				pageNumber = 1; // Reset page number for new account
+				emails = []; // Clear existing emails
+				loadNextPage();
+
+				// Update the previous value to prevent repeated calls
+				previousAccountValue = value;
+			}
 		});
-	}
 
+		return () => unsubscribe();
+	});
 	// Function to handle scroll and load next page
 	const handleScroll = () => {
 		if (!container || isLoading) return; // Prevent duplicate calls while loading
@@ -88,7 +122,7 @@
 	// Handle email selection
 	const handleEmailSelect = (event) => {
 		selectedEmail = event.detail;
-		dispatch('selectEmail', selectedEmail);
+		selectEmail(selectedEmail);
 
 		// Disable transition before updating the email as read
 		disableTransition = true;
@@ -98,10 +132,10 @@
 				user: get(user)?.id.toString(),
 				email_id: selectedEmail?.email_id
 			});
-			const index = emails.findIndex((item) => item.id === selectedEmail.id);
+			const index = emails.findIndex((item) => item.email_id === selectedEmail?.email_id);
 			if (index !== -1 && newEmail) {
 				// Update the object directly
-				emails[index] = newEmail; // Ensure reactivity by creating a new object
+				emails = [...emails.slice(0, index), newEmail, ...emails.slice(index + 1)];
 			}
 		};
 		if (selectedEmail?.labels.includes('UNREAD')) updateEmailAsRead();
@@ -109,6 +143,10 @@
 		// After the update, reset the transition state
 		disableTransition = false;
 	};
+
+	// const removeEmail = (email: Email) => {
+	// 	emails = emails.filter((e) => e.id !== email.id);
+	// };
 
 	// Handle toggle change and load emails based on selected option
 	const handleToggleChange = async (index: number) => {

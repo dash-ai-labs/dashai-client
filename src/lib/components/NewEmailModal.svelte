@@ -1,10 +1,11 @@
 <script lang="ts">
 	import X from '$lib/assets/X.svelte';
-	import { createLabel, LabelType } from '$lib/label';
+	import { createLabel } from '$lib/label';
 	import Modal from './Modal.svelte';
 	import SecondaryButton from './SecondaryButton.svelte';
 	import { user } from '$lib/store';
 	import { get } from 'svelte/store';
+	import { LabelType } from '$lib/types';
 
 	export let showModal = false;
 	let remainingKeywords = 5;

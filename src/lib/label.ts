@@ -1,18 +1,6 @@
 import { PUBLIC_API_URL } from '$env/static/public';
+import type { InputLabel, Label, LabelType } from './types';
 
-export enum LabelType {
-	Email = 'EMAIL'
-}
-export interface InputLabel {
-	name: string;
-	keywords: string[];
-	label_type: LabelType;
-}
-export interface Label {
-	id: string;
-	name: string;
-	keywords: string[];
-}
 export const getLabelList = async ({
 	user,
 	type

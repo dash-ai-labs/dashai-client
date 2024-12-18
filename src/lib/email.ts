@@ -1,22 +1,5 @@
 import { PUBLIC_API_URL } from '$env/static/public';
-
-export interface Email {
-	id: string;
-	subject: string;
-	snippet: string;
-	sender: string[];
-	sender_name: string[];
-	thread_id: string;
-	to: string[];
-	raw_content: string;
-	created_at: Date;
-	content: string;
-	summary: string;
-	email_id: string;
-	labels: string[];
-	date: Date;
-	processed: boolean;
-}
+import type { Email } from './types';
 
 export const getEmailList = async ({
 	user,
@@ -56,6 +39,54 @@ export const getEmailList = async ({
 export const markEmailAsRead = async ({ user, email_id }: { user: string; email_id: string }) => {
 	try {
 		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/read`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};
+
+export const archive = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/archive`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};
+
+export const markAsUnread = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/unread`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};
+
+export const remove = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/delete`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
