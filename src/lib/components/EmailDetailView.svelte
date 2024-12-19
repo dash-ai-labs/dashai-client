@@ -14,43 +14,83 @@
 		markEmailAsUnread,
 		email
 	}: {
-		removeEmail: () => void;
-		archiveEmail: () => void;
-		markEmailAsUnread: () => void;
+		removeEmail: (email: Email) => void;
+		archiveEmail: (email: Email) => void;
+		markEmailAsUnread: (email: Email) => void;
 		email: Email;
 	} = $props();
 	let element = $state<HTMLIFrameElement | null>(null);
 	$effect(() => {
 		if (element && email?.raw_content) {
-			element.srcdoc = DOMPurify.sanitize(email.raw_content);
-			adjustBackground();
+			element.srcdoc = formatEmailContent(email.raw_content);
 		}
 	});
+	function formatEmailContent(content: string): string {
+		// Check if content is HTML by looking for DOCTYPE or HTML tags
+		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
+
+		if (isHTML) {
+			// For HTML content, just sanitize and return with minimal wrapping
+			return `
+				<html>
+				<head>
+					<meta charset="utf-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1">
+				</head>
+				<body style="background-color: #f0f0f0;">
+					${DOMPurify.sanitize(content, {
+						ADD_TAGS: ['style'],
+						ADD_ATTR: ['style']
+					})}
+				</body>
+				</html>
+			`;
+		} else {
+			// For plain text, apply nice formatting
+			const urlRegex = /(https?:\/\/[^\s<]+)/g;
+			const formattedContent = content
+				.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+				.replace(/\r\n|\n|\r/g, '<br>');
+
+			return `
+				<html>
+				<head>
+					<meta charset="utf-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1">
+					<style>
+						body {
+							font-family: Arial, sans-serif;
+							line-height: 1.6;
+							margin: 20px;
+							color: #333;
+							max-width: 800px;
+							white-space: pre-wrap;
+							word-wrap: break-word;
+						}
+						a {
+							color: #0066cc;
+							text-decoration: none;
+						}
+						a:hover {
+							text-decoration: underline;
+						}
+					</style>
+				</head>
+				<body style="background-color: #f0f0f0;">
+					${DOMPurify.sanitize(formattedContent)}
+				</body>
+				</html>
+			`;
+		}
+	}
 
 	onMount(() => {
 		if (element && email?.raw_content) {
-			element.srcdoc = DOMPurify.sanitize(email.raw_content);
+			element.srcdoc = formatEmailContent(email.raw_content);
 		}
 	});
-	let backgroundColor = 'bg-primary-container'; // Default background color
+	let backgroundColor = 'bg-white'; // Default background color
 
-	function adjustBackground() {
-		if (element) {
-			const computedStyles = getComputedStyle(element);
-			const bgColor = computedStyles.backgroundColor;
-			if (bgColor && (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent')) {
-				backgroundColor = bgColor; // Use the defined background color
-				element.classList.add('text-primary-gray');
-				return;
-			}
-			const rgb = computedStyles.color.match(/\d+/g).slice(0, 3).map(Number); // Extract RGB values
-
-			// Calculate luminance
-			const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
-			backgroundColor = luminance > 0.5 ? 'bg-font-light-gray' : 'bg-primary-container'; // Adjust for contrast
-			element.classList.add(luminance > 0.5 ? 'text-primary-black' : 'text-font-light-gray'); // Adjust text color for high contrast
-		}
-	}
 	// editor = new Editor({
 	// 	element: element,
 	// 	extensions: [
@@ -152,7 +192,11 @@
 			</div>
 		</div>
 		<div class="no-scrollbar mt-4 max-h-[600px] space-y-4 p-6">
-			<iframe bind:this={element} title={email.subject} class="no-scrollbar h-[500px] w-full"
+			<iframe
+				bind:this={element}
+				title={email.subject}
+				sandbox="allow-scripts"
+				class="no-scrollbar h-[500px] w-full"
 			></iframe>
 			<div class="px-3">
 				<EmailButton

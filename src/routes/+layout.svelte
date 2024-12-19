@@ -9,4 +9,15 @@
 	});
 </script>
 
-<slot />
+<div class="dashboard">
+	<slot />
+</div>
+
+<style>
+	.dashboard {
+		display: flex;
+		height: 100vh;
+		background-color: #1a1a1a;
+		color: white;
+	}
+</style>
