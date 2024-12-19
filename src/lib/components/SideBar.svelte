@@ -7,6 +7,7 @@
 	import '@material/web/button/text-button';
 	import '@material/web/icon/icon';
 	import LogoutButton from './LogoutButton.svelte';
+	import Logo from '$lib/assets/Logo.svelte';
 
 	export let handleNavigation = (path: string) => {};
 	const navItems = [
@@ -38,7 +39,7 @@
 </script>
 
 <div class={navDrawerClasses}>
-	<div class={'h-[60px] p-[16px] text-font-gray'}>Dash AI</div>
+	<Logo color="fill-primary-gray" />
 	<div class="h-full">
 		{#each navItems as item}
 			<SideBarButton

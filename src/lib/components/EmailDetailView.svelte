@@ -6,10 +6,20 @@
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
 	import Archive from '$lib/assets/Archive.svelte';
 	import EmailButton from './EmailButton.svelte';
+	import type { Email } from '$lib/types';
 
-	const { removeEmail, archiveEmail, markEmailAsUnread, email } = $props();
+	const {
+		removeEmail,
+		archiveEmail,
+		markEmailAsUnread,
+		email
+	}: {
+		removeEmail: () => void;
+		archiveEmail: () => void;
+		markEmailAsUnread: () => void;
+		email: Email;
+	} = $props();
 	let element = $state<HTMLIFrameElement | null>(null);
-
 	$effect(() => {
 		if (element && email?.raw_content) {
 			element.srcdoc = DOMPurify.sanitize(email.raw_content);
@@ -24,21 +34,13 @@
 	});
 	let backgroundColor = 'bg-primary-container'; // Default background color
 
-	// Cleanup the old editor instance if it exists
-	// if (editor) {
-	// 	editor.destroy();
-	// 	editor = null;
-	// }
-
-	// Create a new effect to update the element when email changes
-
 	function adjustBackground() {
 		if (element) {
 			const computedStyles = getComputedStyle(element);
 			const bgColor = computedStyles.backgroundColor;
 			if (bgColor && (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent')) {
 				backgroundColor = bgColor; // Use the defined background color
-				element.classList.add('text-font-dark-gray'); // Adjust text color for high contrast
+				element.classList.add('text-primary-gray');
 				return;
 			}
 			const rgb = computedStyles.color.match(/\d+/g).slice(0, 3).map(Number); // Extract RGB values
@@ -97,7 +99,7 @@
 	};
 </script>
 
-<div class=" w-full min-w-[740px] max-w-[1000px] rounded-lg bg-primary-container">
+<div class="w-full min-w-[740px] max-w-[1000px] rounded-lg bg-primary-container">
 	{#if email}
 		<!-- Header -->
 		<header class="flex h-[60px] items-center gap-2 border-b border-primary-gray px-3">
@@ -149,12 +151,17 @@
 				</div>
 			</div>
 		</div>
-		<div class="no-scrollbar mt-4 max-h-[600px] space-y-4 overflow-auto p-6">
-			<iframe
-				bind:this={element}
-				title={email.subject}
-				class="no-scrollbar h-[500px] w-full overflow-auto bg-white"
+		<div class="no-scrollbar mt-4 max-h-[600px] space-y-4 p-6">
+			<iframe bind:this={element} title={email.subject} class="no-scrollbar h-[500px] w-full"
 			></iframe>
+			<div class="px-3">
+				<EmailButton
+					additionalClass="border-[1px] rounded-lg border-primary-gray text-primary-gray"
+					onclick={() => {}}
+					ariaLabel="Reply"
+					title="Reply">Reply</EmailButton
+				>
+			</div>
 		</div>
 		<!-- Reply Box -->
 		<!-- <div class="fixed bottom-0 left-0 right-0 border-t border-gray-700 bg-gray-800 p-4">

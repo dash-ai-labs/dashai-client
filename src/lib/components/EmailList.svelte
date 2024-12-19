@@ -52,7 +52,11 @@
 
 	$effect(() => {
 		const unsubscribe = emailAccount.subscribe((value) => {
-			if (!previousAccountValue.email || value.email !== previousAccountValue.email) {
+			if (
+				value &&
+				previousAccountValue &&
+				(!previousAccountValue.email || value.email !== previousAccountValue.email)
+			) {
 				pageNumber = 1; // Reset page number for new account
 				emails = []; // Clear existing emails
 				loadNextPage();
@@ -181,7 +185,7 @@
 	<div
 		class="no-scrollbar max-h-[630px] overflow-y-scroll"
 		bind:this={container}
-		on:scroll={handleScroll}
+		onscroll={handleScroll}
 	>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
@@ -191,16 +195,14 @@
 				{#each emails as email (email.id)}
 					{#if !disableTransition}
 						<div transition:fade={{ duration: 300 }}>
-							<svelte:component
-								this={EmailListItem}
+							<EmailListItem
 								{email}
 								on:handleEmailSelect={handleEmailSelect}
 								selected={selectedEmail ? selectedEmail.id === email.id : false}
 							/>
 						</div>
 					{:else}
-						<svelte:component
-							this={EmailListItem}
+						<EmailListItem
 							{email}
 							on:handleEmailSelect={handleEmailSelect}
 							selected={selectedEmail ? selectedEmail.id === email.id : false}

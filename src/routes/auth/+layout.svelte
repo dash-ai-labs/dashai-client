@@ -1,6 +1,2 @@
-<header>
-	<nav>
-		<a href="/">Home</a>
-	</nav>
-</header>
+<header></header>
 <slot />
