@@ -109,10 +109,12 @@
 		}
 
 		// Append the new emails to the existing ones, avoiding duplicates
-		emails = [
-			...emails,
-			...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
-		];
+		if (newEmails && newEmails.length > 0) {
+			emails = [
+				...emails,
+				...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
+			];
+		}
 		isLoading = false;
 	};
 
