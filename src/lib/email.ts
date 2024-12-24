@@ -1,5 +1,5 @@
 import { PUBLIC_API_URL } from '$env/static/public';
-import type { Email } from './types';
+import type { Email, EmailData } from './types';
 
 export const getEmailList = async ({
 	user,
@@ -97,5 +97,21 @@ export const remove = async ({ user, email_id }: { user: string; email_id: strin
 	} catch (error) {
 		console.error('Error fetching email accounts:', error);
 		return [];
+	}
+};
+
+export const sendEmail = async ({ user, email }: { user: string; email: EmailData }) => {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(email)
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
 	}
 };

@@ -2,6 +2,9 @@ export interface User {
 	id: number;
 	email: string;
 	name: string;
+	profile_pic: string;
+	last_login: Date;
+	email_accounts: EmailAccount[];
 }
 export enum LabelType {
 	Email = 'EMAIL'
@@ -36,4 +39,13 @@ export interface Email {
 export interface EmailAccount {
 	email: string;
 	profile_pic: string;
+}
+export interface EmailData {
+	from_addr: string;
+	to: string[];
+	cc: string[];
+	bcc: string[];
+	subject: string;
+	body: string;
+	attachments: string[];
 }

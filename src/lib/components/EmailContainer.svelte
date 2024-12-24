@@ -25,7 +25,7 @@
 </script>
 
 <div>
-	<div class="flex h-[800px] flex-row gap-[20px] py-[20px]">
+	<div class="flex h-full flex-row gap-[20px] py-[20px]">
 		<EmailList {selectEmail} bind:this={emailList} />
 		<EmailDetailView
 			{email}

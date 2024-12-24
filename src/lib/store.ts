@@ -33,3 +33,6 @@ export const user: Writable<User | null> = persistentWritable('user', null);
 export const emailAccount: Writable<any> = persistentWritable('emailAccount', {
 	email: 'All Emails'
 });
+
+export const showErrorModal: Writable<boolean> = writable(false);
+export const errorMessage: Writable<string> = writable('');

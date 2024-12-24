@@ -35,6 +35,7 @@ export default {
 					pink: '#ff375f',
 					black: '#141414',
 					container: '#282A2F',
+					'dark-container': '#1a1a1a',
 					button: '#AAC7FF',
 					'active-button-highlight': '#ecf2f8',
 					'inactive-button-highlight': '#c6cdd5',

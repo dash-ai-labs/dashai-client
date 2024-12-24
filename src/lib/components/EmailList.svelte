@@ -183,7 +183,7 @@
 
 	<InboxSearchBar />
 	<div
-		class="no-scrollbar max-h-[630px] overflow-y-scroll"
+		class="no-scrollbar max-h-[730px] overflow-y-scroll"
 		bind:this={container}
 		onscroll={handleScroll}
 	>
@@ -191,25 +191,23 @@
 			<!-- Loading indicator when toggle is changing -->
 			<div class="w-[300px] py-4 text-center" transition:fade={{ duration: 500 }}>Loading...</div>
 		{:else}
-			{#key emails}
-				{#each emails as email (email.id)}
-					{#if !disableTransition}
-						<div transition:fade={{ duration: 300 }}>
-							<EmailListItem
-								{email}
-								on:handleEmailSelect={handleEmailSelect}
-								selected={selectedEmail ? selectedEmail.id === email.id : false}
-							/>
-						</div>
-					{:else}
+			{#each emails as email (email.id)}
+				{#if !disableTransition}
+					<div transition:fade={{ duration: 300 }}>
 						<EmailListItem
 							{email}
 							on:handleEmailSelect={handleEmailSelect}
 							selected={selectedEmail ? selectedEmail.id === email.id : false}
 						/>
-					{/if}
-				{/each}
-			{/key}
+					</div>
+				{:else}
+					<EmailListItem
+						{email}
+						on:handleEmailSelect={handleEmailSelect}
+						selected={selectedEmail ? selectedEmail.id === email.id : false}
+					/>
+				{/if}
+			{/each}
 		{/if}
 	</div>
 </div>

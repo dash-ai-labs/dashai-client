@@ -9,6 +9,16 @@ export async function initiateGoogleLogin() {
 	window.location.href = url;
 }
 
+export const getUserProfile = async (user_id: string) => {
+	const response = await fetch(`${PUBLIC_API_URL}/user/${user_id}/profile/`, {
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	return response.json();
+};
+
 export const handleCallback = async (code: string, state: string) => {
 	try {
 		const response = await fetch(`${PUBLIC_API_URL}/auth/google/callback`, {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RightChevron from '$lib/assets/RightChevron.svelte';
+	import RightChevron from '$lib/assets/ChevronRight.svelte';
 	import Summary from '$lib/assets/Summary.svelte';
 	import type { Email } from '$lib/types';
 	import { formatDate } from '$lib/utils/dateTime';

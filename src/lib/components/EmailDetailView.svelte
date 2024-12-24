@@ -1,12 +1,26 @@
 <script lang="ts">
 	import Inbox from '$lib/assets/Inbox.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import DOMPurify from 'dompurify';
 	import Trash from '$lib/assets/Trash.svelte';
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
 	import Archive from '$lib/assets/Archive.svelte';
 	import EmailButton from './EmailButton.svelte';
 	import type { Email } from '$lib/types';
+	import { Editor } from '@tiptap/core';
+	import StarterKit from '@tiptap/starter-kit';
+	import Image from '@tiptap/extension-image';
+	import Link from '@tiptap/extension-link';
+	import Table from '@tiptap/extension-table';
+	import TableRow from '@tiptap/extension-table-row';
+	import TableCell from '@tiptap/extension-table-cell';
+	import TableHeader from '@tiptap/extension-table-header';
+	import TextStyle from '@tiptap/extension-text-style';
+	import Color from '@tiptap/extension-color';
+	import Underline from '@tiptap/extension-underline';
+	import Highlight from '@tiptap/extension-highlight';
+	import HorizontalRule from '@tiptap/extension-horizontal-rule';
+	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
 
 	const {
 		removeEmail,
@@ -89,10 +103,8 @@
 			element.srcdoc = formatEmailContent(email.raw_content);
 		}
 	});
-	let backgroundColor = 'bg-white'; // Default background color
 
-	// editor = new Editor({
-	// 	element: element,
+	// let editor = new Editor({
 	// 	extensions: [
 	// 		StarterKit,
 	// 		Image,
@@ -107,14 +119,13 @@
 	// 		Highlight,
 	// 		HorizontalRule
 	// 	],
-	// 	content: email.raw_content,
+	// 	content: email?.raw_content ?? '',
 	// 	onTransaction: () => {
 	// 		// force re-render so `editor.isActive` works as expected
 	// 		editor = editor;
 	// 	}
 	// });
 
-	// Ensure editor instance is destroyed when the component is unmounted
 	// onDestroy(() => {
 	// 	if (editor) {
 	// 		editor.destroy();
@@ -137,9 +148,12 @@
 
 		return `${day} ${month}/${dayOfMonth}/${year} ${hours}:${minutes}${amPm}`;
 	};
+
+	// Add new state variable for compose email height
+	let composeEmailHeight = $state(0);
 </script>
 
-<div class="w-full min-w-[740px] max-w-[1000px] rounded-lg bg-primary-container">
+<div class="w-full min-w-[740px] max-w-[1200px] rounded-lg bg-primary-container">
 	{#if email}
 		<!-- Header -->
 		<header class="flex h-[60px] items-center gap-2 border-b border-primary-gray px-3">
@@ -191,13 +205,16 @@
 				</div>
 			</div>
 		</div>
-		<div class="no-scrollbar mt-4 max-h-[600px] space-y-4 p-6">
+		<div class="no-scrollbar mt-4 max-h-[700px] space-y-4 p-6">
 			<iframe
 				bind:this={element}
 				title={email.subject}
 				sandbox="allow-scripts"
-				class="no-scrollbar h-[500px] w-full"
+				class="no-scrollbar w-full"
+				style="height: {600 - composeEmailHeight}px"
 			></iframe>
+
+			<ComposeEmail {email} bind:height={composeEmailHeight} />
 			<div class="px-3">
 				<EmailButton
 					additionalClass="border-[1px] rounded-lg border-primary-gray text-primary-gray"
@@ -208,13 +225,6 @@
 			</div>
 		</div>
 		<!-- Reply Box -->
-		<!-- <div class="fixed bottom-0 left-0 right-0 border-t border-gray-700 bg-gray-800 p-4">
-			<input
-				type="text"
-				placeholder="Reply Joe Doe..."
-				class="w-full rounded-lg border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-gray-600 focus:outline-none"
-			/>
-		</div> -->
 	{:else}
 		<div class="flex h-full flex-col items-center justify-center gap-[20px]">
 			<Inbox size="80" fill="fill-primary-gray" />

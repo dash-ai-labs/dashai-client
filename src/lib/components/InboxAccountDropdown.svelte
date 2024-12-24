@@ -1,44 +1,68 @@
 <script lang="ts">
-	import Dropdown from './Dropdown.svelte';
 	import { getEmailAccounts } from '$lib/auth';
 	import { user, emailAccount } from '$lib/store';
 	import { get } from 'svelte/store';
-	import AccountDropdownButton from './AccountDropdownButton.svelte';
 	import type { EmailAccount } from '$lib/types';
+	import { Button, Dropdown, DropdownItem, DropdownDivider } from 'flowbite-svelte';
+	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 
 	let emailAccounts: EmailAccount[] = [];
-	let selectedOption: number = 0;
-	let options: any[] = [{ label: 'All Emails' }];
+	type Option = {
+		label: string;
+		icon: string | null;
+	};
+	let options: Option[] = [{ label: 'All Emails', icon: null }];
+	let selectedOption: Option = options[0];
+
 	$: if (get(user)?.id) {
 		loadEmailAccounts();
-		emailAccount.set({ email: options[selectedOption].label });
+		emailAccount.set({ email: selectedOption.label });
 	}
 	async function loadEmailAccounts() {
 		const currentUser = get(user); // Access current user value
 		if (currentUser?.id) {
 			emailAccounts = await getEmailAccounts({ user: currentUser.id.toString() });
-			options.push(
+			options = [{ label: 'All Emails', icon: null }];
+			options = [
+				...options,
 				...emailAccounts.map((account) => ({
-					component: AccountDropdownButton,
 					icon: account.profile_pic,
 					label: account.email
 				}))
-			);
+			];
 		}
 	}
 
-	const addAccount = {
-		label: '+ Add Email',
-		icon: null,
-		fn: () => {
-			console.log('add account');
+	const onSelectOption = (option: Option) => {
+		if (option !== selectedOption) {
+			selectedOption = option;
+			emailAccount.set({ email: option.label });
 		}
+	};
+
+	const addAccount = () => {
+		console.log('add account');
 	};
 </script>
 
-<Dropdown
-	{options}
-	bind:selectedOption
-	onSelectOption={(option: number) => emailAccount.set({ email: options[option].label })}
-	{addAccount}
-/>
+<div class="flex w-full justify-end pt-3">
+	<Button>{$emailAccount.email}<ChevronDownOutline class="ms-2 h-6 w-6" /></Button>
+	<Dropdown class="rounded-lg bg-primary-container">
+		{#each options as option}
+			<DropdownItem
+				class="flex flex-row justify-center {option === selectedOption
+					? 'bg-secondary-active-button-background'
+					: ''} hover:bg-secondary-active-button-background"
+				on:click={() => onSelectOption(option)}
+			>
+				{#if option.icon}
+					<img src={option.icon} alt={option.label} class="h-6 w-6 rounded-full" />
+				{/if}
+				<p class="ml-2 self-center">{option.label}</p>
+			</DropdownItem>
+		{/each}
+		<DropdownItem onclick={addAccount} class="rounded-lg bg-primary-container" slot="footer"
+			>+ Add Email</DropdownItem
+		>
+	</Dropdown>
+</div>

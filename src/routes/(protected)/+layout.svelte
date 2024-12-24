@@ -1,24 +1,36 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { user } from '$lib/store';
+	import { user, errorMessage, showErrorModal } from '$lib/store';
 	import SideBar from '$lib/components/SideBar.svelte';
 	import '@material/web/button/filled-tonal-button';
 	import { onMount } from 'svelte';
-
+	import { getUserProfile } from '$lib/auth';
+	import ErrorModal from '$lib/components/ErrorModal.svelte';
 	onMount(() => {
-		user.subscribe(($user) => {
+		const unsubscribe = user.subscribe(($user) => {
 			if (!$user) {
-				// Redirect to the login page
 				goto('/auth');
 				return;
 			}
-
-			return {
-				props: {
-					user: $user
-				}
-			};
 		});
+
+		// Only fetch profile once on mount
+		if ($user) {
+			(async () => {
+				try {
+					const response = await getUserProfile($user.id.toString());
+					if (response) {
+						user.set(response);
+					}
+				} catch (error) {
+					console.error('Failed to refresh user profile:', error);
+				}
+			})();
+		}
+
+		return () => {
+			unsubscribe();
+		};
 	});
 	// Handle navigation
 	function handleNavigation(path: string) {
@@ -32,6 +44,11 @@
 	<!-- Main Content -->
 	<main class="main-content">
 		<div class="content">
+			<ErrorModal
+				bind:showModal={$showErrorModal}
+				error={$errorMessage}
+				on:closeModal={() => ($showErrorModal = false)}
+			/>
 			<!-- Dynamic content based on route -->
 			<slot />
 		</div>
@@ -53,7 +70,6 @@
 	}
 
 	.content {
-		padding: 2rem;
 		flex: 1;
 		overflow-y: auto;
 	}

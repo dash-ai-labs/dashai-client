@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let fullWidth = false;
 	export let disabled = false;
-
+	export let classes = '';
 	$: buttonClasses = `
         flex 
         flex-col 
@@ -15,6 +15,7 @@
         rounded-[10px]
         text-secondary-active-button-background
         ${fullWidth ? 'w-full' : ''}
+        ${classes}
     `;
 </script>
 
