@@ -23,6 +23,7 @@
 		if (currentUser?.id) {
 			emailAccounts = await getEmailAccounts({ user: currentUser.id.toString() });
 			options = [{ label: 'All Emails', icon: null }];
+
 			options = [
 				...options,
 				...emailAccounts.map((account) => ({
