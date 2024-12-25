@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import RightChevron from '$lib/assets/ChevronRight.svelte';
 	import Summary from '$lib/assets/Summary.svelte';
 	import type { Email } from '$lib/types';
@@ -6,25 +8,29 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	export let email: Email = {};
-	export let selected: boolean = false;
-	let unread: boolean = false;
+	interface Props {
+		email?: Email;
+		selected?: boolean;
+	}
+
+	let { email = {}, selected = false }: Props = $props();
+	let unread: boolean = $state(false);
 	const onClick = () => {
 		dispatch('handleEmailSelect', email);
 	};
 
-	$: {
+	run(() => {
 		if (email && email.labels.includes('UNREAD')) {
 			unread = true;
 		}
-	}
+	});
 </script>
 
 <div
 	class="mx-[12px] border-b-[1px] border-primary-dark-gray py-4 text-primary-active-button-highlight hover:cursor-pointer {selected
 		? 'bg-secondary-active-button-background  hover:bg-secondary-active-button-background-hover'
 		: 'hover:bg-secondary-active-button-background'}"
-	on:click={onClick}
+	onclick={onClick}
 >
 	<div class="flex items-center justify-between">
 		<div class="flex w-[210px] flex-row truncate text-body font-medium">

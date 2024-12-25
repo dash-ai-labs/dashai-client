@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import X from '$lib/assets/X.svelte';
 	import { createLabel } from '$lib/label';
 	import Modal from './Modal.svelte';
@@ -7,15 +9,19 @@
 	import { get } from 'svelte/store';
 	import { LabelType } from '$lib/types';
 
-	export let showModal = false;
-	let remainingKeywords = 5;
-	let nameInput = '';
-	let keyWordInput = '';
-	let keywords: string[] = [];
-	let keywordError = false;
-	let keywordErrorMessage = '';
-	let nameError = false;
-	let nameErrorMessage = '';
+	interface Props {
+		showModal?: boolean;
+	}
+
+	let { showModal = $bindable(false) }: Props = $props();
+	let remainingKeywords = $state(5);
+	let nameInput = $state('');
+	let keyWordInput = $state('');
+	let keywords: string[] = $state([]);
+	let keywordError = $state(false);
+	let keywordErrorMessage = $state('');
+	let nameError = $state(false);
+	let nameErrorMessage = $state('');
 	export function toggleModal() {
 		showModal = !showModal;
 	}
@@ -65,16 +71,22 @@
 		}
 	};
 
-	$: if (!showModal) {
-		showModal = false;
-	}
+	run(() => {
+		if (!showModal) {
+			showModal = false;
+		}
+	});
 
-	$: if (nameInput.length > 0) {
-		nameError = false;
-	}
-	$: if (keywords.length > 0) {
-		keywordError = false;
-	}
+	run(() => {
+		if (nameInput.length > 0) {
+			nameError = false;
+		}
+	});
+	run(() => {
+		if (keywords.length > 0) {
+			keywordError = false;
+		}
+	});
 </script>
 
 <Modal bind:showModal on:closeModal={toggleModal}>
@@ -109,7 +121,7 @@
 								{keyword}
 								<button
 									class="ml-[2px] items-center justify-center"
-									on:click={() => removeKeyword(keyword)}
+									onclick={() => removeKeyword(keyword)}
 									><X stroke="stroke-primary-container" size={17} /></button
 								>
 							</div>
@@ -121,7 +133,7 @@
 					type="text"
 					class="w-full rounded-lg border-0 bg-primary-container focus:outline-none focus:ring-0"
 					placeholder="groceries, clothing"
-					on:keydown={handleEnterKey}
+					onkeydown={handleEnterKey}
 				/>
 				{#if keywordError}
 					<div class="text-subheader text-primary-red">

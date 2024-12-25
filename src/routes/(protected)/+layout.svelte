@@ -6,6 +6,11 @@
 	import { onMount } from 'svelte';
 	import { getUserProfile } from '$lib/auth';
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 	onMount(() => {
 		const unsubscribe = user.subscribe(($user) => {
 			if (!$user) {
@@ -36,7 +41,7 @@
 				on:closeModal={() => ($showErrorModal = false)}
 			/>
 			<!-- Dynamic content based on route -->
-			<slot />
+			{@render children?.()}
 		</div>
 	</main>
 </div>

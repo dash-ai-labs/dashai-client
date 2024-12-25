@@ -1,7 +1,11 @@
-<script>
-	export let color = 'fill-gray-300';
-	export let width = '60';
-	export let height = '60';
+<script lang="ts">
+	interface Props {
+		color?: string;
+		width?: string;
+		height?: string;
+	}
+
+	let { color = 'fill-gray-300', width = '60', height = '60' }: Props = $props();
 </script>
 
 <div class="align-center flex w-full justify-center py-2">

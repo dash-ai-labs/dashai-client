@@ -96,7 +96,7 @@
 <div class="mx-1 my-1 flex w-full flex-row">
 	<!-- Response -->
 	<Button class="h-[30px] px-[2px] py-[1px] hover:bg-secondary-active-button-background">
-		<svelte:component this={selectedAction.icon} class="h-[18px] w-[18px] " size="md" />
+		<selectedAction.icon class="h-[18px] w-[18px] " size="md" />
 		<ChevronDownOutline class="h-6 w-5 " />
 	</Button>
 	<Dropdown
@@ -109,7 +109,7 @@
 			>
 				<div class="flex w-full flex-row">
 					<!-- svelte-ignore svelte_component_deprecated -->
-					<svelte:component this={action.icon} class="h-6 w-6" />
+					<action.icon class="h-6 w-6" />
 					{action.text}
 				</div>
 			</DropdownItem>

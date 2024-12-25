@@ -1,21 +1,32 @@
 <script lang="ts">
 	import type { SvelteComponent } from 'svelte';
 
-	export let active: boolean = false;
-	export let icon: SvelteComponent = null;
-	export let path: string = null;
-	export let handleNavigation = (path: string) => {};
+	interface Props {
+		active?: boolean;
+		icon?: SvelteComponent;
+		path?: string;
+		handleNavigation?: any;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		active = false,
+		icon = null,
+		path = null,
+		handleNavigation = (path: string) => {},
+		children
+	}: Props = $props();
 </script>
 
 <button
-	on:click={() => handleNavigation(path)}
+	onclick={() => handleNavigation(path)}
 	class={`flex h-[56px] w-full flex-row items-center rounded-full px-[20px] ${
 		active ? 'bg-secondary-active-button-background' : 'bg-secondary-container'
 	}`}
 >
 	{#if icon}
-		<svelte:component
-			this={icon}
+		{@const SvelteComponent_1 = icon}
+		<SvelteComponent_1
 			fill={active
 				? 'fill-secondary-active-button-highlight'
 				: 'fill-secondary-inactive-button-highlight'}
@@ -26,6 +37,6 @@
 			active ? 'text-secondary-active-button-highlight' : 'text-secondary-inactive-button-highlight'
 		}`}
 	>
-		<slot />
+		{@render children?.()}
 	</div>
 </button>

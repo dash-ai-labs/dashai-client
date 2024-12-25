@@ -1,5 +1,5 @@
 <script>
-	$: SearchBarClasses = `
+	let SearchBarClasses = $derived(`
         rounded-lg
         bg-secondary-container
         max-w-[720px]
@@ -7,7 +7,7 @@
         m-[10px]
         flex
 		p-[4px]
-    `;
+    `);
 </script>
 
 <div class={SearchBarClasses}>

@@ -1,5 +1,9 @@
 <script lang="ts">
-	export let iconColor = 'fill-primary-gray';
+	interface Props {
+		iconColor?: string;
+	}
+
+	let { iconColor = 'fill-primary-gray' }: Props = $props();
 </script>
 
 <div

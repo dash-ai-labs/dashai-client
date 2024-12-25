@@ -1,7 +1,11 @@
-<script>
-	export let fill = 'fill-secondary-inactive-button-highlight';
-	export let width = 20;
-	export let height = 18;
+<script lang="ts">
+	interface Props {
+		fill?: string;
+		width?: number;
+		height?: number;
+	}
+
+	let { fill = 'fill-secondary-inactive-button-highlight', width = 20, height = 18 }: Props = $props();
 </script>
 
 <svg {width} {height} viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">

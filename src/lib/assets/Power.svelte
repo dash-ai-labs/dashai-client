@@ -1,5 +1,9 @@
-<script>
-	export let fill = 'text-primary-gray'; // Default Tailwind color
+<script lang="ts">
+	interface Props {
+		fill?: string; // Default Tailwind color
+	}
+
+	let { fill = 'text-primary-gray' }: Props = $props();
 </script>
 
 <svg

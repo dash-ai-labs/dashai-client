@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { onMount, onDestroy } from 'svelte';
 	import { Editor } from '@tiptap/core';
 	import Document from '@tiptap/extension-document';
@@ -219,7 +221,7 @@
 				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('bold')
 					? 'rounded text-white ring ring-gray-100'
 					: ''}"
-				on:click|preventDefault={() => editor.chain().focus().toggleBold().run()}
+				onclick={preventDefault(() => editor.chain().focus().toggleBold().run())}
 			>
 				Bold
 			</button>
@@ -230,7 +232,7 @@
 				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('italic')
 					? 'rounded text-white ring ring-gray-100'
 					: ''}"
-				on:click|preventDefault={() => editor.chain().focus().toggleItalic().run()}
+				onclick={preventDefault(() => editor.chain().focus().toggleItalic().run())}
 			>
 				Italic
 			</button>
@@ -241,7 +243,7 @@
 				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('strike')
 					? 'rounded text-white ring ring-gray-100'
 					: ''}"
-				on:click|preventDefault={() => editor.chain().focus().toggleStrike().run()}
+				onclick={preventDefault(() => editor.chain().focus().toggleStrike().run())}
 			>
 				Tachado
 			</button>
@@ -252,7 +254,7 @@
 				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('underline')
 					? 'rounded text-white ring ring-gray-100'
 					: ''}"
-				on:click|preventDefault={() => editor.chain().focus().toggleUnderline().run()}
+				onclick={preventDefault(() => editor.chain().focus().toggleUnderline().run())}
 			>
 				Subrayado
 			</button>
@@ -263,7 +265,7 @@
 				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('code')
 					? 'rounded text-white ring ring-gray-100'
 					: ''}"
-				on:click|preventDefault={() => editor.chain().focus().toggleCode().run()}
+				onclick={preventDefault(() => editor.chain().focus().toggleCode().run())}
 			>
 				Código
 			</button>
@@ -274,7 +276,7 @@
 				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('link')
 					? 'rounded text-white ring ring-gray-100'
 					: ''}"
-				on:click|preventDefault={setLink}
+				onclick={preventDefault(setLink)}
 			>
 				Link
 			</button>
@@ -285,7 +287,7 @@
 	<div class="mx-2 flex justify-start border-b border-primary-gray text-font-light-gray">
 		<AddressHeader {email} {setToEmails} {setCcEmails} {setBccEmails} {setFromEmail} {setSubject} />
 	</div>
-	<div class="mx-1 my-1"><div bind:this={element} /></div>
+	<div class="mx-1 my-1"><div bind:this={element}></div></div>
 	<div class="m-2 flex justify-start text-primary-gray">
 		<Footer {onSend} />
 	</div>

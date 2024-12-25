@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { getEmailAccounts } from '$lib/auth';
 	import { user, emailAccount } from '$lib/store';
 	import { get } from 'svelte/store';
@@ -11,13 +13,9 @@
 		label: string;
 		icon: string | null;
 	};
-	let options: Option[] = [{ label: 'All Emails', icon: null }];
-	let selectedOption: Option = options[0];
+	let options: Option[] = $state([{ label: 'All Emails', icon: null }]);
+	let selectedOption: Option = $state(options[0]);
 
-	$: if (get(user)?.id) {
-		loadEmailAccounts();
-		emailAccount.set({ email: selectedOption.label });
-	}
 	async function loadEmailAccounts() {
 		const currentUser = get(user); // Access current user value
 		if (currentUser?.id) {
@@ -44,6 +42,12 @@
 	const addAccount = () => {
 		console.log('add account');
 	};
+	run(() => {
+		if (get(user)?.id) {
+			loadEmailAccounts();
+			emailAccount.set({ email: selectedOption.label });
+		}
+	});
 </script>
 
 <div class="flex w-full justify-end pt-3">
@@ -62,8 +66,10 @@
 				<p class="ml-2 self-center">{option.label}</p>
 			</DropdownItem>
 		{/each}
-		<DropdownItem onclick={addAccount} class="rounded-lg bg-primary-container" slot="footer"
-			>+ Add Email</DropdownItem
-		>
+		{#snippet footer()}
+				<DropdownItem onclick={addAccount} class="rounded-lg bg-primary-container" 
+				>+ Add Email</DropdownItem
+			>
+			{/snippet}
 	</Dropdown>
 </div>

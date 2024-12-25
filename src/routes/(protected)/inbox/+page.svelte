@@ -6,7 +6,7 @@
 	import PrimaryButton from '$lib/components/PrimaryButton.svelte';
 	import Widgets from '$lib/components/Widgets.svelte';
 
-	let newEmailModalRef = null;
+	let newEmailModalRef = $state(null);
 
 	const toggleEmailModal = () => {
 		if (newEmailModalRef) {

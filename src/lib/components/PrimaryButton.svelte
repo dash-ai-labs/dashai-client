@@ -1,8 +1,21 @@
 <script lang="ts">
-	export let fullWidth = false;
-	export let disabled = false;
-	export let classes = '';
-	$: buttonClasses = `
+    import { createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
+    interface Props {
+        fullWidth?: boolean;
+        disabled?: boolean;
+        classes?: string;
+        children?: import('svelte').Snippet;
+    }
+
+    let {
+        fullWidth = false,
+        disabled = false,
+        classes = '',
+        children
+    }: Props = $props();
+	let buttonClasses = $derived(`
         flex 
         flex-col 
         justify-center 
@@ -16,9 +29,9 @@
         text-secondary-active-button-background
         ${fullWidth ? 'w-full' : ''}
         ${classes}
-    `;
+    `);
 </script>
 
-<button class={buttonClasses} {disabled} on:click>
-	<slot />
+<button class={buttonClasses} {disabled} onclick={bubble('click')}>
+	{@render children?.()}
 </button>

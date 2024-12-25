@@ -4,6 +4,11 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { getUserProfile } from '$lib/auth';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	onMount(() => {
 		const unsubscribe = user.subscribe(($user) => {
@@ -39,7 +44,7 @@
 </script>
 
 <div class="dashboard">
-	<slot />
+	{@render children?.()}
 </div>
 
 <style>

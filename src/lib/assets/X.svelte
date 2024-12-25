@@ -1,6 +1,10 @@
-<script>
-	export let stroke = null;
-	export let size = 17;
+<script lang="ts">
+	interface Props {
+		stroke?: any;
+		size?: number;
+	}
+
+	let { stroke = null, size = 17 }: Props = $props();
 </script>
 
 <svg

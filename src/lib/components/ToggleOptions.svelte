@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let options: string[] = []; // Array of option labels
-	export let activeIndex = 0; // Index of the currently active option
-	export let onChange: (index: number) => void = () => {}; // Callback function to notify parent of selection
+	interface Props {
+		options?: string[]; // Array of option labels
+		activeIndex?: number; // Index of the currently active option
+		onChange?: (index: number) => void; // Callback function to notify parent of selection
+	}
+
+	let { options = [], activeIndex = $bindable(0), onChange = () => {} }: Props = $props();
 
 	const handleClick = (index: number) => {
 		activeIndex = index;
@@ -22,7 +26,7 @@
 	{#each options as option, index}
 		<button
 			class="relative flex-1 px-4 py-2 text-center text-subheader text-font-light-gray transition-colors duration-300 ease-in-out"
-			on:click={() => handleClick(index)}
+			onclick={() => handleClick(index)}
 			class:text-white={activeIndex === index}
 		>
 			{option}

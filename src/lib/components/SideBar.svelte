@@ -9,7 +9,7 @@
 	import LogoutButton from './LogoutButton.svelte';
 	import Logo from '$lib/assets/Logo.svelte';
 
-	export let handleNavigation = (path: string) => {};
+	let { handleNavigation = (path: string) => {} } = $props();
 	const navItems = [
 		{
 			label: 'Inbox',
@@ -24,7 +24,7 @@
 		}
 	];
 
-	$: navDrawerClasses = `
+	let navDrawerClasses = $derived(`
         flex 
         flex-col 
         items-start 
@@ -33,9 +33,9 @@
         h-full 
         bg-secondary-container
         rounded-[16px]
-    `;
+    `);
 
-	$: isActive = (path: string) => $page.url.pathname === path;
+	let isActive = $derived((path: string) => $page.url.pathname === path);
 </script>
 
 <div class={navDrawerClasses}>

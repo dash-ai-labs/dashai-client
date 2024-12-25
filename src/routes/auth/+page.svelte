@@ -30,7 +30,7 @@
 					<div>Your AI dashboard awaits...</div>
 				</div>
 				<button
-					on:click={initiateGoogleLogin}
+					onclick={initiateGoogleLogin}
 					class=" w-[360px] rounded-md border-[1px] border-primary-gray bg-primary-container px-2 py-1"
 					><div class="flex flex-row justify-center gap-3">
 						<GoogleLogo />Sign In with Google
