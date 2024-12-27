@@ -10,33 +10,7 @@
 
 	let { children }: Props = $props();
 
-	onMount(() => {
-		const unsubscribe = user.subscribe(($user) => {
-			if (!$user) {
-				goto('/auth');
-				return;
-			}
-		});
-
-		// Only fetch profile once on mount
-		if ($user) {
-			(async () => {
-				try {
-					const response = await getUserProfile($user.id.toString());
-					if (response) {
-						user.set(response);
-						goto('/inbox');
-					}
-				} catch (error) {
-					console.error('Failed to refresh user profile:', error);
-				}
-			})();
-		}
-
-		return () => {
-			unsubscribe();
-		};
-	});
+	onMount(() => {});
 	// Handle navigation
 	function handleNavigation(path: string) {
 		goto(path);
