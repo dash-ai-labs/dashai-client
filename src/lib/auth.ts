@@ -10,7 +10,7 @@ export async function initiateGoogleLogin() {
 }
 
 export const getUserProfile = async (user_id: string) => {
-	const response = await fetch(`${PUBLIC_API_URL}/user/${user_id}/profile/`, {
+	const response = await fetch(`${PUBLIC_API_URL}/user/${user_id}/profile`, {
 		method: 'GET',
 		credentials: 'include',
 		headers: {
@@ -50,22 +50,6 @@ export const getEmailAccounts = async ({ user }: { user: string }): Promise<Emai
 	} catch (error) {
 		console.error('Error fetching email accounts:', error);
 		return [];
-	}
-};
-
-export const getUser = async (): Promise<any> => {
-	try {
-		const response = await fetch(`${PUBLIC_API_URL}/profile/`, {
-			method: 'GET',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-		return response.json();
-	} catch (error) {
-		console.error('Error fetching user:', error);
-		return null;
 	}
 };
 
