@@ -185,7 +185,7 @@
 
 	<InboxSearchBar />
 	<div
-		class="no-scrollbar max-h-[730px] overflow-y-scroll"
+		class="no-scrollbar max-h-[calc(100vh-300px)] overflow-y-scroll"
 		bind:this={container}
 		onscroll={handleScroll}
 	>

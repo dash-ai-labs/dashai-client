@@ -21,7 +21,7 @@
 		<InboxAccountDropdown />
 	</div>
 
-	<div class="my-[40px] flex flex-col gap-[25px]">
+	<div class="mt-[40px] flex-col gap-[25px]">
 		<div class="flex flex-row">
 			<div class="w-full text-h2">Inbox</div>
 			<div class="flex w-full justify-end">

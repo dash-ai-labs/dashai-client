@@ -10,6 +10,7 @@
 		ExclamationCircleOutline
 	} from 'flowbite-svelte-icons';
 	import type { Component } from 'svelte';
+	import { ComposeEmailMode } from '$lib/types';
 
 	type ResponseAction = {
 		icon: Component;
@@ -21,7 +22,9 @@
 		setBccEmails,
 		setCcEmails,
 		setSubject,
-		setFromEmail
+		setFromEmail,
+		setComposeEmailMode,
+		composeEmailMode
 	}: {
 		email: Email;
 		setToEmails: (emails: string[]) => void;
@@ -29,21 +32,36 @@
 		setCcEmails: (emails: string[]) => void;
 		setSubject: (subject: string) => void;
 		setFromEmail: (email: string) => void;
+		setComposeEmailMode: (mode: ComposeEmailMode) => void;
+		composeEmailMode: ComposeEmailMode;
 	} = $props();
 
 	let fromEmailAccounts: EmailAccount[] | undefined = $user?.email_accounts;
 	let selectedFromEmailAccount: EmailAccount | undefined = $state($user?.email_accounts?.[0]);
 	let toEmails: string[] = $state([]);
+	let selectedAction: ResponseAction = $state({
+		icon: ReplyOutline,
+		text: ComposeEmailMode.Reply
+	});
+
 	$effect(() => {
-		toEmails = [email.sender[0]];
+		if (composeEmailMode === ComposeEmailMode.Reply) {
+			toEmails = [email.sender[0]];
+			selectedAction = {
+				icon: ReplyOutline,
+				text: ComposeEmailMode.Reply
+			};
+		} else {
+			toEmails = [];
+			selectedAction = {
+				icon: ForwardOutline,
+				text: ComposeEmailMode.Forward
+			};
+		}
 	});
 
 	let toEmailsInput: string = $state('');
 	let toEmailsError: boolean = $state(false);
-	let selectedAction: ResponseAction = $state({
-		icon: ReplyOutline,
-		text: 'Reply'
-	});
 
 	$effect(() => {
 		setToEmails(toEmails);
@@ -53,18 +71,22 @@
 	const responseOptions: ResponseAction[] = [
 		{
 			icon: ReplyOutline,
-			text: 'Reply'
+			text: ComposeEmailMode.Reply
 		},
 		{
 			icon: ForwardOutline,
-			text: 'Forward'
+			text: ComposeEmailMode.Forward
 		}
 	];
 
 	function onSelectResponseOption(action: ResponseAction) {
 		selectedAction = { ...action };
-		if (action.text === 'Reply') {
+		if (action.text === ComposeEmailMode.Reply) {
 			setToEmails(toEmails);
+			setComposeEmailMode(ComposeEmailMode.Reply);
+		} else {
+			setToEmails([]);
+			setComposeEmailMode(ComposeEmailMode.Forward);
 		}
 	}
 
@@ -141,14 +163,14 @@
 			</div>
 		{/if}
 		<!-- To -->
-		{#if email.sender}
-			<div class="flex w-full flex-row items-center">
+		{#if email && email.sender}
+			<div class="justify-items-left flex w-full flex-row items-center">
 				<span class="mr-2 flex items-center">To:</span>
 				{#if toEmails.length > 0}
-					<div class="flex w-full flex-wrap items-center gap-[8px]">
+					<div class="flex flex-wrap items-center gap-[8px]">
 						{#each toEmails as toEmail}
 							<div
-								class="flex w-fit flex-row items-center rounded-lg bg-primary-button px-[8px] py-[1px] text-primary-container hover:bg-primary-button"
+								class="flex w-fit flex-row flex-nowrap items-center whitespace-nowrap rounded-lg bg-primary-button px-[8px] py-[1px] text-primary-container hover:bg-primary-button"
 							>
 								{toEmail}
 								<button
@@ -163,7 +185,7 @@
 				<input
 					bind:value={toEmailsInput}
 					type="text"
-					class="w-full rounded-lg border-0 bg-primary-container focus:outline-none focus:ring-0"
+					class="w-full rounded-lg border-0 bg-primary-black focus:outline-none focus:ring-0"
 					onkeydown={handleEnterKey}
 				/>
 			</div>

@@ -1,44 +1,39 @@
 <script lang="ts">
 	import Inbox from '$lib/assets/Inbox.svelte';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import DOMPurify from 'dompurify';
 	import Trash from '$lib/assets/Trash.svelte';
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
 	import Archive from '$lib/assets/Archive.svelte';
 	import EmailButton from './EmailButton.svelte';
 	import type { Email } from '$lib/types';
-	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
-	import Image from '@tiptap/extension-image';
-	import Link from '@tiptap/extension-link';
-	import Table from '@tiptap/extension-table';
-	import TableRow from '@tiptap/extension-table-row';
-	import TableCell from '@tiptap/extension-table-cell';
-	import TableHeader from '@tiptap/extension-table-header';
-	import TextStyle from '@tiptap/extension-text-style';
-	import Color from '@tiptap/extension-color';
-	import Underline from '@tiptap/extension-underline';
-	import Highlight from '@tiptap/extension-highlight';
-	import HorizontalRule from '@tiptap/extension-horizontal-rule';
-	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
+	import { ComposeEmailMode } from '$lib/types';
+	import BackgroundGradient from './ui/BackgroundGradient/BackgroundGradient.svelte';
+	import { ForwardOutline, ReplyOutline, ReplySolid } from 'flowbite-svelte-icons';
 
 	const {
 		removeEmail,
 		archiveEmail,
 		markEmailAsUnread,
-		email
+		email,
+		setShowComposeEmail,
+		setComposeEmailMode
 	}: {
 		removeEmail: (email: Email) => void;
 		archiveEmail: (email: Email) => void;
 		markEmailAsUnread: (email: Email) => void;
 		email: Email;
+		setShowComposeEmail: (show: boolean) => void;
+		setComposeEmailMode: (mode: ComposeEmailMode) => void;
 	} = $props();
 	let element = $state<HTMLIFrameElement | null>(null);
+
 	$effect(() => {
 		if (element && email?.raw_content) {
 			element.srcdoc = formatEmailContent(email.raw_content);
 		}
 	});
+
 	function formatEmailContent(content: string): string {
 		// Check if content is HTML by looking for DOCTYPE or HTML tags
 		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
@@ -153,7 +148,7 @@
 	let composeEmailHeight = $state(0);
 </script>
 
-<div class="w-full min-w-[740px] max-w-[1200px] rounded-lg bg-primary-container">
+<div class="h-full w-full min-w-[740px] max-w-[1200px] rounded-lg bg-primary-container">
 	{#if email}
 		<!-- Header -->
 		<header class="flex h-[60px] items-center gap-2 border-b border-primary-gray px-3">
@@ -205,25 +200,39 @@
 				</div>
 			</div>
 		</div>
-		<div class="no-scrollbar mt-4 max-h-[700px] space-y-4 p-6">
+		<div class="no-scrollbar relative grid max-h-[850px] max-w-[1200px] p-4">
 			<iframe
 				bind:this={element}
 				title={email.subject}
 				sandbox="allow-scripts"
 				class="no-scrollbar w-full"
-				style="height: {600 - composeEmailHeight}px"
+				style="height: 780px"
 			></iframe>
 
-			<ComposeEmail {email} bind:height={composeEmailHeight} />
-			<div class="px-3">
-				<EmailButton
-					additionalClass="border-[1px] rounded-lg border-primary-gray text-primary-gray"
-					onclick={() => {}}
-					ariaLabel="Reply"
-					title="Reply">Reply</EmailButton
-				>
+			<div
+				class="absolute bottom-2 z-50 flex flex-row justify-items-end gap-[10px] self-end justify-self-end px-3"
+			>
+				<BackgroundGradient className="rounded-md max-w-sm px-4 py-2 bg-primary-black ">
+					<button
+						class="flex flex-row items-center gap-[10px]"
+						onclick={() => {
+							setShowComposeEmail(true);
+							setComposeEmailMode(ComposeEmailMode.Reply);
+						}}><ReplyOutline height="20" width="20" class="text-primary-white" />Reply</button
+					>
+				</BackgroundGradient>
+				<BackgroundGradient className="rounded-md max-w-sm px-4 py-2 bg-primary-black">
+					<button
+						class="flex flex-row items-center gap-[10px]"
+						onclick={() => {
+							setShowComposeEmail(true);
+							setComposeEmailMode(ComposeEmailMode.Forward);
+						}}><ForwardOutline height="20" width="20" class="text-primary-white" />Forward</button
+					>
+				</BackgroundGradient>
 			</div>
 		</div>
+
 		<!-- Reply Box -->
 	{:else}
 		<div class="flex h-full flex-col items-center justify-center gap-[20px]">

@@ -2,6 +2,6 @@
 	import AddNewWidget from './AddNewWidget.svelte';
 </script>
 
-<div>
+<div class="flex max-h-[300px]">
 	<AddNewWidget />
 </div>

@@ -28,11 +28,11 @@
         flex 
         flex-col 
         items-start 
-        p-3 
+        px-3 
         w-[180px] 
-        h-full 
         bg-secondary-container
         rounded-[16px]
+		my-2
     `);
 
 	let isActive = $derived((path: string) => $page.url.pathname === path);
@@ -40,7 +40,7 @@
 
 <div class={navDrawerClasses}>
 	<Logo color="fill-primary-gray" />
-	<div class="h-full">
+	<div>
 		{#each navItems as item}
 			<SideBarButton
 				{handleNavigation}
@@ -52,5 +52,7 @@
 			>
 		{/each}
 	</div>
-	<LogoutButton />
+	<div class="mb-2 mt-auto flex self-center">
+		<LogoutButton />
+	</div>
 </div>

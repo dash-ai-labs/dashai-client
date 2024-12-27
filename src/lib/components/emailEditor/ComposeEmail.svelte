@@ -2,7 +2,7 @@
 	import { preventDefault } from 'svelte/legacy';
 
 	import { onMount, onDestroy } from 'svelte';
-	import { Editor } from '@tiptap/core';
+	import { Editor, Node } from '@tiptap/core';
 	import Document from '@tiptap/extension-document';
 	import Paragraph from '@tiptap/extension-paragraph';
 	import HardBreak from '@tiptap/extension-hard-break';
@@ -16,13 +16,17 @@
 	import Placeholder from '@tiptap/extension-placeholder';
 	import BubbleMenu from '@tiptap/extension-bubble-menu';
 	import CharacterCount from '@tiptap/extension-character-count';
-	import type { Email, EmailData } from '$lib/types';
+	import Blockquote from '@tiptap/extension-blockquote';
+	import { ComposeEmailMode, type Email, type EmailData } from '$lib/types';
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
 	import Footer from './Footer.svelte';
 	import { emailAccount, user, errorMessage, showErrorModal } from '$lib/store';
 	import { sendEmail } from '$lib/email';
+	import { CloseOutline } from 'flowbite-svelte-icons';
+	import DOMPurify from 'dompurify';
+
 	let content = '';
 	let limit = 100;
 	let bold = true;
@@ -32,12 +36,17 @@
 	let link = false;
 	let code = false;
 	let placeholder = '';
-	let { email, height = $bindable() }: { email: Email; height: number } = $props();
+	let {
+		email,
+		height = $bindable(),
+		composeEmailMode,
+		setShowComposeEmail,
+		setComposeEmailMode
+	}: { email: Email; height: number } = $props();
 	let element: HTMLElement;
 	let bmenu: HTMLElement;
-	let editor: Editor;
+	let editor: Editor = $state(null);
 	let dropDownSelectedOption = 0;
-
 	let emailData: EmailData = $state({
 		subject: '',
 		body: '',
@@ -150,15 +159,107 @@
 		};
 		_sendEmail();
 	};
+	const EmailQuote = Node.create({
+		name: 'emailQuote',
 
+		group: 'block',
+
+		content: 'block+',
+
+		defining: true,
+
+		parseHTML() {
+			return [
+				{
+					tag: 'blockquote[data-type="email-quote"]'
+				}
+			];
+		},
+
+		renderHTML({ HTMLAttributes }) {
+			return [
+				'blockquote',
+				{ 'data-type': 'email-quote', class: 'pl-4 border-l-4 border-gray-300' },
+				[
+					'iframe',
+					{
+						srcdoc: 0,
+						frameborder: '0',
+						class: 'w-full h-full',
+						sandbox: 'allow-same-origin'
+					}
+				]
+			];
+		}
+	});
+	const sanitizeHtml = (html) => {
+		// Configure DOMPurify to allow certain tags and attributes
+		// const config = {
+		// 	ALLOWED_TAGS: [
+		// 		'p',
+		// 		'br',
+		// 		'strong',
+		// 		'em',
+		// 		'u',
+		// 		'a',
+		// 		'ul',
+		// 		'ol',
+		// 		'li',
+		// 		'table',
+		// 		'thead',
+		// 		'tbody',
+		// 		'tr',
+		// 		'td',
+		// 		'th',
+		// 		'img',
+		// 		'h1',
+		// 		'h2',
+		// 		'h3',
+		// 		'h4',
+		// 		'h5',
+		// 		'h6',
+		// 		'blockquote',
+		// 		'div',
+		// 		'span'
+		// 	],
+		// 	ALLOWED_ATTR: [
+		// 		'href',
+		// 		'src',
+		// 		'alt',
+		// 		'class',
+		// 		'style',
+		// 		'target',
+		// 		'rel',
+		// 		'data-type',
+		// 		'width',
+		// 		'height'
+		// 	],
+		// 	ALLOW_DATA_ATTR: true
+		// };
+
+		return DOMPurify.sanitize(html);
+	};
+	const formatThread = (thread) => {
+		const sanitizedContent = sanitizeHtml(thread.raw_content);
+
+		return `
+        <div class="mt-4 mb-4 text-white">
+            <blockquote data-type="email-quote" style="text-color: white;" class="pl-4 text-white border-l-4 border-gray-300">
+                ${email.raw_content}
+            </blockquote>
+        </div>
+    `;
+	};
 	onMount(() => {
 		editor = new Editor({
 			element: element,
 			extensions: [
+				EmailQuote,
 				Document,
 				Paragraph,
 				Text,
 				//Bold,
+				Blockquote,
 				CustomBold,
 				Code,
 				Italic,
@@ -187,7 +288,7 @@
 			content,
 			editorProps: {
 				attributes: {
-					class: 'p-3 outline-none text-base min-h-[200px]'
+					class: 'prose p-3 outline-none text-font-light-gray text-base min-h-[200px]'
 				}
 			},
 			onCreate({ editor }) {
@@ -205,6 +306,97 @@
 				emailData.body = html;
 			}
 		});
+	});
+	function formatEmailContent(content: string): string {
+		// Check if content is HTML by looking for DOCTYPE or HTML tags
+		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
+
+		if (isHTML) {
+			// For HTML content, just sanitize and return with minimal wrapping
+			return `
+				<html>
+				<head>
+					<meta charset="utf-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1">
+				</head>
+				<body style="background-color: #f0f0f0;">
+					${DOMPurify.sanitize(content, {
+						ADD_TAGS: ['style'],
+						ADD_ATTR: ['style']
+					})}
+				</body>
+				</html>
+			`;
+		} else {
+			// For plain text, apply nice formatting
+			const urlRegex = /(https?:\/\/[^\s<]+)/g;
+			const formattedContent = content
+				.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+				.replace(/\r\n|\n|\r/g, '<br>');
+
+			return `
+				<html>
+				<head>
+					<meta charset="utf-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1">
+					<style>
+						body {
+							font-family: Arial, sans-serif;
+							line-height: 1.6;
+							margin: 20px;
+							color: #333;
+							max-width: 800px;
+							white-space: pre-wrap;
+							word-wrap: break-word;
+						}
+						a {
+							color: #0066cc;
+							text-decoration: none;
+						}
+						a:hover {
+							text-decoration: underline;
+						}
+					</style>
+				</head>
+				<body style="background-color: #f0f0f0;">
+					${DOMPurify.sanitize(formattedContent)}
+				</body>
+				</html>
+			`;
+		}
+	}
+
+	$effect(() => {
+		if (!editor) return;
+
+		if (
+			composeEmailMode === ComposeEmailMode.Reply ||
+			composeEmailMode === ComposeEmailMode.Forward
+		) {
+			const setContent = async () => {
+				try {
+					// Clear existing content first
+					editor.commands.clearContent();
+					const formattedContent = formatEmailContent(email.raw_content);
+					// Add some spacing
+					// Try setting the raw content first
+
+					// If raw content is empty, try the formatted content
+					editor.chain().setThread;
+
+					// Move cursor to top
+					await editor.commands.setTextSelection(0);
+
+					// Log the editor's content for debugging
+					console.log('Editor content:', editor.getHTML());
+				} catch (error) {
+					console.error('Error setting content:', error);
+				}
+			};
+			setContent();
+		} else {
+			editor.commands.clearContent();
+		}
 	});
 
 	onDestroy(() => {
@@ -283,9 +475,23 @@
 		{/if}
 	{/if}
 </div>
-<div class="rounded-2xl border border-primary-gray bg-primary-container">
+<div
+	class="fixed bottom-[-10px] right-2 z-50 w-[50%] overflow-hidden rounded-2xl rounded-b-none border border-primary-gray bg-primary-black"
+>
 	<div class="mx-2 flex justify-start border-b border-primary-gray text-font-light-gray">
-		<AddressHeader {email} {setToEmails} {setCcEmails} {setBccEmails} {setFromEmail} {setSubject} />
+		<AddressHeader
+			{email}
+			{composeEmailMode}
+			{setToEmails}
+			{setCcEmails}
+			{setBccEmails}
+			{setFromEmail}
+			{setSubject}
+			{setComposeEmailMode}
+		/>
+		<button class="self-start py-2 text-primary-gray" onclick={() => setShowComposeEmail(false)}>
+			<CloseOutline name="close" />
+		</button>
 	</div>
 	<div class="mx-1 my-1"><div bind:this={element}></div></div>
 	<div class="m-2 flex justify-start text-primary-gray">

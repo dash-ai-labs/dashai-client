@@ -67,9 +67,9 @@
 			</DropdownItem>
 		{/each}
 		{#snippet footer()}
-				<DropdownItem onclick={addAccount} class="rounded-lg bg-primary-container" 
+			<DropdownItem onclick={addAccount} class="rounded-lg bg-primary-container"
 				>+ Add Email</DropdownItem
 			>
-			{/snippet}
+		{/snippet}
 	</Dropdown>
 </div>

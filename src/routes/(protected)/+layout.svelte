@@ -49,7 +49,6 @@
 <style>
 	.dashboard {
 		display: flex;
-		height: 100vh;
 		background-color: #1a1a1a;
 		color: white;
 	}
@@ -62,6 +61,7 @@
 
 	.content {
 		flex: 1;
+		height: 100%;
 		overflow-y: auto;
 	}
 

@@ -49,3 +49,9 @@ export interface EmailData {
 	body: string;
 	attachments: string[];
 }
+
+export enum ComposeEmailMode {
+	NewEmail = 'New Email',
+	Reply = 'Reply',
+	Forward = 'Forward'
+}
