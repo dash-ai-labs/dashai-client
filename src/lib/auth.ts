@@ -11,6 +11,7 @@ export async function initiateGoogleLogin() {
 
 export const getUserProfile = async (user_id: string) => {
 	const response = await fetch(`${PUBLIC_API_URL}/user/${user_id}/profile/`, {
+		method: 'GET',
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json'

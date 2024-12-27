@@ -381,9 +381,6 @@
 					// Add some spacing
 					// Try setting the raw content first
 
-					// If raw content is empty, try the formatted content
-					editor.chain().setThread;
-
 					// Move cursor to top
 					await editor.commands.setTextSelection(0);
 
@@ -393,9 +390,9 @@
 					console.error('Error setting content:', error);
 				}
 			};
-			setContent();
+			// setContent();
 		} else {
-			editor.commands.clearContent();
+			// editor.commands.clearContent();
 		}
 	});
 
