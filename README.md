@@ -1,6 +1,7 @@
 # DASH client
 
 Client for DASH - AI dashboard for email.
+
 ## Installation
 
 1. Clone the repository:
