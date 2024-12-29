@@ -1,28 +1,37 @@
 # DASH client
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Client for DASH - AI dashboard for email.
 
-## Creating a project
+## Installation
 
-If you're seeing this, you've probably already done this step. Congrats!
-
+1. Clone the repository:
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+git clone https://github.com/dash-ai-labs/dash-client.git
+cd dash-client
 ```
 
-## Developing
+2. Install dependencies:
+```bash
+npm install
+# or
+pnpm install
+# or
+yarn
+```
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+3. Create a `.env` file in the root directory:
+```env
+# Server Configuration
+PUBLIC_API_URL=<api_url>
+PUBLIC_GOOGLE_CLIENT_ID=<google_client_id>
+```
+
+## Development
+
+Start the development server:
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
 ## Building
@@ -35,4 +44,25 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Features
+
+- Adaptive bitrate streaming using DASH
+- Support for multiple video qualities
+- Automatic quality selection based on network conditions
+- Custom quality selection controls
+- Buffer management
+
+## Requirements
+
+- Modern web browser with MSE (Media Source Extensions) support
+- Node.js 16.x or higher
+- Internet connection for streaming
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| PUBLIC_API_URL | API URL | - |
+| PUBLIC_GOOGLE_CLIENT_ID | Google Client ID | - |
+
+> Note: To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
