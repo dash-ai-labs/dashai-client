@@ -20,13 +20,9 @@ const config = {
 			fallback: 'index.html'
 		}),
 		csp: {
+			mode: 'hash',
 			directives: {
 				'script-src': ['self']
-			},
-			// must be specified with either the `report-uri` or `report-to` directives, or both
-			reportOnly: {
-				'script-src': ['self'],
-				'report-uri': ['/']
 			}
 		}
 	}
