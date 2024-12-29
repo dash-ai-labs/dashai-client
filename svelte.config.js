@@ -18,7 +18,17 @@ const config = {
 				default: true
 			},
 			fallback: 'index.html'
-		})
+		}),
+		csp: {
+			directives: {
+				'script-src': ['self']
+			},
+			// must be specified with either the `report-uri` or `report-to` directives, or both
+			reportOnly: {
+				'script-src': ['self'],
+				'report-uri': ['/']
+			}
+		}
 	}
 };
 
