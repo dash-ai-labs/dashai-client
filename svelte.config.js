@@ -18,13 +18,7 @@ const config = {
 				default: true
 			},
 			fallback: 'index.html'
-		}),
-		csp: {
-			mode: 'hash',
-			directives: {
-				'script-src': ['self']
-			}
-		}
+		})
 	}
 };
 
