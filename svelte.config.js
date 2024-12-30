@@ -14,17 +14,6 @@ const config = {
 		adapter: adapter(),
 		csrf: {
 			checkOrigin: true
-		},
-		headers: {
-			'/*': {
-				'Cache-Control': 'max-age=0, no-cache, no-store, must-revalidate',
-				'Content-Security-Policy':
-					"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
-				'X-Frame-Options': 'DENY',
-				'X-Content-Type-Options': 'nosniff',
-				Pragma: 'no-cache',
-				Expires: '0'
-			}
 		}
 	}
 };
