@@ -28,6 +28,7 @@
 	});
 
 	$effect(() => {
+		let buffer = '';
 		if (queryResponseReader && queryResponseReader instanceof ReadableStreamDefaultReader) {
 			const readStream = async () => {
 				searchResults = []; // Reset results when starting new search
@@ -38,16 +39,31 @@
 						const { done, value } = await queryResponseReader!.read();
 						if (done) break;
 						const chunk = decoder.decode(value);
-						const { data } = JSON.parse(chunk);
-						// If chunk has no leading whitespace and searchResults isn't empty,
-						// append it to the last result instead of adding as new entry
-						if (!data.startsWith(' ') && searchResults.length > 0) {
-							const lastIndex = searchResults.length - 1;
-							searchResults = [
-								...searchResults.slice(0, lastIndex),
-								searchResults[lastIndex] + data
-							];
-						} else searchResults = [...searchResults, data];
+						buffer += chunk; // Accumulate chunks in the buffer
+
+						// Attempt to parse complete JSON objects
+						let boundary = buffer.indexOf('\n'); // Assume newline-separated JSON
+						while (boundary !== -1) {
+							const jsonString = buffer.slice(0, boundary); // Extract one JSON object
+							buffer = buffer.slice(boundary + 1); // Remove processed part
+							boundary = buffer.indexOf('\n');
+
+							try {
+								const { data } = JSON.parse(jsonString);
+								// Handle parsed data
+								if (!data.startsWith(' ') && searchResults.length > 0) {
+									const lastIndex = searchResults.length - 1;
+									searchResults = [
+										...searchResults.slice(0, lastIndex),
+										searchResults[lastIndex] + data
+									];
+								} else {
+									searchResults = [...searchResults, data];
+								}
+							} catch (error) {
+								console.error('Error parsing JSON string:', jsonString, error);
+							}
+						}
 					}
 				} catch (error) {
 					console.error('Error reading search stream:', error);
