@@ -5,6 +5,7 @@
 	import NewEmailModal from '$lib/components/NewEmailModal.svelte';
 	import PrimaryButton from '$lib/components/PrimaryButton.svelte';
 	import snarkdown from 'snarkdown';
+	import { fade } from 'svelte/transition';
 
 	let newEmailModalRef = $state(null);
 	let queryResponseReader = $state<ReadableStreamDefaultReader<Uint8Array> | null>(null);
@@ -21,6 +22,8 @@
 
 	let searchResultsHTML = $state<string>('');
 
+	let isLoading = $state(false);
+
 	$effect(() => {
 		if (searchResults.length > 0) {
 			searchResultsHTML = snarkdown(searchResults.join(' '));
@@ -30,6 +33,7 @@
 	$effect(() => {
 		let buffer = '';
 		if (queryResponseReader && queryResponseReader instanceof ReadableStreamDefaultReader) {
+			isLoading = true;
 			const readStream = async () => {
 				searchResults = []; // Reset results when starting new search
 				const decoder = new TextDecoder('utf-8');
@@ -39,9 +43,11 @@
 						const { done, value } = await queryResponseReader!.read();
 						if (done) break;
 						const chunk = decoder.decode(value);
-						buffer += chunk; // Accumulate chunks in the buffer
+						buffer += chunk;
 
-						// Attempt to parse complete JSON objects
+						// Add artificial delay
+						await new Promise((resolve) => setTimeout(resolve, 50));
+
 						let boundary = buffer.indexOf('\n'); // Assume newline-separated JSON
 						while (boundary !== -1) {
 							const jsonString = buffer.slice(0, boundary); // Extract one JSON object
@@ -67,6 +73,8 @@
 					}
 				} catch (error) {
 					console.error('Error reading search stream:', error);
+				} finally {
+					isLoading = false;
 				}
 			};
 			readStream();
@@ -85,6 +93,7 @@
 		<div class="relative max-h-[400px] max-w-full overflow-hidden overflow-y-auto py-2">
 			<div
 				class="markdown prose prose-invert flex flex-col gap-2 rounded-lg border border-primary-white bg-secondary-container p-3 text-primary-white"
+				transition:fade={{ duration: 200 }}
 			>
 				{@html searchResultsHTML}
 			</div>
