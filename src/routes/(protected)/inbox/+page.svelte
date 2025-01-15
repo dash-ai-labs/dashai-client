@@ -38,15 +38,16 @@
 						const { done, value } = await queryResponseReader!.read();
 						if (done) break;
 						const chunk = decoder.decode(value);
+						const { data } = JSON.parse(chunk);
 						// If chunk has no leading whitespace and searchResults isn't empty,
 						// append it to the last result instead of adding as new entry
-						if (!chunk.startsWith(' ') && searchResults.length > 0) {
+						if (!data.startsWith(' ') && searchResults.length > 0) {
 							const lastIndex = searchResults.length - 1;
 							searchResults = [
 								...searchResults.slice(0, lastIndex),
-								searchResults[lastIndex] + chunk
+								searchResults[lastIndex] + data
 							];
-						} else searchResults = [...searchResults, chunk];
+						} else searchResults = [...searchResults, data];
 					}
 				} catch (error) {
 					console.error('Error reading search stream:', error);
@@ -67,7 +68,7 @@
 	{#if searchResultsHTML.length > 0}
 		<div class="relative">
 			<div
-				class="markdown prose prose-invert flex flex-col gap-2 rounded-lg border border-primary-white bg-secondary-container p-3 text-primary-white"
+				class="markdown prose prose-invert flex max-h-[200px] flex-col gap-2 rounded-lg border border-primary-white bg-secondary-container p-3 text-primary-white"
 			>
 				{@html searchResultsHTML}
 			</div>
