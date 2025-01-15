@@ -50,7 +50,7 @@
 	});
 </script>
 
-<div class="flex w-full justify-end pt-3">
+<div class="flex w-[200px] justify-end">
 	<Button>{$emailAccount.email}<ChevronDownOutline class="ms-2 h-6 w-6" /></Button>
 	<Dropdown class="rounded-lg bg-primary-container">
 		{#each options as option}

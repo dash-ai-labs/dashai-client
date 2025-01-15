@@ -39,7 +39,7 @@
 <!-- <div class="relative"> -->
 <div class="flex h-[calc(100vh-280px)] flex-row gap-[20px] overflow-hidden pt-[20px]">
 	<EmailList {selectEmail} bind:this={emailList} />
-	<div class="relative h-full">
+	<div class="relative h-full w-full">
 		<EmailDetailView
 			{email}
 			{removeEmail}

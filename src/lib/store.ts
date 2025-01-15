@@ -36,3 +36,4 @@ export const emailAccount: Writable<any> = persistentWritable('emailAccount', {
 
 export const showErrorModal: Writable<boolean> = writable(false);
 export const errorMessage: Writable<string> = writable('');
+export const emailSearchInput: Writable<string> = writable('');

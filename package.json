@@ -62,6 +62,7 @@
 		"date-fns": "^4.1.0",
 		"date-fns-tz": "^3.2.0",
 		"dompurify": "^3.2.2",
+		"snarkdown": "^2.0.0",
 		"svelte-motion": "^0.12.2",
 		"tailwind-merge": "^2.6.0"
 	}

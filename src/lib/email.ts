@@ -115,3 +115,33 @@ export const sendEmail = async ({ user, email }: { user: string; email: EmailDat
 		console.error('Error fetching email accounts:', error);
 	}
 };
+
+export const searchEmailsStreaming = async ({ user, search }: { user: string; search: string }) => {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/chat?query=${search}`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.body?.getReader();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+	}
+};
+
+export const searchEmails = async ({ user, search }: { user: string; search: string }) => {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/search?query=${search}`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+	}
+};

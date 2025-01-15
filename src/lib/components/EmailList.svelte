@@ -1,13 +1,18 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { emailAccount, user } from '$lib/store';
+	import { emailAccount, emailSearchInput, user } from '$lib/store';
 	import { get } from 'svelte/store';
-	import { archive, getEmailList, markAsUnread, markEmailAsRead, remove } from '$lib/email';
+	import {
+		archive,
+		getEmailList,
+		markAsUnread,
+		markEmailAsRead,
+		remove,
+		searchEmails
+	} from '$lib/email';
 	import EmailListItem from './EmailListItem.svelte';
 	import ToggleOptions from './ToggleOptions.svelte';
-	import InboxSearchBar from './InboxSearchBar.svelte';
 	import type { Email } from '$lib/types';
-
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
 			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
@@ -47,8 +52,20 @@
 	let isToggleLoading = $state(false); // Loading state for toggle change
 	let lastFilter = $state(['INBOX']);
 	let disableTransition = $state(false); // New state variable to disable transition
-
 	let previousAccountValue = $state({ email: '' });
+
+	emailSearchInput.subscribe((searchInput) => {
+		if (searchInput && searchInput.length > 0) {
+			const _searchEmails = async () => {
+				const emailResults = await searchEmails({
+					user: get(user)?.id.toString(),
+					search: searchInput
+				});
+				emails = emailResults;
+			};
+			_searchEmails();
+		}
+	});
 
 	$effect(() => {
 		const unsubscribe = emailAccount.subscribe((value) => {
@@ -183,7 +200,6 @@
 		/>
 	</div>
 
-	<InboxSearchBar />
 	<div
 		class="no-scrollbar max-h-[calc(100vh-300px)] overflow-y-scroll"
 		bind:this={container}
