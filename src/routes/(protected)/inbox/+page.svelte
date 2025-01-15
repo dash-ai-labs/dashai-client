@@ -82,9 +82,9 @@
 	</div>
 
 	{#if searchResultsHTML.length > 0}
-		<div class="relative">
+		<div class="relative max-h-[400px] max-w-full overflow-hidden overflow-y-auto py-2">
 			<div
-				class="markdown prose prose-invert flex max-h-[200px] flex-col gap-2 rounded-lg border border-primary-white bg-secondary-container p-3 text-primary-white"
+				class="markdown prose prose-invert flex flex-col gap-2 rounded-lg border border-primary-white bg-secondary-container p-3 text-primary-white"
 			>
 				{@html searchResultsHTML}
 			</div>
