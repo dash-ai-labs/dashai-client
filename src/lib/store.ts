@@ -29,7 +29,7 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 }
 
 export const user: Writable<User | null> = persistentWritable('user', null);
-
+export const nonce: Writable<string | null> = writable(null);
 export const emailAccount: Writable<any> = persistentWritable('emailAccount', {
 	email: 'All Emails'
 });

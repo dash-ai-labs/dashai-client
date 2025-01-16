@@ -9,6 +9,9 @@
 	import type { Email } from '$lib/types';
 	import { ComposeEmailMode } from '$lib/types';
 	import { ForwardOutline, ReplyOutline, ReplySolid } from 'flowbite-svelte-icons';
+	import { getEmailContent } from '$lib/api/email';
+	import { get } from 'svelte/store';
+	import { user } from '$lib/store';
 
 	const {
 		removeEmail,
@@ -28,8 +31,18 @@
 	let element = $state<HTMLIFrameElement | null>(null);
 
 	$effect(() => {
-		if (element && email?.raw_content) {
-			element.srcdoc = formatEmailContent(email.raw_content);
+		if (element && email?.content) {
+			const loadContent = async () => {
+				const userData = get(user);
+				const content = await getEmailContent({
+					user: userData?.id.toString(),
+					email_id: email.email_id
+				});
+				if (element && content) {
+					element.srcdoc = content;
+				}
+			};
+			loadContent();
 		}
 	});
 
@@ -61,7 +74,8 @@
         <body>
             ${DOMPurify.sanitize(content, {
 							ADD_TAGS: ['style'],
-							ADD_ATTR: ['style']
+							ADD_ATTR: ['style', 'nonce'],
+							ALLOW_DATA_ATTR: true
 						})}
         </body>
         </html>
@@ -99,7 +113,10 @@
             </style>
         </head>
         <body>
-            ${DOMPurify.sanitize(formattedContent)}
+            ${DOMPurify.sanitize(formattedContent, {
+							ADD_ATTR: ['nonce'],
+							ALLOW_DATA_ATTR: true
+						})}
         </body>
         </html>
     `;

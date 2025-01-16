@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
 
-	import { getEmailAccounts } from '$lib/auth';
+	import { getEmailAccounts } from '$lib/api/auth';
 	import { user, emailAccount } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { EmailAccount } from '$lib/types';

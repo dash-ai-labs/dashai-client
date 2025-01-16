@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { searchEmailsStreaming } from '$lib/email';
+	import { searchEmailsStreaming } from '$lib/api/email';
 	import { emailSearchInput, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	let SearchBarClasses = $derived(

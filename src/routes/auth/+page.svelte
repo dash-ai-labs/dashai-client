@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import AuthScreenBackgroundVector from '$lib/assets/AuthScreenBackgroundVector.svelte';
 	import GoogleLogo from '$lib/assets/GoogleLogo.svelte';
-	import { initiateGoogleLogin } from '$lib/auth';
+	import { initiateGoogleLogin } from '$lib/api/auth';
 	import Logo from '$lib/assets/Logo.svelte';
 	import { user } from '$lib/store';
 	import { onMount } from 'svelte';

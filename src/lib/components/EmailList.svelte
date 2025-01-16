@@ -9,7 +9,7 @@
 		markEmailAsRead,
 		remove,
 		searchEmails
-	} from '$lib/email';
+	} from '$lib/api/email';
 	import EmailListItem from './EmailListItem.svelte';
 	import ToggleOptions from './ToggleOptions.svelte';
 	import type { Email } from '$lib/types';

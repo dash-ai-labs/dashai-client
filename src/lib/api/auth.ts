@@ -1,16 +1,16 @@
 import { goto } from '$app/navigation';
-import { PUBLIC_API_URL } from '$env/static/public';
 import { user } from '$lib/store';
+import { apiRequest } from './base';
 import type { EmailAccount } from './types';
 
 export async function initiateGoogleLogin() {
-	const response = await fetch(`${PUBLIC_API_URL}/auth/google/url`, { credentials: 'include' });
+	const response = await apiRequest(`auth/google/url`, { credentials: 'include' });
 	const { url } = await response.json();
 	window.location.href = url;
 }
 
 export const getUserProfile = async (user_id: string) => {
-	const response = await fetch(`${PUBLIC_API_URL}/user/${user_id}/profile`, {
+	const response = await apiRequest(`user/${user_id}/profile`, {
 		method: 'GET',
 		credentials: 'include',
 		headers: {
@@ -22,7 +22,7 @@ export const getUserProfile = async (user_id: string) => {
 
 export const handleCallback = async (code: string, state: string) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/auth/google/callback`, {
+		const response = await apiRequest(`auth/google/callback`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -39,7 +39,7 @@ export const handleCallback = async (code: string, state: string) => {
 
 export const getEmailAccounts = async ({ user }: { user: string }): Promise<EmailAccount[]> => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email_accounts`, {
+		const response = await apiRequest(`user/${user}/email_accounts`, {
 			method: 'GET',
 			credentials: 'include',
 			headers: {
@@ -54,7 +54,7 @@ export const getEmailAccounts = async ({ user }: { user: string }): Promise<Emai
 };
 
 export async function logout(): Promise<void> {
-	await fetch(`${PUBLIC_API_URL}/auth/logout`, {
+	await apiRequest(`auth/logout`, {
 		method: 'POST',
 		credentials: 'include'
 	});

@@ -1,5 +1,6 @@
 export function load({ locals }) {
-  return {
-    nonce: locals.nonce,
-  };
+	console.log('Server nonce:', locals.nonce);
+	return {
+		nonce: locals.nonce
+	};
 }

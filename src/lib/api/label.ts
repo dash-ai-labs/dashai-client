@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { apiRequest } from './base';
 import type { InputLabel, Label, LabelType } from './types';
 
 export const getLabelList = async ({
@@ -9,7 +9,7 @@ export const getLabelList = async ({
 	type: LabelType;
 }): Promise<Label[]> => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/labels?label_type=${type}`, {
+		const response = await apiRequest(`user/${user}/labels?label_type=${type}`, {
 			method: 'GET',
 			credentials: 'include',
 			headers: {
@@ -31,7 +31,7 @@ export const createLabel = async ({
 	label: InputLabel;
 }): Promise<Label | null> => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/label`, {
+		const response = await apiRequest(`user/${user}/label`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {

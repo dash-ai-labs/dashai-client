@@ -23,7 +23,7 @@
 	import AddressHeader from './AddressHeader.svelte';
 	import Footer from './Footer.svelte';
 	import { emailAccount, user, errorMessage, showErrorModal } from '$lib/store';
-	import { sendEmail } from '$lib/email';
+	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
 

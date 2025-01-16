@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { apiRequest } from './base';
 import type { Email, EmailData } from './types';
 
 export const getEmailList = async ({
@@ -21,8 +21,8 @@ export const getEmailList = async ({
 		if (filter) params.append('filter', filter.toString());
 		if (!!account) params.append('account', account);
 
-		const url = `${PUBLIC_API_URL}/user/${user}/emails?${params.toString()}`;
-		const response = await fetch(url, {
+		const url = `user/${user}/emails?${params.toString()}`;
+		const response = await apiRequest(url, {
 			method: 'GET',
 			credentials: 'include',
 			headers: {
@@ -38,7 +38,7 @@ export const getEmailList = async ({
 
 export const markEmailAsRead = async ({ user, email_id }: { user: string; email_id: string }) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/read`, {
+		const response = await apiRequest(`user/${user}/email/${email_id}/read`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -52,9 +52,25 @@ export const markEmailAsRead = async ({ user, email_id }: { user: string; email_
 	}
 };
 
+export const getEmailContent = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await apiRequest(`user/${user}/email/${email_id}/content`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.text();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};
+
 export const archive = async ({ user, email_id }: { user: string; email_id: string }) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/archive`, {
+		const response = await apiRequest(`user/${user}/email/${email_id}/archive`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -70,7 +86,7 @@ export const archive = async ({ user, email_id }: { user: string; email_id: stri
 
 export const markAsUnread = async ({ user, email_id }: { user: string; email_id: string }) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/unread`, {
+		const response = await apiRequest(`user/${user}/email/${email_id}/unread`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -86,7 +102,7 @@ export const markAsUnread = async ({ user, email_id }: { user: string; email_id:
 
 export const remove = async ({ user, email_id }: { user: string; email_id: string }) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/${email_id}/delete`, {
+		const response = await apiRequest(`user/${user}/email/${email_id}/delete`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -102,7 +118,7 @@ export const remove = async ({ user, email_id }: { user: string; email_id: strin
 
 export const sendEmail = async ({ user, email }: { user: string; email: EmailData }) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email`, {
+		const response = await apiRequest(`user/${user}/email`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -118,7 +134,7 @@ export const sendEmail = async ({ user, email }: { user: string; email: EmailDat
 
 export const searchEmailsStreaming = async ({ user, search }: { user: string; search: string }) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/chat?query=${search}`, {
+		const response = await apiRequest(`user/${user}/email/chat?query=${search}`, {
 			method: 'GET',
 			credentials: 'include',
 			headers: {
@@ -133,7 +149,7 @@ export const searchEmailsStreaming = async ({ user, search }: { user: string; se
 
 export const searchEmails = async ({ user, search }: { user: string; search: string }) => {
 	try {
-		const response = await fetch(`${PUBLIC_API_URL}/user/${user}/email/search?query=${search}`, {
+		const response = await apiRequest(`user/${user}/email/search?query=${search}`, {
 			method: 'GET',
 			credentials: 'include',
 			headers: {

@@ -2,7 +2,7 @@
 	import { run } from 'svelte/legacy';
 
 	import X from '$lib/assets/X.svelte';
-	import { createLabel } from '$lib/label';
+	import { createLabel } from '$lib/api/label';
 	import Modal from './Modal.svelte';
 	import SecondaryButton from './SecondaryButton.svelte';
 	import { user } from '$lib/store';
