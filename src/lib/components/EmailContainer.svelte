@@ -50,9 +50,9 @@
 			bind:this={emailDetailView}
 		/>
 		{#if showComposeEmail}
-			<!-- <div class="absolute bottom-[-35px] right-0 w-[calc(100%-340px)]"> -->
-			<ComposeEmail {email} {setShowComposeEmail} {composeEmailMode} {setComposeEmailMode} />
-			<!-- </div> -->
+			{#key showComposeEmail}
+				<ComposeEmail {email} {setShowComposeEmail} {composeEmailMode} {setComposeEmailMode} />
+			{/key}
 		{/if}
 	</div>
 </div>
