@@ -8,7 +8,6 @@
 	import EmailButton from './EmailButton.svelte';
 	import type { Email } from '$lib/types';
 	import { ComposeEmailMode } from '$lib/types';
-	import BackgroundGradient from './ui/BackgroundGradient/BackgroundGradient.svelte';
 	import { ForwardOutline, ReplyOutline, ReplySolid } from 'flowbite-svelte-icons';
 
 	const {
@@ -113,35 +112,6 @@
 		}
 	});
 
-	// let editor = new Editor({
-	// 	extensions: [
-	// 		StarterKit,
-	// 		Image,
-	// 		Link,
-	// 		Table,
-	// 		TableRow,
-	// 		TableCell,
-	// 		TableHeader,
-	// 		TextStyle,
-	// 		Color,
-	// 		Underline,
-	// 		Highlight,
-	// 		HorizontalRule
-	// 	],
-	// 	content: email?.raw_content ?? '',
-	// 	onTransaction: () => {
-	// 		// force re-render so `editor.isActive` works as expected
-	// 		editor = editor;
-	// 	}
-	// });
-
-	// onDestroy(() => {
-	// 	if (editor) {
-	// 		editor.destroy();
-	// 		editor = null;
-	// 	}
-	// });
-
 	const formatDate = (date: Date): string => {
 		let dateObj = new Date(date);
 		const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -226,7 +196,7 @@
 			<div
 				class="absolute bottom-2 z-50 flex flex-row justify-items-end gap-[10px] self-end justify-self-end px-3"
 			>
-				<BackgroundGradient className="rounded-md max-w-sm px-4 py-2 bg-primary-black ">
+				<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
 					<button
 						class="flex flex-row items-center gap-[10px]"
 						onclick={() => {
@@ -234,8 +204,8 @@
 							setComposeEmailMode(ComposeEmailMode.Reply);
 						}}><ReplyOutline height="20" width="20" class="text-primary-white" />Reply</button
 					>
-				</BackgroundGradient>
-				<BackgroundGradient className="rounded-md max-w-sm px-4 py-2 bg-primary-black">
+				</div>
+				<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
 					<button
 						class="flex flex-row items-center gap-[10px]"
 						onclick={() => {
@@ -243,7 +213,7 @@
 							setComposeEmailMode(ComposeEmailMode.Forward);
 						}}><ForwardOutline height="20" width="20" class="text-primary-white" />Forward</button
 					>
-				</BackgroundGradient>
+				</div>
 			</div>
 		</div>
 

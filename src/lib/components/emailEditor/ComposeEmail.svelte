@@ -373,6 +373,12 @@
 			composeEmailMode === ComposeEmailMode.Reply ||
 			composeEmailMode === ComposeEmailMode.Forward
 		) {
+			if (composeEmailMode === ComposeEmailMode.Reply) {
+				setSubject(`Re: ${email.subject}`);
+			}
+			if (composeEmailMode === ComposeEmailMode.Forward) {
+				setSubject(`Fwd: ${email.subject}`);
+			}
 			const setContent = async () => {
 				try {
 					// Clear existing content first
@@ -475,6 +481,14 @@
 <div
 	class="fixed bottom-[-10px] right-2 z-50 w-[50%] overflow-hidden rounded-2xl rounded-b-none border border-primary-gray bg-primary-black"
 >
+	<div class="bg-primary-hazy-black flex flex-row px-3 py-1 text-primary-button">
+		<div class="self-center px-2 py-2">{emailData.subject}</div>
+		<div class="ml-auto self-center">
+			<button class="self-start py-2 text-primary-gray" onclick={() => setShowComposeEmail(false)}>
+				<CloseOutline name="close" />
+			</button>
+		</div>
+	</div>
 	<div class="mx-2 flex justify-start border-b border-primary-gray text-font-light-gray">
 		<AddressHeader
 			{email}
@@ -486,9 +500,6 @@
 			{setSubject}
 			{setComposeEmailMode}
 		/>
-		<button class="self-start py-2 text-primary-gray" onclick={() => setShowComposeEmail(false)}>
-			<CloseOutline name="close" />
-		</button>
 	</div>
 	<div class="mx-1 my-1"><div bind:this={element}></div></div>
 	<div class="m-2 flex justify-start text-primary-gray">
