@@ -49,7 +49,6 @@
 			nameError = true;
 			nameErrorMessage = 'Please enter a name';
 		}
-		console.log(keywords.length);
 		if (keywords.length === 0) {
 			keywordError = true;
 			keywordErrorMessage = 'Please enter a keyword';
