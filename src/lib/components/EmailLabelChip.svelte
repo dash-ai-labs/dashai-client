@@ -15,7 +15,8 @@
 
 <button
 	class="group flex items-center justify-center gap-2 rounded-lg px-4 py-1"
-	style="background-color: {label.color}; width: 100px;"
+	style:background-color={label.color}
+	style:width="100px"
 	onclick={handleClick}
 >
 	<CloseOutline class="hidden h-3 w-3 text-primary-black group-hover:block" />
