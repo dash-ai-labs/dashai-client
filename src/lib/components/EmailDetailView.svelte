@@ -6,20 +6,24 @@
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
 	import Archive from '$lib/assets/Archive.svelte';
 	import EmailButton from './EmailButton.svelte';
-	import type { Email } from '$lib/types';
+	import type { Email, Label } from '$lib/types';
 	import { ComposeEmailMode } from '$lib/types';
-	import { ForwardOutline, ReplyOutline, ReplySolid } from 'flowbite-svelte-icons';
+	import { ForwardOutline, ReplyOutline } from 'flowbite-svelte-icons';
 	import { getEmailContent } from '$lib/api/email';
 	import { get } from 'svelte/store';
 	import { user } from '$lib/store';
-
+	import AddEmailLabel from './AddEmailLabel.svelte';
+	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import EmailLabelChip from './EmailLabelChip.svelte';
 	const {
 		removeEmail,
 		archiveEmail,
 		markEmailAsUnread,
 		email,
 		setShowComposeEmail,
-		setComposeEmailMode
+		setComposeEmailMode,
+		addLabelToEmail,
+		removeLabelFromEmail
 	}: {
 		removeEmail: (email: Email) => void;
 		archiveEmail: (email: Email) => void;
@@ -27,6 +31,8 @@
 		email: Email;
 		setShowComposeEmail: (show: boolean) => void;
 		setComposeEmailMode: (mode: ComposeEmailMode) => void;
+		addLabelToEmail: (email: Email, emailLabel: Label) => void;
+		removeLabelFromEmail: (email: Email, emailLabel: Label) => void;
 	} = $props();
 	let element = $state<HTMLIFrameElement | null>(null);
 
@@ -45,6 +51,15 @@
 			loadContent();
 		}
 	});
+	const addLabelPopup: PopupSettings = {
+		// Represents the type of event that opens/closed the popup
+		event: 'click',
+		// Matches the data-popup value on your popup element
+		target: 'addLabelPopup',
+		// Defines which side of your trigger the popup will appear
+		placement: 'bottom',
+		closeQuery: ''
+	};
 
 	function formatEmailContent(content: string): string {
 		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
@@ -145,8 +160,9 @@
 		return `${day} ${month}/${dayOfMonth}/${year} ${hours}:${minutes}${amPm}`;
 	};
 
-	// Add new state variable for compose email height
-	let composeEmailHeight = $state(0);
+	const onLabelClick = (label: Label) => {
+		removeLabelFromEmail(email, label);
+	};
 </script>
 
 <div class="h-full min-w-[740px] max-w-[1200px] rounded-lg bg-primary-container">
@@ -196,7 +212,24 @@
 							<h1 class="text-lg">{email.subject}</h1>
 							<p class="text-sm text-gray-400">Reply To: {email.sender[0]}</p>
 						</div>
-						<span class="text-sm text-gray-400">{formatDate(email.date)}</span>
+						<div class="flex flex-col gap-1">
+							<div class="flex flex-row items-center justify-center gap-1">
+								{#each email.email_labels as label}
+									<EmailLabelChip {label} {onLabelClick} />
+								{/each}
+								<button
+									use:popup={addLabelPopup}
+									class="whitespace-nowrap rounded-lg border-[1px] border-dashed border-primary-gray px-4 text-primary-gray"
+									>+ Label</button
+								>
+							</div>
+							<div data-popup="addLabelPopup">
+								<AddEmailLabel {email} {addLabelToEmail} />
+							</div>
+							<span class="items-center text-right text-sm text-gray-400"
+								>{formatDate(email.date)}</span
+							>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -246,5 +279,15 @@
 <style>
 	div {
 		transition: background-color 0.3s ease;
+	}
+
+	[data-popup] {
+		/* Display */
+		display: none;
+		/* Position */
+		z-index: 50;
+		position: absolute;
+		top: 0;
+		left: 1;
 	}
 </style>

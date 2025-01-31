@@ -23,7 +23,9 @@
 		if (e.target === dialog) dialog.close();
 	}}
 >
-	<div class="overflow-hidden rounded-lg border-0 bg-primary-black p-[24px] text-font-light-gray">
+	<div
+		class="overflow-hidden rounded-lg border border-primary-dark-gray bg-primary-black p-[24px] text-font-light-gray"
+	>
 		{@render header?.()}
 		{@render children?.()}
 		<!-- svelte-ignore a11y_autofocus -->

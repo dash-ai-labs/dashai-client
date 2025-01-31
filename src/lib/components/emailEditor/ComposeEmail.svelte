@@ -22,7 +22,7 @@
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
 	import Footer from './Footer.svelte';
-	import { emailAccount, user, errorMessage, showErrorModal } from '$lib/store';
+	import { user, errorMessage, showErrorModal } from '$lib/store';
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
@@ -481,7 +481,7 @@
 <div
 	class="fixed bottom-[-10px] right-2 z-50 w-[50%] overflow-hidden rounded-2xl rounded-b-none border border-primary-gray bg-primary-black"
 >
-	<div class="bg-primary-hazy-black flex flex-row px-3 py-1 text-primary-button">
+	<div class="flex flex-row bg-primary-hazy-black px-3 py-1 text-primary-button">
 		<div class="self-center px-2 py-2">{emailData.subject}</div>
 		<div class="ml-auto self-center">
 			<button class="self-start py-2 text-primary-gray" onclick={() => setShowComposeEmail(false)}>

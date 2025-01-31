@@ -3,6 +3,12 @@
 	import { onMount } from 'svelte';
 	import { initializeLayout } from '$lib/layout';
 	import { nonce } from '$lib/store';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
+	import { initializeStores, Modal } from '@skeletonlabs/skeleton';
+
+	initializeStores();
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -20,6 +26,7 @@
 </script>
 
 <div class="dashboard">
+	<Modal />
 	{@render children?.()}
 </div>
 

@@ -71,11 +71,21 @@
 			<div class="px-1">
 				<Summary width={15} height={18} />
 			</div>
-			<div class="max-w-[250px] truncate text-wrap text-subheader">{email.summary}</div>
+			<div class="max-w-[230px] truncate text-wrap text-subheader">{email.summary}</div>
 		</div>
 	{:else}
 		<div class="px-1">
 			<div class="max-w-[250px] truncate text-subheader">{email.subject}</div>
 		</div>
 	{/if}
+	<!-- {#each email.email_labels as emailLabel}
+		<div class="px-1">
+			<div
+				class="rounded-md px-1 py-1 text-primary-black"
+				style="background-color: {emailLabel.color}"
+			>
+				{emailLabel.name}
+			</div>
+		</div>
+	{/each} -->
 </div>

@@ -9,15 +9,28 @@ export interface User {
 export enum LabelType {
 	Email = 'EMAIL'
 }
+export enum LabelColor {
+	GREEN = '#7CE38B',
+	BLUE = '#77BDFB',
+	PURPLE = '#CEA5FB',
+	ORANGE = '#FAA356',
+	PINK = '#FBB1AC',
+	LIGHT_BLUE = '#A2D2FB'
+}
+
 export interface InputLabel {
 	name: string;
-	keywords: string[];
 	label_type: LabelType;
+	color: LabelColor;
 }
 export interface Label {
 	id: string;
 	name: string;
-	keywords: string[];
+	color: LabelColor;
+}
+export enum EmailLabelAction {
+	Add = 'add',
+	Remove = 'remove'
 }
 export interface Email {
 	id: string;
@@ -33,6 +46,7 @@ export interface Email {
 	summary: string;
 	email_id: string;
 	labels: string[];
+	email_labels: Label[];
 	date: Date;
 	processed: boolean;
 }

@@ -1,5 +1,5 @@
+import type { EmailLabelAction, Email, EmailData } from '$lib/types';
 import { apiRequest } from './base';
-import type { Email, EmailData } from './types';
 
 export const getEmailList = async ({
 	user,
@@ -159,5 +159,34 @@ export const searchEmails = async ({ user, search }: { user: string; search: str
 		return response.json();
 	} catch (error) {
 		console.error('Error fetching email accounts:', error);
+	}
+};
+
+export const emailLabelAction = async ({
+	user,
+	email_id,
+	label_id,
+	action
+}: {
+	user: string;
+	email_id: string;
+	label_id: string;
+	action: EmailLabelAction;
+}) => {
+	try {
+		const response = await apiRequest(
+			`user/${user}/email/${email_id}/label/${label_id}/${action}`,
+			{
+				method: 'POST',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}
+		);
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
 	}
 };

@@ -12,7 +12,7 @@
 	} from '$lib/api/email';
 	import EmailListItem from './EmailListItem.svelte';
 	import ToggleOptions from './ToggleOptions.svelte';
-	import type { Email } from '$lib/types';
+	import { type Email } from '$lib/types';
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
 			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
@@ -40,6 +40,7 @@
 		};
 		_archive();
 	};
+
 	const { selectEmail } = $props();
 	let emails = $state<Email[]>([]);
 	let container = $state<HTMLElement | null>(null);

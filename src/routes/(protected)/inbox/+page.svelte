@@ -2,18 +2,16 @@
 	import EmailContainer from '$lib/components/EmailContainer.svelte';
 	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
-	import NewEmailModal from '$lib/components/NewEmailModal.svelte';
+	import NewEmailLabelComponent from '$lib/components/NewEmailLabelComponent.svelte';
 	import PrimaryButton from '$lib/components/PrimaryButton.svelte';
+	import { refreshEmailLabels } from '$lib/helpers';
+	import { getModalStore, type ModalComponent, type ModalSettings } from '@skeletonlabs/skeleton';
 	import snarkdown from 'snarkdown';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	let newEmailModalRef = $state(null);
 	let queryResponseReader = $state<ReadableStreamDefaultReader<Uint8Array> | null>(null);
-	const toggleEmailModal = () => {
-		if (newEmailModalRef) {
-			newEmailModalRef.toggleModal();
-		}
-	};
+
 	const setQueryResponseReader = (reader: ReadableStreamDefaultReader) => {
 		queryResponseReader = reader;
 	};
@@ -28,6 +26,10 @@
 		if (searchResults.length > 0) {
 			searchResultsHTML = snarkdown(searchResults.join(' '));
 		}
+	});
+
+	onMount(() => {
+		refreshEmailLabels();
 	});
 
 	$effect(() => {
@@ -80,10 +82,22 @@
 			readStream();
 		}
 	});
+	const modalStore = getModalStore();
+
+	function modalComponentForm(): void {
+		const c: ModalComponent = { ref: NewEmailLabelComponent };
+		const modal: ModalSettings = {
+			type: 'component',
+			component: c,
+			title: 'Email Label',
+			body: 'Add new email label',
+			response: (r) => console.log('response:', r)
+		};
+		modalStore.trigger(modal);
+	}
 </script>
 
 <div class="mx-[40px]">
-	<NewEmailModal bind:this={newEmailModalRef} />
 	<div class="flex flex-row items-center">
 		<InboxSearchBar {setQueryResponseReader} />
 		<InboxAccountDropdown />
@@ -104,7 +118,7 @@
 			<div class="w-full text-h2">Inbox</div>
 
 			<div class="flex w-full justify-end">
-				<PrimaryButton on:click={toggleEmailModal}>+ Email Label</PrimaryButton>
+				<PrimaryButton on:click={modalComponentForm}>+ Email Label</PrimaryButton>
 			</div>
 		</div>
 		<!-- <Widgets /> -->

@@ -45,3 +45,49 @@ export const createLabel = async ({
 		return null;
 	}
 };
+
+export const deleteLabel = async ({
+	user,
+	label
+}: {
+	user: string;
+	label: string;
+}): Promise<Label | null> => {
+	try {
+		const response = await apiRequest(`user/${user}/label/${label}`, {
+			method: 'DELETE',
+			credentials: 'include'
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error deleting label:', error);
+		return null;
+	}
+};
+
+export const editLabel = async ({
+	user,
+	label,
+	name,
+	color
+}: {
+	user: string;
+	label: string;
+	name: string;
+	color: string;
+}): Promise<Label | null> => {
+	try {
+		const response = await apiRequest(`user/${user}/label/${label}`, {
+			method: 'PATCH',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ name, color })
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error editing label:', error);
+		return null;
+	}
+};
