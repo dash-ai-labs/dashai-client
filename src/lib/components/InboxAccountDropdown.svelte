@@ -5,7 +5,7 @@
 	import { user, emailAccount } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { EmailAccount } from '$lib/types';
-	import { Button, Dropdown, DropdownItem, DropdownDivider } from 'flowbite-svelte';
+	import { Button, Dropdown, DropdownItem } from 'flowbite-svelte';
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 
 	let emailAccounts: EmailAccount[] = [];
@@ -52,7 +52,7 @@
 
 <div class="flex w-[200px] justify-end">
 	<Button>{$emailAccount.email}<ChevronDownOutline class="ms-2 h-6 w-6" /></Button>
-	<Dropdown class="rounded-lg bg-primary-container">
+	<Dropdown color="#00000" class="rounded-lg bg-primary-container">
 		{#each options as option}
 			<DropdownItem
 				class="flex flex-row justify-center {option === selectedOption
@@ -67,7 +67,9 @@
 			</DropdownItem>
 		{/each}
 		{#snippet footer()}
-			<DropdownItem onclick={addAccount} class="rounded-lg bg-primary-container"
+			<DropdownItem
+				onclick={addAccount}
+				class="rounded-lg bg-primary-container hover:bg-secondary-active-button-background"
 				>+ Add Email</DropdownItem
 			>
 		{/snippet}

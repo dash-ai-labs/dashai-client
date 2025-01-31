@@ -213,7 +213,7 @@
 							<p class="text-sm text-gray-400">Reply To: {email.sender[0]}</p>
 						</div>
 						<div class="flex flex-col gap-1">
-							<div class="flex flex-row items-center justify-center gap-1">
+							<div class="flex flex-row items-center justify-end gap-1">
 								{#each email.email_labels as label}
 									<EmailLabelChip {label} {onLabelClick} />
 								{/each}
@@ -238,7 +238,7 @@
 			<iframe
 				bind:this={element}
 				title={email.subject}
-				sandbox="allow-same-origin"
+				sandbox="allow-same-origin allow-popups"
 				class="no-scrollbar w-full bg-primary-white"
 				style="height: 780px; background-color: #f0f0f0;"
 			></iframe>
