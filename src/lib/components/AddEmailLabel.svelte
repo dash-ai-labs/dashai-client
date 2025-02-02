@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { createLabel, getLabelList } from '$lib/api/label';
+	import { createLabel } from '$lib/api/label';
 	import { emailLabels, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { LabelColor, LabelType, type Email, type Label } from '$lib/types';
 	import { onMount } from 'svelte';
 	import EmailLabel from './EmailLabel.svelte';
+	import { refreshEmailLabels } from '$lib/helpers';
 
 	interface Props {
 		email: Email;
@@ -21,15 +22,13 @@
 			submit();
 		}
 	};
-	const getEmailLabels = async () => {
-		emailLabelList = await getLabelList({
-			user: get(user)?.id.toString(),
-			type: LabelType.Email
-		});
-		emailLabels.set(emailLabelList);
-	};
+
+	emailLabels.subscribe((value) => {
+		emailLabelList = value;
+	});
+
 	onMount(() => {
-		getEmailLabels();
+		refreshEmailLabels();
 	});
 
 	const submit = async () => {
@@ -49,7 +48,7 @@
 			if (response) {
 				nameInput = '';
 				addLabelToEmail(email, response);
-				await getEmailLabels();
+				await refreshEmailLabels();
 			}
 		}
 	};
