@@ -8,6 +8,7 @@
 	import Button from './Button.svelte';
 	import { LabelOutline, TrashBinOutline } from 'flowbite-svelte-icons';
 	import ColorPicker from './ColorPicker.svelte';
+	import { refreshEmailLabels } from '$lib/helpers';
 
 	interface Props {
 		showModal?: boolean;
@@ -31,16 +32,13 @@
 			submit();
 		}
 	};
-	const getEmailLabels = async () => {
-		emailLabelList = await getLabelList({
-			user: get(user)?.id.toString(),
-			type: LabelType.Email
-		});
-		emailLabels.set(emailLabelList);
-	};
+
+	emailLabels.subscribe((value) => {
+		emailLabelList = value;
+	});
 
 	onMount(() => {
-		getEmailLabels();
+		refreshEmailLabels();
 	});
 
 	const submit = async () => {
@@ -60,7 +58,7 @@
 			if (response) {
 				toggleModal();
 				nameInput = '';
-				await getEmailLabels();
+				await refreshEmailLabels();
 			}
 		}
 	};
@@ -80,7 +78,7 @@
 	const _deleteLabel = async () => {
 		const response = await deleteLabel({ user: get(user)?.id.toString(), label: emailLabel.id });
 		if (response) {
-			await getEmailLabels();
+			await refreshEmailLabels();
 			closePopupMenu();
 		}
 	};
