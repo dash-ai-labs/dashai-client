@@ -80,6 +80,7 @@
 	const _deleteLabel = async () => {
 		const response = await deleteLabel({ user: get(user)?.id.toString(), label: emailLabel.id });
 		if (response) {
+			await getEmailLabels();
 			closePopupMenu();
 		}
 	};
