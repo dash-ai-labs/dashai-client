@@ -59,3 +59,17 @@ export async function logout(): Promise<void> {
 		credentials: 'include'
 	});
 }
+
+export const addEmailAccount = async (user: string) => {
+	try {
+		const response = await apiRequest(`user/${user}/email_accounts/register`, {
+			method: 'POST',
+			credentials: 'include'
+		});
+		const { url } = await response.json();
+		window.location.href = url;
+	} catch (error) {
+		console.error('Error adding email account:', error);
+		return [];
+	}
+};

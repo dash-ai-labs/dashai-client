@@ -92,6 +92,7 @@
 			color: colorInput
 		});
 		if (response) {
+			emailLabel = response;
 			closePopupMenu();
 		}
 	};

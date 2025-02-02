@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
 
-	import { getEmailAccounts } from '$lib/api/auth';
+	import { addEmailAccount, getEmailAccounts } from '$lib/api/auth';
 	import { user, emailAccount } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { EmailAccount } from '$lib/types';
@@ -15,9 +15,8 @@
 	};
 	let options: Option[] = $state([{ label: 'All Emails', icon: null }]);
 	let selectedOption: Option = $state(options[0]);
-
+	let currentUser = get(user);
 	async function loadEmailAccounts() {
-		const currentUser = get(user); // Access current user value
 		if (currentUser?.id) {
 			emailAccounts = await getEmailAccounts({ user: currentUser.id.toString() });
 			options = [{ label: 'All Emails', icon: null }];
@@ -39,8 +38,8 @@
 		}
 	};
 
-	const addAccount = () => {
-		console.log('add account');
+	const addAccount = async () => {
+		await addEmailAccount(currentUser?.id.toString());
 	};
 	run(() => {
 		if (get(user)?.id) {
