@@ -13,3 +13,10 @@
 		scrollbar-width: none; /* Firefox */
 	}
 }
+
+.variant-filled-primary {
+	@apply rounded-md bg-primary-dark-gray text-primary-white;
+}
+.variant-soft-primary {
+	@apply rounded-md bg-primary-blue/20 text-primary-gray !ring-0 dark:bg-primary-blue/20;
+}

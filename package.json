@@ -41,6 +41,7 @@
 		"@material/web": "^2.2.0",
 		"@sveltejs/adapter-cloudflare": "^5.0.0",
 		"@sveltejs/adapter-vercel": "^5.5.2",
+		"@tabler/icons-svelte": "^3.29.0",
 		"@tiptap/core": "^2.10.3",
 		"@tiptap/extension-blockquote": "^2.10.4",
 		"@tiptap/extension-bubble-menu": "^2.10.4",

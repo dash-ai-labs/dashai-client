@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
-	import { createLabel, deleteLabel, editLabel, getLabelList } from '$lib/api/label';
+	import { createLabel, deleteLabel, editLabel } from '$lib/api/label';
 	import { emailLabels, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { LabelColor, LabelType, type Label } from '$lib/types';

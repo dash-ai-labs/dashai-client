@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
-
+	import { IconLabelImportantFilled } from '@tabler/icons-svelte';
 	import RightChevron from '$lib/assets/ChevronRight.svelte';
 	import Summary from '$lib/assets/Summary.svelte';
 	import type { Email } from '$lib/types';
@@ -78,14 +78,12 @@
 			<div class="max-w-[250px] truncate text-subheader">{email.subject}</div>
 		</div>
 	{/if}
-	<!-- {#each email.email_labels as emailLabel}
-		<div class="px-1">
-			<div
-				class="rounded-md px-1 py-1 text-primary-black"
-				style="background-color: {emailLabel.color}"
-			>
-				{emailLabel.name}
-			</div>
-		</div>
-	{/each} -->
+	<div class="flex flex-row">
+		{#each email.email_labels as emailLabel}
+			<IconLabelImportantFilled color={emailLabel.color} size={20} />
+		{/each}
+	</div>
 </div>
+
+<style>
+</style>

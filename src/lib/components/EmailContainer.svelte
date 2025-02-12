@@ -4,7 +4,7 @@
 	import { get } from 'svelte/store';
 	import EmailDetailView from './EmailDetailView.svelte';
 	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
-	import EmailList from './EmailList.svelte';
+	import EmailList from './emailListContainer/EmailList.svelte';
 	import { user } from '$lib/store';
 
 	let email = $state<Email | undefined>(undefined);

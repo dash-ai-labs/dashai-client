@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { emailAccount, emailSearchInput, user } from '$lib/store';
+	import { emailAccount, emailSearchList, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import {
 		archive,
@@ -10,8 +10,9 @@
 		remove,
 		searchEmails
 	} from '$lib/api/email';
-	import EmailListItem from './EmailListItem.svelte';
-	import ToggleOptions from './ToggleOptions.svelte';
+	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+
 	import { type Email } from '$lib/types';
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
@@ -49,18 +50,18 @@
 	let selectedEmail = $state<Email | undefined>(undefined);
 	let isLoading = $state(false); // Track if data is being fetched
 	let toggleOptions = $state(['All Mail', 'Unread']);
-	let selectedToggleOption = $state(0);
 	let isToggleLoading = $state(false); // Loading state for toggle change
 	let lastFilter = $state(['INBOX']);
 	let disableTransition = $state(false); // New state variable to disable transition
 	let previousAccountValue = $state({ email: '' });
+	let selectedToggleOption: number = $state(0);
 
-	emailSearchInput.subscribe((searchInput) => {
-		if (searchInput && searchInput.length > 0) {
+	emailSearchList.subscribe((searchList) => {
+		if (searchList && searchList.length > 0) {
 			const _searchEmails = async () => {
 				const emailResults = await searchEmails({
 					user: get(user)?.id.toString(),
-					search: searchInput
+					search: searchList[0].query
 				});
 				emails = emailResults;
 			};
@@ -173,13 +174,12 @@
 	// };
 
 	// Handle toggle change and load emails based on selected option
-	const handleToggleChange = async (index: number) => {
-		selectedToggleOption = index;
+	const handleToggleChange = async (value: number) => {
 		pageNumber = 1; // Reset page number for new filter
 		isToggleLoading = true; // Set loading state to true when toggling
 		emails = []; // Clear the email list to reload for the new filter
-		if (selectedToggleOption !== 0) {
-			lastFilter.push(toggleOptions[selectedToggleOption].toUpperCase());
+		if (value !== 0) {
+			lastFilter.push(toggleOptions[value].toUpperCase());
 		} else {
 			lastFilter.pop();
 		}
@@ -189,16 +189,28 @@
 	};
 </script>
 
-<div class="w-80 rounded-lg bg-primary-container">
+<div class="w-86 rounded-lg bg-primary-container">
 	<div
 		class="flex h-[60px] items-center justify-between border-b border-primary-gray p-[10px] text-h4"
 	>
-		<div class="mx-[4px]">Emails</div>
-		<ToggleOptions
-			options={toggleOptions}
-			activeIndex={selectedToggleOption}
-			onChange={handleToggleChange}
-		/>
+		<div class="mx-[2px]">Emails</div>
+		<RadioGroup
+			active="variant-filled-primary"
+			hover="hover:variant-soft-primary"
+			border={'border-0'}
+			rounded={'rounded-md'}
+			size={'sm'}
+			background={'bg-primary-black'}
+		>
+			{#each toggleOptions as option, index}
+				<RadioItem
+					bind:group={selectedToggleOption}
+					name={option}
+					value={index}
+					on:click={() => handleToggleChange(index)}>{option}</RadioItem
+				>
+			{/each}
+		</RadioGroup>
 	</div>
 
 	<div

@@ -18,6 +18,11 @@ export enum LabelColor {
 	LIGHT_BLUE = '#A2D2FB'
 }
 
+export interface SearchEntry {
+	query: string;
+	resultReader: ReadableStreamDefaultReader;
+}
+
 export interface InputLabel {
 	name: string;
 	label_type: LabelType;

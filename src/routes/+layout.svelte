@@ -4,9 +4,9 @@
 	import { initializeLayout } from '$lib/layout';
 	import { nonce } from '$lib/store';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
-	import { initializeStores, Modal } from '@skeletonlabs/skeleton';
-
+	import { storePopup, type ModalComponent, initializeStores, Modal } from '@skeletonlabs/skeleton';
+	import NewEmailLabelComponent from '$lib/components/NewEmailLabelComponent.svelte';
+	import EmailAISearchComponent from '$lib/components/emailSearch/EmailAISearchComponent.svelte';
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
@@ -23,10 +23,16 @@
 		await nonce.set(data.nonce);
 		initializeLayout();
 	});
+
+	const modalRegistry: Record<string, ModalComponent> = {
+		newEmailLabelComponent: { ref: NewEmailLabelComponent },
+		emailAISearchComponent: { ref: EmailAISearchComponent }
+	};
 </script>
 
 <div class="dashboard">
-	<Modal />
+	<Modal components={modalRegistry} />
+
 	{@render children?.()}
 </div>
 
