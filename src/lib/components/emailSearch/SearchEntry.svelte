@@ -16,7 +16,6 @@
 	$effect(() => {
 		let buffer = '';
 		if (resultReader) {
-			console.log('inside');
 			isLoading = true;
 			const readStream = async () => {
 				searchResults = []; // Reset results when starting new search

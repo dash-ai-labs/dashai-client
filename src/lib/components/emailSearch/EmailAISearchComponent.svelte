@@ -17,7 +17,6 @@
 	const modalStore = getModalStore();
 
 	const handleSubmit = async () => {
-		console.log('searchQuery', searchQuery);
 		if (searchQuery.length > 0) {
 			const reader = await searchEmailsStreaming({
 				user: get(user)?.id.toString(),

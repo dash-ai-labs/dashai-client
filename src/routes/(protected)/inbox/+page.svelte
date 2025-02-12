@@ -26,7 +26,7 @@
 			component: 'newEmailLabelComponent',
 			title: 'Email Label',
 			body: 'Add new email label',
-			response: (r) => console.log('response:', r)
+			response: (r) => refreshEmailLabels()
 		};
 		modalStore.trigger(modal);
 	}
