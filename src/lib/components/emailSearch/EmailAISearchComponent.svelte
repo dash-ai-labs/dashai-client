@@ -5,7 +5,7 @@
 	import SearchEntry from './SearchEntry.svelte';
 	import { searchEmailsStreaming } from '$lib/api/email';
 
-	let searchQuery = '';
+	let searchQuery = $state('');
 	let showError = $state(false);
 
 	let searchHistory: string[] = [
