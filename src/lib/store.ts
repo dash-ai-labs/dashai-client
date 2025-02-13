@@ -37,3 +37,4 @@ export const emailLabels: Writable<any> = persistentWritable('emailLabels', []);
 export const showErrorModal: Writable<boolean> = writable(false);
 export const errorMessage: Writable<string> = writable('');
 export const emailSearchList: Writable<SearchEntry[]> = writable([]);
+export const emailList: Writable<any> = persistentWritable('emailList', []);

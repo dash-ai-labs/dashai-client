@@ -19,7 +19,15 @@
 
 	let { children, data }: Props = $props();
 
+	let isMobile = $state(false);
+
 	onMount(async () => {
+		const checkMobile = () => {
+			const width = window.visualViewport?.width || window.innerWidth;
+			isMobile = width <= 768;
+		};
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
 		await nonce.set(data.nonce);
 		initializeLayout();
 	});
@@ -30,11 +38,18 @@
 	};
 </script>
 
-<div class="dashboard">
-	<Modal components={modalRegistry} />
+{#if isMobile}
+	<div class="mobile-message">
+		<h2>Desktop Only</h2>
+		<p>This app is only available on desktop devices for now.</p>
+	</div>
+{:else}
+	<div class="dashboard">
+		<Modal components={modalRegistry} />
 
-	{@render children?.()}
-</div>
+		{@render children?.()}
+	</div>
+{/if}
 
 <style nonce="{data.nonce}">
 	.dashboard {
@@ -42,5 +57,21 @@
 		height: 100vh;
 		background-color: #1a1a1a;
 		color: white;
+	}
+
+	.mobile-message {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100vh;
+		background-color: #1a1a1a;
+		color: white;
+		padding: 1rem;
+		text-align: center;
+	}
+
+	.mobile-message h2 {
+		margin-bottom: 1rem;
 	}
 </style>

@@ -1,12 +1,14 @@
 <script lang="ts">
+	import { getEmailList } from '$lib/api/email';
 	import EmailContainer from '$lib/components/EmailContainer.svelte';
 	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
 	import PrimaryButton from '$lib/components/PrimaryButton.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
+	import { emailList, user } from '$lib/store';
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-
+	import { get } from 'svelte/store';
 	onMount(() => {
 		refreshEmailLabels();
 		const modal: ModalSettings = {
@@ -30,6 +32,16 @@
 		};
 		modalStore.trigger(modal);
 	}
+
+	onMount(async () => {
+		const _emailList = await getEmailList({
+			user: get(user)?.id.toString(),
+			limit: 30,
+			page: 1,
+			filter: ['INBOX']
+		});
+		emailList.set(_emailList);
+	});
 </script>
 
 <div class="mx-[40px]">

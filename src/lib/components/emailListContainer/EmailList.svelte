@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { emailAccount, emailSearchList, user } from '$lib/store';
+	import { emailAccount, emailList, emailSearchList, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import {
 		archive,
@@ -13,12 +13,12 @@
 	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
-	import { type Email } from '$lib/types';
+	import { type Email, type EmailAccount } from '$lib/types';
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
 			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
 			if (res) {
-				emails = [...emails.map((e) => (e.email_id === email.email_id ? res : e))];
+				_emailList = [..._emailList.map((e) => (e.email_id === email.email_id ? res : e))];
 			}
 		};
 		_markAsUnread();
@@ -27,7 +27,7 @@
 		const _remove = async () => {
 			const res = await remove({ user: get(user)?.id.toString(), email_id: email.email_id });
 			if (res) {
-				emails = [...emails.filter((e) => e.email_id !== email.email_id)];
+				_emailList = [..._emailList.filter((e) => e.email_id !== email.email_id)];
 			}
 		};
 		_remove();
@@ -36,15 +36,16 @@
 		const _archive = async () => {
 			const res = await archive({ user: get(user)?.id.toString(), email_id: email.email_id });
 			if (res) {
-				emails = [...emails.filter((e) => e.email_id !== email.email_id)];
+				_emailList = [..._emailList.filter((e) => e.email_id !== email.email_id)];
 			}
 		};
 		_archive();
 	};
 
 	const { selectEmail } = $props();
-	let emails = $state<Email[]>([]);
+	let _emailList = $state<Email[]>(get(emailList));
 	let container = $state<HTMLElement | null>(null);
+	let _emailAccount = $state<EmailAccount | undefined>(get(emailAccount));
 	let pageNumber = $state(1);
 	let limit = $state(30);
 	let selectedEmail = $state<Email | undefined>(undefined);
@@ -53,7 +54,7 @@
 	let isToggleLoading = $state(false); // Loading state for toggle change
 	let lastFilter = $state(['INBOX']);
 	let disableTransition = $state(false); // New state variable to disable transition
-	let previousAccountValue = $state({ email: '' });
+	let previousAccountValue = $state<EmailAccount | undefined>(get(emailAccount));
 	let selectedToggleOption: number = $state(0);
 
 	emailSearchList.subscribe((searchList) => {
@@ -63,7 +64,7 @@
 					user: get(user)?.id.toString(),
 					search: searchList[0].query
 				});
-				emails = emailResults;
+				_emailList = emailResults;
 			};
 			_searchEmails();
 		}
@@ -77,7 +78,8 @@
 				(!previousAccountValue.email || value.email !== previousAccountValue.email)
 			) {
 				pageNumber = 1; // Reset page number for new account
-				emails = []; // Clear existing emails
+				_emailList = []; // Clear existing emails
+				_emailAccount = value;
 				loadNextPage();
 
 				// Update the previous value to prevent repeated calls
@@ -129,18 +131,26 @@
 
 		// Append the new emails to the existing ones, avoiding duplicates
 		if (newEmails && newEmails.length > 0) {
-			emails = [
-				...emails,
-				...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
-			];
+			if (_emailList.length === 0) {
+				emailList.set(newEmails);
+			} else {
+				emailList.update((emails) => [
+					...emails,
+					...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
+				]);
+			}
 		}
 		isLoading = false;
 	};
 
+	emailList.subscribe((value) => {
+		_emailList = value;
+	});
+
 	// Function to load the next page of emails
 	const loadNextPage = async () => {
 		if (isLoading) return; // Prevent concurrent calls
-		await loadEmails($emailAccount.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
+		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
 		pageNumber++; // Increment after a successful fetch
 	};
 
@@ -157,10 +167,10 @@
 				user: get(user)?.id.toString(),
 				email_id: selectedEmail?.email_id
 			});
-			const index = emails.findIndex((item) => item.email_id === selectedEmail?.email_id);
+			const index = _emailList.findIndex((item) => item.email_id === selectedEmail?.email_id);
 			if (index !== -1 && newEmail) {
 				// Update the object directly
-				emails = [...emails.slice(0, index), newEmail, ...emails.slice(index + 1)];
+				_emailList = [..._emailList.slice(0, index), newEmail, ..._emailList.slice(index + 1)];
 			}
 		};
 		if (selectedEmail?.labels.includes('UNREAD')) updateEmailAsRead();
@@ -177,14 +187,16 @@
 	const handleToggleChange = async (value: number) => {
 		pageNumber = 1; // Reset page number for new filter
 		isToggleLoading = true; // Set loading state to true when toggling
-		emails = []; // Clear the email list to reload for the new filter
+		_emailList = []; // Clear the email list to reload for the new filter
 		if (value !== 0) {
-			lastFilter.push(toggleOptions[value].toUpperCase());
+			if (!lastFilter.includes(toggleOptions[value].toUpperCase())) {
+				lastFilter.push(toggleOptions[value].toUpperCase());
+			}
 		} else {
 			lastFilter.pop();
 		}
 
-		await loadEmails($emailAccount.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
+		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
 		isToggleLoading = false; // Set loading state to false after emails are loaded
 	};
 </script>
@@ -222,7 +234,7 @@
 			<!-- Loading indicator when toggle is changing -->
 			<div class="w-[300px] py-4 text-center" transition:fade={{ duration: 500 }}>Loading...</div>
 		{:else}
-			{#each emails as email (email.id)}
+			{#each _emailList as email (email.id)}
 				{#if !disableTransition}
 					<div transition:fade={{ duration: 300 }}>
 						<EmailListItem
