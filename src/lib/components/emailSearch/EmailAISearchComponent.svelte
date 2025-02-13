@@ -18,18 +18,32 @@
 
 	const handleSubmit = async () => {
 		if (searchQuery.length > 0) {
+			const id = crypto.randomUUID();
+			emailSearchList.update((list) => [
+				...list,
+				{
+					query: searchQuery,
+					resultReader: null,
+					loading: true,
+					id: id
+				}
+			]);
 			const reader = await searchEmailsStreaming({
 				user: get(user)?.id.toString(),
 				search: searchQuery
 			});
 			if (reader) {
-				emailSearchList.update((list) => [
-					...list,
-					{
-						query: searchQuery,
-						resultReader: reader
-					}
-				]);
+				emailSearchList.update((list) =>
+					list.map((item) =>
+						item.id === id
+							? {
+									...item,
+									resultReader: reader,
+									loading: false
+								}
+							: item
+					)
+				);
 			}
 		} else {
 			showError = true;
@@ -43,7 +57,11 @@
 
 		<div class="h-full w-full">
 			{#each $emailSearchList as emailSearch}
-				<SearchEntry query={emailSearch.query} resultReader={emailSearch.resultReader} />
+				<SearchEntry
+					query={emailSearch.query}
+					resultReader={emailSearch.resultReader}
+					loading={emailSearch.loading}
+				/>
 			{/each}
 			<form onsubmit={handleSubmit}>
 				<input

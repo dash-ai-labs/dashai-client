@@ -22,6 +22,16 @@
 	};
 	const handleInput = async () => {
 		if (searchInput.length > 0) {
+			modalStore.trigger(modal);
+			const id = crypto.randomUUID();
+			emailSearchList.update((list) => [
+				{
+					query: searchInput,
+					resultReader: null,
+					loading: true,
+					id: id
+				}
+			]);
 			const reader = await searchEmailsStreaming({
 				user: get(user)?.id.toString(),
 				search: searchInput
@@ -30,11 +40,11 @@
 				emailSearchList.update((list) => [
 					{
 						query: searchInput,
-						resultReader: reader
-					},
-					...list
+						resultReader: reader,
+						loading: false,
+						id: id
+					}
 				]);
-				modalStore.trigger(modal);
 			}
 		} else {
 			showError = true;

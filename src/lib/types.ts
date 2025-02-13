@@ -20,7 +20,9 @@ export enum LabelColor {
 
 export interface SearchEntry {
 	query: string;
-	resultReader: ReadableStreamDefaultReader;
+	resultReader: ReadableStreamDefaultReader | null;
+	loading: boolean;
+	id: string;
 }
 
 export interface InputLabel {
