@@ -1,6 +1,14 @@
-# DASH client
+<br /><br />
 
-Client for DASH - AI dashboard for email.
+<p align="center">
+<a href="https://getdash.ai">
+  <img src="https://getdash.ai/logo.png" alt="Dash AI Logo" width="70">
+</a>
+</p>
+<h1 align="center"><b>Dash</b></h1>
+<p align="center"><b>Supercharge your email productivity</b></p>
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e2e99e76-e3a4-4043-be78-d9a1a19683ff/deploy-status)](https://app.netlify.com/sites/dashaiclient/deploys)
 
 ## Installation
 
