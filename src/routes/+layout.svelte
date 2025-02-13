@@ -10,6 +10,11 @@
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
+	function isMobileDevice(): boolean {
+		if (typeof navigator === 'undefined') return false; // Prevent SSR issues
+		return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+	}
+
 	interface Props {
 		children?: import('svelte').Snippet;
 		data: {
@@ -21,13 +26,10 @@
 
 	let isMobile = $state(false);
 
+	onMount(() => {
+		isMobile = isMobileDevice();
+	});
 	onMount(async () => {
-		const checkMobile = () => {
-			const width = window.visualViewport?.width || window.innerWidth;
-			isMobile = width <= 768;
-		};
-		checkMobile();
-		window.addEventListener('resize', checkMobile);
 		await nonce.set(data.nonce);
 		initializeLayout();
 	});
