@@ -57,9 +57,23 @@ export interface Email {
 	date: Date;
 	processed: boolean;
 }
+
+export enum EmailAccountStatus {
+	NOT_STARTED = 'NOT_STARTED',
+	SYNCING = 'SYNCING',
+	SUCCESS = 'SUCCESS',
+	FAILED = 'FAILED'
+}
+export enum EmailProvider {
+	GMAIL = 'GMAIL'
+}
+
 export interface EmailAccount {
 	email: string;
 	profile_pic: string;
+	created_at: Date;
+	status: EmailAccountStatus;
+	provider: EmailProvider;
 }
 export interface EmailData {
 	from_addr: string;
