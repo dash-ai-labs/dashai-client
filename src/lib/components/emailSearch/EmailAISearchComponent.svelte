@@ -7,6 +7,19 @@
 
 	let searchQuery = $state('');
 	let showError = $state(false);
+	let containerDiv: HTMLDivElement | null = $state(null);
+
+	// Add auto-scroll when content updates
+	$effect(() => {
+		emailSearchList.subscribe((values) => {
+			if (values.some((item) => item.resultReader && item.loading)) {
+				containerDiv?.scrollTo({
+					top: containerDiv.scrollHeight,
+					behavior: 'smooth'
+				});
+			}
+		});
+	});
 
 	let searchHistory: string[] = [
 		// 'How many emails have I receive in the past week?',
@@ -28,6 +41,8 @@
 					id: id
 				}
 			]);
+			// Scroll to bottom after adding new entry
+
 			const reader = await searchEmailsStreaming({
 				user: get(user)?.id.toString(),
 				search: searchQuery
@@ -48,14 +63,17 @@
 		} else {
 			showError = true;
 		}
+		searchQuery = '';
 	};
 </script>
 
 {#if $modalStore[0]}
-	<div class="z-50 flex w-[80%] flex-col gap-6 self-start rounded-xl bg-primary-dark-gray/95 p-6">
+	<div
+		class="z-50 flex max-h-[80vh] w-[80%] flex-col gap-6 self-start rounded-xl bg-primary-dark-gray/95 p-6"
+	>
 		<!-- Search Input Area -->
 
-		<div class="h-full w-full">
+		<div class="h-full w-full overflow-y-auto" bind:this={containerDiv}>
 			{#each $emailSearchList as emailSearch}
 				<SearchEntry
 					query={emailSearch.query}

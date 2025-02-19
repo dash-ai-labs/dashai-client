@@ -19,12 +19,7 @@
 		</div>
 		<article class={cBody}>{$modalStore[0].body ?? '(body missing)'}</article>
 		<div class="items-center justify-items-center self-center">
-			<iframe
-				src="https://giphy.com/embed/26tjZN1tRfDDCOdUc"
-				width="480"
-				height="360"
-				frameBorder="0"
-				class="giphy-embed"
-			></iframe>
+			<img src="/images/robot.gif" alt="robot" width="480" height="360" />
 		</div>
-	</div>{/if}
+	</div>
+{/if}
