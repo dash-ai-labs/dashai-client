@@ -44,6 +44,8 @@
 			title: 'Syncing email account(s)',
 			body: 'Your inbox is huge. Please wait while we sync your emails.\nThis may take a few minutes.',
 			position: 'items-center justify-center',
+			backdropClasses: '!bg-black/40',
+
 			response: (r) => {
 				checkEmailAccountStatus();
 			}
