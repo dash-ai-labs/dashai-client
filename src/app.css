@@ -1,0 +1,22 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer utilities {
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+	/* Hide scrollbar for IE, Edge and Firefox */
+	.no-scrollbar {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
+}
+
+.variant-filled-primary {
+	@apply rounded-md bg-primary-dark-gray text-primary-white;
+}
+.variant-soft-primary {
+	@apply rounded-md bg-primary-blue/20 text-primary-gray !ring-0 dark:bg-primary-blue/20;
+}

@@ -1,0 +1,14 @@
+<script lang="ts">
+	interface Props {
+		fill?: any;
+	}
+
+	let { fill = null }: Props = $props();
+</script>
+
+<svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<path
+		d="M0.294922 10.59L4.87492 6L0.294922 1.41L1.70492 0L7.70492 6L1.70492 12L0.294922 10.59Z"
+		class={fill}
+	/>
+</svg>
