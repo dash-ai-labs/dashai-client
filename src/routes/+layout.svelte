@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
+	import { PUBLIC_CLARITY_PROJECT_ID } from '$env/static/public';
 	import { initializeLayout } from '$lib/layout';
 	import { nonce } from '$lib/store';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
@@ -8,6 +9,12 @@
 	import NewEmailLabelComponent from '$lib/components/NewEmailLabelComponent.svelte';
 	import EmailAISearchComponent from '$lib/components/emailSearch/EmailAISearchComponent.svelte';
 	import InboxNotReadyComponent from '$lib/components/InboxNotReadyComponent.svelte';
+	import Clarity from '@microsoft/clarity';
+	const projectId = PUBLIC_CLARITY_PROJECT_ID || undefined;
+
+	if (projectId) {
+		Clarity.init(projectId);
+	}
 
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
