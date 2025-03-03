@@ -2,8 +2,16 @@
 	import { goto } from '$app/navigation';
 	import { errorMessage, showErrorModal } from '$lib/store';
 	import SideBar from '$lib/components/SideBar.svelte';
+	import { PUBLIC_CLARITY_PROJECT_ID } from '$env/static/public';
 	import '@material/web/button/filled-tonal-button';
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
+	import Clarity from '@microsoft/clarity';
+
+	const projectId = PUBLIC_CLARITY_PROJECT_ID || undefined;
+
+	if (projectId) {
+		Clarity.init(projectId);
+	}
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
