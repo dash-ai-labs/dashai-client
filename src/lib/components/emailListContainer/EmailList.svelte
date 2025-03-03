@@ -14,6 +14,7 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	import { type Email, type EmailAccount } from '$lib/types';
+	import EmailListSearch from './EmailListSearch.svelte';
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
 			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
@@ -224,7 +225,7 @@
 			{/each}
 		</RadioGroup>
 	</div>
-
+	<EmailListSearch />
 	<div
 		class="no-scrollbar max-h-[calc(100vh-300px)] overflow-y-scroll"
 		bind:this={container}
