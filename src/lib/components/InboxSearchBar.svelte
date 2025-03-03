@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { searchEmailsStreaming } from '$lib/api/email';
-	import { emailSearchList, user } from '$lib/store';
+	import { aiSearchQuery, emailSearchList, user } from '$lib/store';
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { get } from 'svelte/store';
 
@@ -18,6 +18,7 @@
 		response: (r) => {
 			emailSearchList.set([]);
 			searchInput = '';
+			aiSearchQuery.set('');
 		}
 	};
 	const handleInput = async () => {
@@ -32,6 +33,7 @@
 					id: id
 				}
 			]);
+			aiSearchQuery.set(searchInput);
 			const reader = await searchEmailsStreaming({
 				user: get(user)?.id.toString(),
 				search: searchInput

@@ -14,6 +14,7 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	import { type Email, type EmailAccount } from '$lib/types';
+	import EmailListSearch from './EmailListSearch.svelte';
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
 			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
@@ -42,7 +43,7 @@
 		_archive();
 	};
 
-	const { selectEmail } = $props();
+	const { selectEmail, setShowComposeEmail } = $props();
 	let _emailList = $state<Email[]>(get(emailList));
 	let container = $state<HTMLElement | null>(null);
 	let _emailAccount = $state<EmailAccount | undefined>(get(emailAccount));
@@ -89,6 +90,10 @@
 
 		return () => unsubscribe();
 	});
+
+	const setEmailList = (emails: Email[]) => {
+		_emailList = emails;
+	};
 	// Function to handle scroll and load next page
 	const handleScroll = () => {
 		if (!container || isLoading) return; // Prevent duplicate calls while loading
@@ -224,7 +229,7 @@
 			{/each}
 		</RadioGroup>
 	</div>
-
+	<EmailListSearch {setShowComposeEmail} {setEmailList} />
 	<div
 		class="no-scrollbar max-h-[calc(100vh-300px)] overflow-y-scroll"
 		bind:this={container}
