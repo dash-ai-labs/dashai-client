@@ -43,7 +43,7 @@
 		_archive();
 	};
 
-	const { selectEmail } = $props();
+	const { selectEmail, setShowComposeEmail } = $props();
 	let _emailList = $state<Email[]>(get(emailList));
 	let container = $state<HTMLElement | null>(null);
 	let _emailAccount = $state<EmailAccount | undefined>(get(emailAccount));
@@ -90,6 +90,10 @@
 
 		return () => unsubscribe();
 	});
+
+	const setEmailList = (emails: Email[]) => {
+		_emailList = emails;
+	};
 	// Function to handle scroll and load next page
 	const handleScroll = () => {
 		if (!container || isLoading) return; // Prevent duplicate calls while loading
@@ -225,7 +229,7 @@
 			{/each}
 		</RadioGroup>
 	</div>
-	<EmailListSearch />
+	<EmailListSearch {setShowComposeEmail} {setEmailList} />
 	<div
 		class="no-scrollbar max-h-[calc(100vh-300px)] overflow-y-scroll"
 		bind:this={container}

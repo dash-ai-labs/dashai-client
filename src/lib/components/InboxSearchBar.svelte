@@ -18,6 +18,7 @@
 		response: (r) => {
 			emailSearchList.set([]);
 			searchInput = '';
+			aiSearchQuery.set('');
 		}
 	};
 	const handleInput = async () => {
