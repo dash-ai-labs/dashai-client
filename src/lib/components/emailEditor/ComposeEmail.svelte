@@ -1,22 +1,10 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
 
-	import { onMount, onDestroy } from 'svelte';
-	import { Editor, Node } from '@tiptap/core';
-	import Document from '@tiptap/extension-document';
-	import Paragraph from '@tiptap/extension-paragraph';
-	import HardBreak from '@tiptap/extension-hard-break';
-	import Text from '@tiptap/extension-text';
+	import { onDestroy } from 'svelte';
+	import { Node } from '@tiptap/core';
+	import Editor from './editor/index.svelte';
 	import Bold from '@tiptap/extension-bold';
-	import Code from '@tiptap/extension-code';
-	import Italic from '@tiptap/extension-italic';
-	import Strike from '@tiptap/extension-strike';
-	import Underline from '@tiptap/extension-underline';
-	import Link from '@tiptap/extension-link';
-	import Placeholder from '@tiptap/extension-placeholder';
-	import BubbleMenu from '@tiptap/extension-bubble-menu';
-	import CharacterCount from '@tiptap/extension-character-count';
-	import Blockquote from '@tiptap/extension-blockquote';
 	import { ComposeEmailMode, type Email, type EmailData } from '$lib/types';
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
@@ -26,6 +14,7 @@
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
+	import type { EditorType } from './lib';
 
 	let content = '';
 	let limit = 100;
@@ -42,10 +31,15 @@
 		composeEmailMode,
 		setShowComposeEmail,
 		setComposeEmailMode
-	}: { email: Email; height: number } = $props();
+	}: {
+		email: Email;
+		height: number;
+		composeEmailMode: ComposeEmailMode;
+		setShowComposeEmail: (show: boolean) => void;
+		setComposeEmailMode: (mode: ComposeEmailMode) => void;
+	} = $props();
 	let element: HTMLElement;
 	let bmenu: HTMLElement;
-	let editor: Editor = $state(null);
 	let dropDownSelectedOption = 0;
 	let emailData: EmailData = $state({
 		subject: '',
@@ -56,6 +50,9 @@
 		bcc: [],
 		attachments: []
 	});
+	let suggestionText = $state('');
+	let saveStatus = $state('Saved');
+	let editor: EditorType;
 
 	const setToEmails = (emails: string[]) => {
 		emailData.to = emails;
@@ -250,63 +247,86 @@
         </div>
     `;
 	};
-	onMount(() => {
-		editor = new Editor({
-			element: element,
-			extensions: [
-				EmailQuote,
-				Document,
-				Paragraph,
-				Text,
-				//Bold,
-				Blockquote,
-				CustomBold,
-				Code,
-				Italic,
-				Strike,
-				Underline,
-				Link.configure({
-					validate: (href) => /^https?:\/\//.test(href),
-					HTMLAttributes: { rel: null, target: null }
-				}),
-				BubbleMenu.configure({
-					element: bmenu,
-					tippyOptions: { duration: 100, theme: 'local', maxWidth: 450, appendTo: document.body }
-				}),
-				CharacterCount.configure({
-					limit
-				}),
-				HardBreak.extend({
-					addKeyboardShortcuts() {
-						return {
-							Enter: () => this.editor.commands.setHardBreak()
-						};
-					}
-				}).configure({ keepMarks: false }),
-				Placeholder.configure({ placeholder })
-			],
-			content,
-			editorProps: {
-				attributes: {
-					class: 'prose p-3 outline-none text-font-light-gray text-base min-h-[200px]'
-				}
-			},
-			onCreate({ editor }) {
-				// The editor is ready.
-				const html = editor.getHTML();
-				emailData.body = html;
-			},
-			onTransaction: () => {
-				// force re-render so `editor.isActive` works as expected
-				editor = editor;
-			},
-			onUpdate: ({ editor }) => {
-				const html = editor.getHTML();
-				// send the content to an API here
-				emailData.body = html;
-			}
-		});
-	});
+	// onMount(() => {
+	// 	editor = new Editor({
+	// 		element: element,
+	// 		extensions: [
+	// 			EmailQuote,
+	// 			// Document,
+	// 			// Paragraph,
+	// 			// Text,
+	// 			//Bold,
+	// 			StarterKit,
+	// 			// Blockquote,
+	// 			// CustomBold,
+	// 			// 	Code,
+	// 			// Italic,
+	// 			// Strike,
+	// 			// Underline,
+	// 			Link.configure({
+	// 				validate: (href) => /^https?:\/\//.test(href),
+	// 				HTMLAttributes: { rel: null, target: null }
+	// 			}),
+	// 			BubbleMenu.configure({
+	// 				element: bmenu,
+	// 				tippyOptions: { duration: 100, theme: 'local', maxWidth: 450, appendTo: document.body }
+	// 			}),
+	// 			CharacterCount.configure({
+	// 				limit
+	// 			}),
+	// 			// HardBreak.extend({
+	// 			// 	addKeyboardShortcuts() {
+	// 			// 		return {
+	// 			// 			Enter: () => this.editor.commands.setHardBreak()
+	// 			// 		};
+	// 			// 	}
+	// 			// }).configure({ keepMarks: false }),
+	// 			Placeholder.configure({ placeholder })
+	// 		],
+	// 		content,
+	// 		editorProps: {
+	// 			attributes: {
+	// 				class: 'prose p-3 outline-none text-font-light-gray text-base min-h-[200px]'
+	// 			},
+	// 			handleKeyDown: (view, event) => {
+	// 				if (event.key === 'Tab') {
+	// 					event.preventDefault();
+	// 					setTimeout(async () => {
+	// 						if (editor) {
+	// 							console.log('Inserting content:', suggestionText);
+	// 							await editor.chain().focus().insertContent(suggestionText).scrollIntoView().run();
+	// 							console.log('Inserted after delay:', editor.getText());
+	// 						}
+	// 					}, 50);
+
+	// 					// Use setTimeout to log after the editor has updated
+	// 					setTimeout(() => {
+	// 						console.log('Editor HTML after update:', editor.getHTML());
+	// 						emailData.body = editor.getHTML();
+	// 						editor.commands.focus(); // Ensure the editor regains focus
+	// 					}, 0);
+	// 				}
+	// 			}
+	// 		},
+	// 		onCreate({ editor }) {
+	// 			// The editor is ready.
+	// 			const html = editor.getHTML();
+	// 			emailData.body = html;
+	// 		},
+	// 		onTransaction: () => {
+	// 			// force re-render so `editor.isActive` works as expected
+	// 			editor = editor;
+	// 		},
+	// 		onUpdate: ({ editor }) => {
+	// 			// const html = editor.getHTML();
+	// 			// // send the content to an API here
+	// 			// emailData.body = html;
+	// 			const updatedHtml = editor.getHTML();
+	// 			console.log('Editor updated, new HTML:', updatedHtml);
+	// 			emailData.body = updatedHtml;
+	// 		}
+	// 	});
+	// });
 	function formatEmailContent(content: string): string {
 		// Check if content is HTML by looking for DOCTYPE or HTML tags
 		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
@@ -365,6 +385,20 @@
 			`;
 		}
 	}
+	// $effect(() => {
+	// 	if (!editor) return;
+	// 	const _getSuggestion = async () => {
+	// 		const suggestion = await getSuggestion({
+	// 			user: get(user)?.id.toString(),
+	// 			email_id: email ? email.id : '',
+	// 			subject: emailData.subject,
+	// 			body: emailData.body
+	// 		});
+	// 		suggestionText = suggestion;
+	// 		console.log('Suggestion:', suggestionText);
+	// 	};
+	// 	if (emailData.subject || emailData.body) _getSuggestion();
+	// });
 
 	$effect(() => {
 		if (!editor) return;
@@ -379,6 +413,7 @@
 			if (composeEmailMode === ComposeEmailMode.Forward) {
 				setSubject(`Fwd: ${email.subject}`);
 			}
+
 			const setContent = async () => {
 				try {
 					// Clear existing content first
@@ -399,13 +434,14 @@
 			// setContent();
 		} else {
 			// editor.commands.clearContent();
+			setSubject('');
 		}
 	});
 
 	onDestroy(() => {
-		if (editor) {
-			editor.destroy();
-		}
+		// if (editor) {
+		// 	editor.destroy();
+		// }
 	});
 </script>
 
@@ -482,7 +518,11 @@
 	class="fixed bottom-[-10px] right-2 z-50 w-[50%] overflow-hidden rounded-2xl rounded-b-none border border-primary-gray bg-primary-black"
 >
 	<div class="flex flex-row bg-primary-hazy-black px-3 py-1 text-primary-button">
-		<div class="self-center px-2 py-2">{emailData.subject}</div>
+		{#if emailData.subject === '' && composeEmailMode === ComposeEmailMode.NewEmail}
+			<div class="self-center px-2 py-2">New Email</div>
+		{:else}
+			<div class="self-center px-2 py-2">{emailData.subject}</div>
+		{/if}
 		<div class="ml-auto self-center">
 			<button class="self-start py-2 text-primary-gray" onclick={() => setShowComposeEmail(false)}>
 				<CloseOutline name="close" />
@@ -501,7 +541,27 @@
 			{setComposeEmailMode}
 		/>
 	</div>
-	<div class="mx-1 my-1"><div bind:this={element}></div></div>
+	<div class="mx-1 my-1">
+		<Editor
+			bind:this={editor}
+			onUpdate={() => {
+				saveStatus = 'Unsaved';
+			}}
+			onDebouncedUpdate={() => {
+				saveStatus = 'Saving...';
+				// Simulate a delay in saving.
+				setTimeout(() => {
+					saveStatus = 'Saved';
+				}, 500);
+			}}
+		>
+			<div
+				class="absolute right-5 top-5 z-10 mb-5 rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400"
+			>
+				{saveStatus}
+			</div>
+		</Editor>
+	</div>
 	<div class="m-2 flex justify-start text-primary-gray">
 		<Footer {onSend} />
 	</div>

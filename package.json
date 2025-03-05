@@ -37,8 +37,10 @@
 		"vite": "^5.4.4"
 	},
 	"dependencies": {
+		"@ai-sdk/svelte": "^1.1.21",
 		"@floating-ui/dom": "^1.6.13",
 		"@material/web": "^2.2.0",
+		"@melt-ui/svelte": "^0.86.3",
 		"@sveltejs/adapter-cloudflare": "^5.0.0",
 		"@sveltejs/adapter-vercel": "^5.5.2",
 		"@tabler/icons-svelte": "^3.29.0",
@@ -57,17 +59,26 @@
 		"@tiptap/extension-table-cell": "^2.10.3",
 		"@tiptap/extension-table-header": "^2.10.3",
 		"@tiptap/extension-table-row": "^2.10.3",
+		"@tiptap/extension-task-item": "^2.11.5",
+		"@tiptap/extension-task-list": "^2.11.5",
 		"@tiptap/extension-text-align": "^2.10.3",
 		"@tiptap/extension-text-style": "^2.10.3",
 		"@tiptap/extension-underline": "^2.10.3",
 		"@tiptap/pm": "^2.10.3",
 		"@tiptap/starter-kit": "^2.10.3",
+		"@tiptap/suggestion": "^2.11.5",
+		"ai": "^4.1.53",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"date-fns-tz": "^3.2.0",
 		"dompurify": "^3.2.2",
+		"lucide-svelte": "^0.477.0",
+		"melt": "^0.17.0",
 		"snarkdown": "^2.0.0",
 		"svelte-motion": "^0.12.2",
-		"tailwind-merge": "^2.6.0"
+		"svelte-moveable": "^0.45.0",
+		"tailwind-merge": "^2.6.0",
+		"tiptap-markdown": "^0.8.10",
+		"zod": "^3.24.2"
 	}
 }
