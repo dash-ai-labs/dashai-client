@@ -13,7 +13,7 @@
 	import { ComposeEmailMode } from '$lib/types';
 
 	type ResponseAction = {
-		icon: Component;
+		icon: Component | undefined;
 		text: string;
 	};
 	const {
@@ -51,18 +51,24 @@
 				icon: ReplyOutline,
 				text: ComposeEmailMode.Reply
 			};
-		} else {
+		} else if (composeEmailMode === ComposeEmailMode.Forward) {
 			toEmails = [];
 			selectedAction = {
 				icon: ForwardOutline,
 				text: ComposeEmailMode.Forward
+			};
+		} else {
+			toEmails = [];
+			selectedAction = {
+				icon: undefined,
+				text: ComposeEmailMode.NewEmail
 			};
 		}
 	});
 
 	let toEmailsInput: string = $state('');
 	let toEmailsError: boolean = $state(false);
-
+	let subjectInput: string = $state('');
 	$effect(() => {
 		setToEmails(toEmails);
 		setFromEmail(selectedFromEmailAccount?.email ?? '');
@@ -113,30 +119,38 @@
 			}
 		}
 	};
+
+	const handleSubjectEnterKey = (e) => {
+		if (e.key === 'Enter' || e.key === 'Tab') {
+			setSubject(subjectInput);
+		}
+	};
 </script>
 
 <div class="mx-1 my-1 flex w-full flex-row">
 	<!-- Response -->
-	<Button class="h-[30px] px-[2px] py-[1px] hover:bg-secondary-active-button-background">
-		<selectedAction.icon class="h-[18px] w-[18px] " size="md" />
-		<ChevronDownOutline class="h-6 w-5 " />
-	</Button>
-	<Dropdown
-		class="z-50 w-full rounded-lg border border-primary-gray bg-primary-container shadow-sm "
-	>
-		{#each responseOptions as action}
-			<DropdownItem
-				onclick={() => onSelectResponseOption(action)}
-				class="w-full justify-center overflow-hidden px-2 hover:cursor-pointer hover:bg-secondary-active-button-background"
-			>
-				<div class="flex w-full flex-row">
-					<!-- svelte-ignore svelte_component_deprecated -->
-					<action.icon class="h-6 w-6" />
-					{action.text}
-				</div>
-			</DropdownItem>
-		{/each}
-	</Dropdown>
+	{#if composeEmailMode !== ComposeEmailMode.NewEmail}
+		<Button class="h-[30px] px-[2px] py-[1px] hover:bg-secondary-active-button-background">
+			<selectedAction.icon class="h-[18px] w-[18px] " size="md" />
+			<ChevronDownOutline class="h-6 w-5 " />
+		</Button>
+		<Dropdown
+			class="z-50 w-full rounded-lg border border-primary-gray bg-primary-container shadow-sm "
+		>
+			{#each responseOptions as action}
+				<DropdownItem
+					onclick={() => onSelectResponseOption(action)}
+					class="w-full justify-center overflow-hidden px-2 hover:cursor-pointer hover:bg-secondary-active-button-background"
+				>
+					<div class="flex w-full flex-row">
+						<!-- svelte-ignore svelte_component_deprecated -->
+						<action.icon class="h-6 w-6" />
+						{action.text}
+					</div>
+				</DropdownItem>
+			{/each}
+		</Dropdown>
+	{/if}
 	<div class="flex w-full flex-col items-center">
 		<!-- From -->
 		{#if fromEmailAccounts && selectedFromEmailAccount}
@@ -163,37 +177,50 @@
 			</div>
 		{/if}
 		<!-- To -->
-		{#if email && email.sender}
-			<div class="justify-items-left flex w-full flex-row items-center">
-				<span class="mr-2 flex items-center">To:</span>
-				{#if toEmails.length > 0}
-					<div class="flex flex-wrap items-center gap-[8px]">
-						{#each toEmails as toEmail}
-							<div
-								class="flex w-fit flex-row flex-nowrap items-center whitespace-nowrap rounded-lg bg-primary-button px-[8px] py-[1px] text-primary-container hover:bg-primary-button"
+		<!-- {#if email && email.sender} -->
+		<div class="justify-items-left flex w-full flex-row items-center">
+			<span class="mr-2 flex items-center">To:</span>
+			{#if toEmails.length > 0}
+				<div class="flex flex-wrap items-center gap-[8px]">
+					{#each toEmails as toEmail}
+						<div
+							class="flex w-fit flex-row flex-nowrap items-center whitespace-nowrap rounded-lg bg-primary-button px-[8px] py-[1px] text-primary-container hover:bg-primary-button"
+						>
+							{toEmail}
+							<button
+								class="ml-[2px] items-center justify-center"
+								onclick={() => removeEmail(toEmail)}
+								><X stroke="stroke-primary-container" size={17} /></button
 							>
-								{toEmail}
-								<button
-									class="ml-[2px] items-center justify-center"
-									onclick={() => removeEmail(toEmail)}
-									><X stroke="stroke-primary-container" size={17} /></button
-								>
-							</div>
-						{/each}
-					</div>
-				{/if}
-				<input
-					bind:value={toEmailsInput}
-					type="text"
-					class="w-full rounded-lg border-0 bg-primary-black focus:outline-none focus:ring-0"
-					onkeydown={handleEnterKey}
-				/>
-			</div>
-			{#if toEmailsError}
-				<div class="flex w-full flex-row items-center justify-start gap-[2px] text-primary-red">
-					<ExclamationCircleOutline /> Invalid email
+						</div>
+					{/each}
 				</div>
 			{/if}
+			<input
+				bind:value={toEmailsInput}
+				type="text"
+				class="w-full rounded-lg border-0 bg-primary-black focus:outline-none focus:ring-0"
+				onkeydown={handleEnterKey}
+			/>
+		</div>
+		{#if toEmailsError}
+			<div class="flex w-full flex-row items-center justify-start gap-[2px] text-primary-red">
+				<ExclamationCircleOutline /> Invalid email
+			</div>
+		{/if}
+		<!-- {/if} -->
+
+		{#if composeEmailMode === ComposeEmailMode.NewEmail}
+			<div class="justify-items-left flex w-full flex-row items-center">
+				<span class="mr-2 flex items-center">Subject:</span>
+
+				<input
+					bind:value={subjectInput}
+					type="text"
+					class="w-full rounded-lg border-0 bg-primary-black selection:bg-primary-button selection:text-primary-container focus:outline-none focus:ring-0"
+					onkeydown={handleSubjectEnterKey}
+				/>
+			</div>
 		{/if}
 	</div>
 </div>

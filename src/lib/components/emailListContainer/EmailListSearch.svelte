@@ -61,7 +61,10 @@
 			{/if}
 		</div>
 	</form>
-	<SecondaryButton extraClasses="bg-primary-blue" on:click={() => setShowComposeEmail(true)}
-		>Compose</SecondaryButton
+	<SecondaryButton
+		extraClasses="bg-primary-blue"
+		on:click={() => {
+			setShowComposeEmail();
+		}}>Compose</SecondaryButton
 	>
 </div>
