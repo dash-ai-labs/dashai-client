@@ -15,7 +15,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/e2e99e76-e3a4-4043-be78-d9a1a19683ff/deploy-status)](https://app.netlify.com/sites/dashaiclient/deploys)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dash-ai-labs/dashai-client)
-[![](https://dcbadge.limes.pink/api/server/BbDjwtf9sK)](https://discord.gg/uuBsw5xFHc)
+[![](https://dcbadge.limes.pink/api/server/uuBsw5xFHc)](https://discord.gg/uuBsw5xFHc)
 
 
 ## Installation
