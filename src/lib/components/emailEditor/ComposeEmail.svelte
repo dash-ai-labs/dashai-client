@@ -26,7 +26,9 @@
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
+	import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
+	const toastStore = getToastStore();
 	let content = '';
 	let limit = 100;
 	let bold = true;
@@ -156,9 +158,27 @@
 
 		const _sendEmail = async () => {
 			await sendEmail({ user: $user.id, email: emailData });
+			const t: ToastSettings = {
+				message: 'Email sent successfully',
+				background: 'bg-primary-green'
+			};
+			toastStore.trigger(t);
+			_clearEmailData();
+			setShowComposeEmail(false);
+			editor.destroy();
 		};
 		_sendEmail();
 	};
+	const _clearEmailData = () => {
+		emailData.subject = '';
+		emailData.body = '';
+		emailData.from_addr = '';
+		emailData.to = [];
+		emailData.cc = [];
+		emailData.bcc = [];
+		emailData.attachments = [];
+	};
+
 	const EmailQuote = Node.create({
 		name: 'emailQuote',
 

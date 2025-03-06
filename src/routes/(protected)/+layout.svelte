@@ -4,6 +4,7 @@
 	import SideBar from '$lib/components/SideBar.svelte';
 	import '@material/web/button/filled-tonal-button';
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
+	import { Toast } from '@skeletonlabs/skeleton';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -32,6 +33,7 @@
 			{@render children?.()}
 		</div>
 	</main>
+	<Toast />
 </div>
 
 <style>
