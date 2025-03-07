@@ -4,8 +4,6 @@ import { LabelType, ToastType } from './types';
 import { emailLabels, user } from './store';
 import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
-const toastStore = getToastStore();
-
 export const refreshEmailLabels = async () => {
 	const emailLabelList = await getLabelList({
 		user: get(user)?.id.toString(),
@@ -15,6 +13,8 @@ export const refreshEmailLabels = async () => {
 };
 
 export const showToast = (message: string, type: ToastType) => {
+	const toastStore = getToastStore();
+
 	const t: ToastSettings = {
 		message: message,
 		background: type
