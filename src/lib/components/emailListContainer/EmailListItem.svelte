@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
 	import { IconLabelImportantFilled } from '@tabler/icons-svelte';
 	import RightChevron from '$lib/assets/ChevronRight.svelte';
 	import Summary from '$lib/assets/Summary.svelte';
@@ -14,14 +13,14 @@
 	}
 
 	let { email = {}, selected = false }: Props = $props();
-	let unread: boolean = $state(false);
+	let unread: boolean = $state(true);
 	const onClick = () => {
 		dispatch('handleEmailSelect', email);
 	};
 
-	run(() => {
-		if (email && email.labels.includes('UNREAD')) {
-			unread = true;
+	$effect(() => {
+		if (email && !email.labels.includes('UNREAD')) {
+			unread = false;
 		}
 	});
 </script>
