@@ -172,10 +172,16 @@
 				user: get(user)?.id.toString(),
 				email_id: selectedEmail?.email_id
 			});
-			const index = _emailList.findIndex((item) => item.email_id === selectedEmail?.email_id);
+			const index = _emailList.findIndex(
+				(item: Email) => item.email_id === selectedEmail?.email_id
+			);
 			if (index !== -1 && newEmail) {
 				// Update the object directly
-				_emailList = [..._emailList.slice(0, index), newEmail, ..._emailList.slice(index + 1)];
+
+				_emailList = _emailList.map((email: Email) =>
+					email.email_id === selectedEmail?.email_id ? newEmail : email
+				);
+				emailList.set(_emailList);
 			}
 		};
 		if (selectedEmail?.labels.includes('UNREAD')) updateEmailAsRead();
