@@ -28,6 +28,7 @@
 	import DOMPurify from 'dompurify';
 	import { showToast } from '$lib/helpers';
 
+	const toastStore = getToastStore();
 	let content = '';
 	let limit = 100;
 	let bold = true;
