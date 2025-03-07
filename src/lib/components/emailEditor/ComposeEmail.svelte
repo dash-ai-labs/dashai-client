@@ -17,7 +17,7 @@
 	import BubbleMenu from '@tiptap/extension-bubble-menu';
 	import CharacterCount from '@tiptap/extension-character-count';
 	import Blockquote from '@tiptap/extension-blockquote';
-	import { ComposeEmailMode, type Email, type EmailData } from '$lib/types';
+	import { ComposeEmailMode, ToastType, type Email, type EmailData } from '$lib/types';
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
@@ -26,7 +26,7 @@
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
-	import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { showToast } from '$lib/helpers';
 
 	const toastStore = getToastStore();
 	let content = '';
@@ -158,11 +158,7 @@
 
 		const _sendEmail = async () => {
 			await sendEmail({ user: $user.id, email: emailData });
-			const t: ToastSettings = {
-				message: 'Email sent successfully',
-				background: 'bg-primary-green'
-			};
-			toastStore.trigger(t);
+			showToast('Email sent successfully', ToastType.Success);
 			_clearEmailData();
 			setShowComposeEmail(false);
 			editor.destroy();
