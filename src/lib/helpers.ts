@@ -2,7 +2,7 @@ import { get } from 'svelte/store';
 import { getLabelList } from './api/label';
 import { LabelType, ToastType } from './types';
 import { emailLabels, user } from './store';
-import { getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+import { type ToastSettings } from '@skeletonlabs/skeleton';
 
 export const refreshEmailLabels = async () => {
 	const emailLabelList = await getLabelList({
@@ -12,9 +12,7 @@ export const refreshEmailLabels = async () => {
 	emailLabels.set(emailLabelList);
 };
 
-export const showToast = (message: string, type: ToastType) => {
-	const toastStore = getToastStore();
-
+export const showToast = (toastStore: any, message: string, type: ToastType) => {
 	const t: ToastSettings = {
 		message: message,
 		background: type

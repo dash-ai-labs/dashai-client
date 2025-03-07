@@ -1,6 +1,11 @@
 import type { EmailLabelAction, Email, EmailData } from '$lib/types';
 import { apiRequest } from './base';
 
+interface EmailListResponse {
+	emails: Email[];
+	end: boolean;
+}
+
 export const getEmailList = async ({
 	user,
 	account,
@@ -13,7 +18,7 @@ export const getEmailList = async ({
 	limit: number;
 	page: number;
 	filter?: string[];
-}): Promise<Email[]> => {
+}): Promise<EmailListResponse> => {
 	const limitString = limit.toString();
 	const pageString = page.toString();
 	try {
@@ -32,7 +37,7 @@ export const getEmailList = async ({
 		return response.json();
 	} catch (error) {
 		console.error('Error fetching email accounts:', error);
-		return [];
+		return { emails: [], end: false };
 	}
 };
 

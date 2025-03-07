@@ -27,7 +27,7 @@
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
 	import { showToast } from '$lib/helpers';
-
+	import { getToastStore } from '@skeletonlabs/skeleton';
 	const toastStore = getToastStore();
 	let content = '';
 	let limit = 100;
@@ -158,7 +158,7 @@
 
 		const _sendEmail = async () => {
 			await sendEmail({ user: $user.id, email: emailData });
-			showToast('Email sent successfully', ToastType.Success);
+			showToast(toastStore, 'Email sent successfully', ToastType.Success);
 			_clearEmailData();
 			setShowComposeEmail(false);
 			editor.destroy();

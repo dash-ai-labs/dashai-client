@@ -1,5 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import type { SearchEntry, User } from './types';
+import { goto } from '$app/navigation';
 
 // Define the type for the user store with optional initial value
 function persistentWritable(key: string, initialValue: any): Writable<any> {
@@ -9,7 +10,12 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 			// Only run this code in the browser
 			const storedValue = localStorage.getItem(key);
 			if (storedValue) {
-				set(JSON.parse(storedValue)); // Set the store to the value from localStorage
+				try {
+					set(JSON.parse(storedValue)); // Set the store to the value from localStorage
+				} catch (e) {
+					console.error(`Failed to parse stored value for ${key}:`, e);
+					// Fall back to initial value
+				}
 			}
 		}
 
