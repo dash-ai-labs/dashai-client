@@ -70,13 +70,13 @@
 	});
 
 	onMount(async () => {
-		const _emailList = await getEmailList({
+		const { emails, end } = await getEmailList({
 			user: get(user)?.id.toString(),
 			limit: 30,
 			page: 1,
 			filter: ['INBOX']
 		});
-		emailList.set(_emailList);
+		emailList.set(emails);
 	});
 </script>
 

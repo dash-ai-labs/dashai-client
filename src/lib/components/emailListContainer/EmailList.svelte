@@ -42,13 +42,13 @@
 		};
 		_archive();
 	};
-
 	const { selectEmail, setShowComposeEmail } = $props();
 	let _emailList = $state<Email[]>(get(emailList));
 	let container = $state<HTMLElement | null>(null);
 	let _emailAccount = $state<EmailAccount | undefined>(get(emailAccount));
 	let pageNumber = $state(1);
 	let limit = $state(30);
+	let listEnd = $state(false);
 	let selectedEmail = $state<Email | undefined>(undefined);
 	let isLoading = $state(false); // Track if data is being fetched
 	let toggleOptions = $state(['All Mail', 'Unread']);
@@ -98,7 +98,7 @@
 	const handleScroll = () => {
 		if (!container || isLoading) return; // Prevent duplicate calls while loading
 		const { scrollTop, scrollHeight, clientHeight } = container;
-		if (scrollTop + clientHeight >= scrollHeight - 70) {
+		if (scrollTop + clientHeight >= scrollHeight - 100) {
 			// Trigger slightly before the end
 			loadNextPage();
 		}
@@ -118,20 +118,24 @@
 		let newEmails;
 
 		if (email === 'All Emails') {
-			newEmails = await getEmailList({
+			const { emails, end } = await getEmailList({
 				user,
 				limit,
 				page,
 				filter
 			});
+			newEmails = emails;
+			listEnd = end;
 		} else {
-			newEmails = await getEmailList({
+			const { emails, end } = await getEmailList({
 				user,
 				account: email,
 				limit,
 				page,
 				filter
 			});
+			newEmails = emails;
+			listEnd = end;
 		}
 
 		// Append the new emails to the existing ones, avoiding duplicates
@@ -139,7 +143,7 @@
 			if (_emailList.length === 0) {
 				emailList.set(newEmails);
 			} else {
-				emailList.update((emails) => [
+				emailList.update((emails: Email[]) => [
 					...emails,
 					...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
 				]);
@@ -237,7 +241,7 @@
 	</div>
 	<EmailListSearch {setShowComposeEmail} {setEmailList} />
 	<div
-		class="no-scrollbar max-h-[calc(100vh-300px)] overflow-y-scroll"
+		class="no-scrollbar max-h-[calc(100vh-400px)] overflow-y-scroll"
 		bind:this={container}
 		onscroll={handleScroll}
 	>
@@ -262,6 +266,14 @@
 					/>
 				{/if}
 			{/each}
+			{#if listEnd}
+				<div
+					class="w-full py-4 text-center font-light text-primary-gray"
+					transition:fade={{ duration: 500 }}
+				>
+					No more emails.
+				</div>
+			{/if}
 		{/if}
 	</div>
 </div>
