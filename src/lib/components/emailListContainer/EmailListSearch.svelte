@@ -17,11 +17,8 @@
 	const handleInput = async () => {
 		if (searchInput.length > 0) {
 			const id = crypto.randomUUID();
-			const userId = get(user)?.id;
-			if (!userId) return;
-
 			const response: Email[] = await searchEmails({
-				user: userId.toString(),
+				user: get(user)?.id.toString(),
 				search: searchInput
 			});
 			setEmailList(response);

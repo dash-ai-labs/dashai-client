@@ -9,7 +9,7 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 		if (typeof window !== 'undefined') {
 			// Only run this code in the browser
 			const storedValue = localStorage.getItem(key);
-			if (storedValue && storedValue !== 'undefined') {
+			if (storedValue) {
 				try {
 					set(JSON.parse(storedValue)); // Set the store to the value from localStorage
 				} catch (e) {
@@ -27,9 +27,7 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 	// Subscribe to changes and update localStorage (in the browser)
 	if (typeof window !== 'undefined') {
 		store.subscribe((value) => {
-			if (value !== undefined) {
-				localStorage.setItem(key, JSON.stringify(value));
-			}
+			localStorage.setItem(key, JSON.stringify(value));
 		});
 	}
 
