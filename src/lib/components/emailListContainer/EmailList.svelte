@@ -12,6 +12,7 @@
 	} from '$lib/api/email';
 	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { IconReload } from '@tabler/icons-svelte';
 
 	import { type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
@@ -214,13 +215,47 @@
 		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
 		isToggleLoading = false; // Set loading state to false after emails are loaded
 	};
+
+	// Add a refresh function
+	const refreshEmails = async () => {
+		pageNumber = 1; // Reset page number
+		_emailList = []; // Clear existing emails
+		isLoading = true; // Set loading indicator
+		emailList.set([]); // Clear the store too
+
+		const userId = get(user)?.id;
+		if (!userId) {
+			isLoading = false;
+			return;
+		}
+
+		await loadEmails(
+			_emailAccount?.email || 'All Emails',
+			userId.toString(),
+			limit,
+			pageNumber,
+			lastFilter
+		);
+
+		pageNumber++; // Increment after a successful fetch
+		isLoading = false;
+	};
 </script>
 
 <div class="w-86 rounded-lg bg-primary-container">
 	<div
 		class="flex h-[60px] items-center justify-between border-b border-primary-gray p-[10px] text-h4"
 	>
-		<div class="mx-[2px]">Emails</div>
+		<div class="mx-[2px] flex items-center">
+			<div>Emails</div>
+			<button
+				class="ml-2 rounded-full p-1 hover:bg-primary-gray/20"
+				onclick={refreshEmails}
+				aria-label="Refresh emails"
+			>
+				<IconReload size="18" color="gray" />
+			</button>
+		</div>
 		<RadioGroup
 			active="variant-filled-primary"
 			hover="hover:variant-soft-primary"

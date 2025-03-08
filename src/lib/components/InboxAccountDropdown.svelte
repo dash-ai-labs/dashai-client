@@ -15,7 +15,13 @@
 	};
 	let options: Option[] = $state([{ label: 'All Emails', icon: null }]);
 	let selectedOption: Option = $state(options[0]);
-	let currentUser = get(user);
+	let currentUser = $state(get(user));
+
+	// Update currentUser when user store changes
+	user.subscribe((value) => {
+		currentUser = value;
+	});
+
 	async function loadEmailAccounts() {
 		if (currentUser?.id) {
 			emailAccounts = await getEmailAccounts({ user: currentUser.id.toString() });
@@ -39,10 +45,13 @@
 	};
 
 	const addAccount = async () => {
-		await addEmailAccount(currentUser?.id.toString());
+		if (currentUser?.id) {
+			await addEmailAccount(currentUser.id.toString());
+		}
 	};
+
 	run(() => {
-		if (get(user)?.id) {
+		if (currentUser?.id) {
 			loadEmailAccounts();
 			emailAccount.set({ email: selectedOption.label });
 		}
@@ -50,7 +59,7 @@
 </script>
 
 <div class="flex w-[200px] justify-end">
-	<Button>{$emailAccount.email}<ChevronDownOutline class="ms-2 h-6 w-6" /></Button>
+	<Button>{$emailAccount?.email || 'All Emails'}<ChevronDownOutline class="ms-2 h-6 w-6" /></Button>
 	<Dropdown color="#00000" class="rounded-lg bg-primary-container">
 		{#each options as option}
 			<DropdownItem
