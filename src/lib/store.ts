@@ -10,12 +10,7 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 			// Only run this code in the browser
 			const storedValue = localStorage.getItem(key);
 			if (storedValue) {
-				try {
-					set(JSON.parse(storedValue)); // Set the store to the value from localStorage
-				} catch (e) {
-					console.error(`Failed to parse stored value for ${key}:`, e);
-					// Fall back to initial value
-				}
+				set(JSON.parse(storedValue));
 			}
 		}
 
