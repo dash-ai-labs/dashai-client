@@ -12,12 +12,16 @@
 	} from '$lib/api/email';
 	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { IconRefresh } from '@tabler/icons-svelte';
 
 	import { type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
-			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
+			const userId = get(user)?.id;
+			if (!userId) return;
+
+			const res = await markAsUnread({ user: userId.toString(), email_id: email.email_id });
 			if (res) {
 				_emailList = [..._emailList.map((e) => (e.email_id === email.email_id ? res : e))];
 			}
@@ -26,7 +30,10 @@
 	};
 	export const removeEmail = (email: Email) => {
 		const _remove = async () => {
-			const res = await remove({ user: get(user)?.id.toString(), email_id: email.email_id });
+			const userId = get(user)?.id;
+			if (!userId) return;
+
+			const res = await remove({ user: userId.toString(), email_id: email.email_id });
 			if (res) {
 				_emailList = [..._emailList.filter((e) => e.email_id !== email.email_id)];
 			}
@@ -35,7 +42,10 @@
 	};
 	export const archiveEmail = (email: Email) => {
 		const _archive = async () => {
-			const res = await archive({ user: get(user)?.id.toString(), email_id: email.email_id });
+			const userId = get(user)?.id;
+			if (!userId) return;
+
+			const res = await archive({ user: userId.toString(), email_id: email.email_id });
 			if (res) {
 				_emailList = [..._emailList.filter((e) => e.email_id !== email.email_id)];
 			}
@@ -61,8 +71,11 @@
 	emailSearchList.subscribe((searchList) => {
 		if (searchList && searchList.length > 0) {
 			const _searchEmails = async () => {
+				const userId = get(user)?.id;
+				if (!userId) return;
+
 				const emailResults = await searchEmails({
-					user: get(user)?.id.toString(),
+					user: userId.toString(),
 					search: searchList[0].query
 				});
 				_emailList = emailResults;
@@ -159,12 +172,16 @@
 	// Function to load the next page of emails
 	const loadNextPage = async () => {
 		if (isLoading) return; // Prevent concurrent calls
-		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
+
+		const userId = get(user)?.id;
+		if (!userId) return;
+
+		await loadEmails(_emailAccount?.email || '', userId.toString(), limit, pageNumber, lastFilter);
 		pageNumber++; // Increment after a successful fetch
 	};
 
 	// Handle email selection
-	const handleEmailSelect = (event) => {
+	const handleEmailSelect = (event: CustomEvent) => {
 		selectedEmail = event.detail;
 		selectEmail(selectedEmail);
 
@@ -172,9 +189,12 @@
 		disableTransition = true;
 
 		const updateEmailAsRead = async () => {
+			const userId = get(user)?.id;
+			if (!userId || !selectedEmail?.email_id) return;
+
 			const newEmail = await markEmailAsRead({
-				user: get(user)?.id.toString(),
-				email_id: selectedEmail?.email_id
+				user: userId.toString(),
+				email_id: selectedEmail.email_id
 			});
 			const index = _emailList.findIndex(
 				(item: Email) => item.email_id === selectedEmail?.email_id
@@ -211,8 +231,26 @@
 			lastFilter.pop();
 		}
 
-		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
+		const userId = get(user)?.id;
+		if (!userId) return;
+
+		await loadEmails(_emailAccount?.email || '', userId.toString(), limit, pageNumber, lastFilter);
 		isToggleLoading = false; // Set loading state to false after emails are loaded
+	};
+
+	// Add a refresh function
+	const refreshEmails = async () => {
+		pageNumber = 1; // Reset page number
+		_emailList = []; // Clear existing emails
+		isLoading = true; // Set loading indicator
+
+		const userId = get(user)?.id;
+		if (!userId) return;
+
+		await loadEmails(_emailAccount?.email || '', userId.toString(), limit, pageNumber, lastFilter);
+
+		pageNumber++; // Increment after a successful fetch
+		isLoading = false;
 	};
 </script>
 
@@ -220,7 +258,16 @@
 	<div
 		class="flex h-[60px] items-center justify-between border-b border-primary-gray p-[10px] text-h4"
 	>
-		<div class="mx-[2px]">Emails</div>
+		<div class="mx-[2px] flex items-center">
+			<div>Emails</div>
+			<button
+				class="ml-2 rounded-full p-1 hover:bg-primary-gray/20"
+				onclick={refreshEmails}
+				aria-label="Refresh emails"
+			>
+				<IconRefresh size="18" color="gray" />
+			</button>
+		</div>
 		<RadioGroup
 			active="variant-filled-primary"
 			hover="hover:variant-soft-primary"
