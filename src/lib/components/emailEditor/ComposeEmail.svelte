@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { onDestroy } from 'svelte';
 	import { Node } from '@tiptap/core';
 	import Editor from './editor/index.svelte';
 	import Bold from '@tiptap/extension-bold';
-	import { ComposeEmailMode, type Email, type EmailData } from '$lib/types';
+	import { ComposeEmailMode, ToastType, type Email, type EmailData } from '$lib/types';
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
@@ -16,6 +14,9 @@
 	import DOMPurify from 'dompurify';
 	import type { EditorType } from './lib';
 
+	import { showToast } from '$lib/helpers';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	const toastStore = getToastStore();
 	let content = '';
 	let limit = 100;
 	let bold = true;
@@ -153,9 +154,23 @@
 
 		const _sendEmail = async () => {
 			await sendEmail({ user: $user.id, email: emailData });
+			showToast(toastStore, 'Email sent successfully', ToastType.Success);
+			_clearEmailData();
+			setShowComposeEmail(false);
+			editor.destroy();
 		};
 		_sendEmail();
 	};
+	const _clearEmailData = () => {
+		emailData.subject = '';
+		emailData.body = '';
+		emailData.from_addr = '';
+		emailData.to = [];
+		emailData.cc = [];
+		emailData.bcc = [];
+		emailData.attachments = [];
+	};
+
 	const EmailQuote = Node.create({
 		name: 'emailQuote',
 
@@ -445,75 +460,6 @@
 	});
 </script>
 
-<div bind:this={bmenu}>
-	{#if editor}
-		{#if bold}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('bold')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleBold().run())}
-			>
-				Bold
-			</button>
-		{/if}
-
-		{#if italic}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('italic')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleItalic().run())}
-			>
-				Italic
-			</button>
-		{/if}
-
-		{#if strike}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('strike')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleStrike().run())}
-			>
-				Tachado
-			</button>
-		{/if}
-
-		{#if underline}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('underline')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleUnderline().run())}
-			>
-				Subrayado
-			</button>
-		{/if}
-
-		{#if code}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('code')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleCode().run())}
-			>
-				Código
-			</button>
-		{/if}
-
-		{#if link}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('link')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(setLink)}
-			>
-				Link
-			</button>
-		{/if}
-	{/if}
-</div>
 <div
 	class="fixed bottom-[-10px] right-2 z-50 w-[50%] overflow-hidden rounded-2xl rounded-b-none border border-primary-gray bg-primary-black"
 >
@@ -542,25 +488,7 @@
 		/>
 	</div>
 	<div class="mx-1 my-1">
-		<Editor
-			bind:this={editor}
-			onUpdate={() => {
-				saveStatus = 'Unsaved';
-			}}
-			onDebouncedUpdate={() => {
-				saveStatus = 'Saving...';
-				// Simulate a delay in saving.
-				setTimeout(() => {
-					saveStatus = 'Saved';
-				}, 500);
-			}}
-		>
-			<div
-				class="absolute right-5 top-5 z-10 mb-5 rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400"
-			>
-				{saveStatus}
-			</div>
-		</Editor>
+		<Editor bind:this={editor} />
 	</div>
 	<div class="m-2 flex justify-start text-primary-gray">
 		<Footer {onSend} />

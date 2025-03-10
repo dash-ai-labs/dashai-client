@@ -32,8 +32,11 @@
 
 	export const addLabelToEmail = (_email: Email, emailLabel: Label) => {
 		const _addLabelToEmail = async () => {
+			const currentUser = get(user);
+			if (!currentUser?.id || !_email) return;
+
 			const res = await emailLabelAction({
-				user: get(user)?.id.toString(),
+				user: currentUser.id.toString(),
 				email_id: _email.email_id,
 				label_id: emailLabel.id,
 				action: EmailLabelAction.Add
@@ -47,8 +50,11 @@
 
 	export const removeLabelFromEmail = (_email: Email, emailLabel: Label) => {
 		const _removeLabelFromEmail = async () => {
+			const currentUser = get(user);
+			if (!currentUser?.id || !_email) return;
+
 			const res = await emailLabelAction({
-				user: get(user)?.id.toString(),
+				user: currentUser.id.toString(),
 				email_id: _email.email_id,
 				label_id: emailLabel.id,
 				action: EmailLabelAction.Remove

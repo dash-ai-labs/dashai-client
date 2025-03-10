@@ -157,9 +157,9 @@
 	});
 </script>
 
-<!-- {#if editor && editor.isEditable}
+{#if editor && editor.isEditable}
 	<EditorBubbleMenu {editor} />
-{/if} -->
+{/if}
 
 <div id="editor" class={className} bind:this={element}>
 	<slot />

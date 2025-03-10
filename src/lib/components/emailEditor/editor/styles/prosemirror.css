@@ -120,3 +120,8 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 .tippy-box {
 	max-width: 400px !important;
 }
+
+/* Add this to the prosemirror CSS file */
+.task-item .ProseMirror-placeholder {
+	display: none !important;
+}

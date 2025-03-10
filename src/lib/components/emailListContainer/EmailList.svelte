@@ -12,6 +12,7 @@
 	} from '$lib/api/email';
 	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { IconReload } from '@tabler/icons-svelte';
 
 	import { ComposeEmailMode, type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
@@ -50,6 +51,7 @@
 	let _emailAccount = $state<EmailAccount | undefined>(get(emailAccount));
 	let pageNumber = $state(1);
 	let limit = $state(30);
+	let listEnd = $state(false);
 	let selectedEmail = $state<Email | undefined>(undefined);
 	let isLoading = $state(false); // Track if data is being fetched
 	let toggleOptions = $state(['All Mail', 'Unread']);
@@ -99,7 +101,7 @@
 	const handleScroll = () => {
 		if (!container || isLoading) return; // Prevent duplicate calls while loading
 		const { scrollTop, scrollHeight, clientHeight } = container;
-		if (scrollTop + clientHeight >= scrollHeight - 70) {
+		if (scrollTop + clientHeight >= scrollHeight - 100) {
 			// Trigger slightly before the end
 			loadNextPage();
 		}
@@ -119,20 +121,24 @@
 		let newEmails;
 
 		if (email === 'All Emails') {
-			newEmails = await getEmailList({
+			const { emails, end } = await getEmailList({
 				user,
 				limit,
 				page,
 				filter
 			});
+			newEmails = emails;
+			listEnd = end;
 		} else {
-			newEmails = await getEmailList({
+			const { emails, end } = await getEmailList({
 				user,
 				account: email,
 				limit,
 				page,
 				filter
 			});
+			newEmails = emails;
+			listEnd = end;
 		}
 
 		// Append the new emails to the existing ones, avoiding duplicates
@@ -140,7 +146,7 @@
 			if (_emailList.length === 0) {
 				emailList.set(newEmails);
 			} else {
-				emailList.update((emails) => [
+				emailList.update((emails: Email[]) => [
 					...emails,
 					...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
 				]);
@@ -173,10 +179,16 @@
 				user: get(user)?.id.toString(),
 				email_id: selectedEmail?.email_id
 			});
-			const index = _emailList.findIndex((item) => item.email_id === selectedEmail?.email_id);
+			const index = _emailList.findIndex(
+				(item: Email) => item.email_id === selectedEmail?.email_id
+			);
 			if (index !== -1 && newEmail) {
 				// Update the object directly
-				_emailList = [..._emailList.slice(0, index), newEmail, ..._emailList.slice(index + 1)];
+
+				_emailList = _emailList.map((email: Email) =>
+					email.email_id === selectedEmail?.email_id ? newEmail : email
+				);
+				emailList.set(_emailList);
 			}
 		};
 		if (selectedEmail?.labels.includes('UNREAD')) updateEmailAsRead();
@@ -205,13 +217,47 @@
 		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
 		isToggleLoading = false; // Set loading state to false after emails are loaded
 	};
+
+	// Add a refresh function
+	const refreshEmails = async () => {
+		pageNumber = 1; // Reset page number
+		_emailList = []; // Clear existing emails
+		isLoading = true; // Set loading indicator
+		emailList.set([]); // Clear the store too
+
+		const userId = get(user)?.id;
+		if (!userId) {
+			isLoading = false;
+			return;
+		}
+
+		await loadEmails(
+			_emailAccount?.email || 'All Emails',
+			userId.toString(),
+			limit,
+			pageNumber,
+			lastFilter
+		);
+
+		pageNumber++; // Increment after a successful fetch
+		isLoading = false;
+	};
 </script>
 
 <div class="w-86 rounded-lg bg-primary-container">
 	<div
 		class="flex h-[60px] items-center justify-between border-b border-primary-gray p-[10px] text-h4"
 	>
-		<div class="mx-[2px]">Emails</div>
+		<div class="mx-[2px] flex items-center">
+			<div>Emails</div>
+			<button
+				class="ml-2 rounded-full p-1 hover:bg-primary-gray/20"
+				onclick={refreshEmails}
+				aria-label="Refresh emails"
+			>
+				<IconReload size="18" color="gray" />
+			</button>
+		</div>
 		<RadioGroup
 			active="variant-filled-primary"
 			hover="hover:variant-soft-primary"
@@ -238,7 +284,7 @@
 		{setEmailList}
 	/>
 	<div
-		class="no-scrollbar max-h-[calc(100vh-300px)] overflow-y-scroll"
+		class="no-scrollbar max-h-[calc(100vh-400px)] overflow-y-scroll"
 		bind:this={container}
 		onscroll={handleScroll}
 	>
@@ -263,6 +309,14 @@
 					/>
 				{/if}
 			{/each}
+			{#if listEnd}
+				<div
+					class="w-full py-4 text-center font-light text-primary-gray"
+					transition:fade={{ duration: 500 }}
+				>
+					No more emails.
+				</div>
+			{/if}
 		{/if}
 	</div>
 </div>

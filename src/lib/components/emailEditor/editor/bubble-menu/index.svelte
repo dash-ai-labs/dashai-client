@@ -3,14 +3,20 @@
 		name: string;
 		isActive: () => boolean;
 		command: () => void;
-		icon: typeof BoldIcon;
+		icon: any;
 	}
 </script>
 
 <script lang="ts">
 	import { cn } from '$lib/utils/cn';
 	import type { Editor } from '@tiptap/core';
-	import { BoldIcon, CodeIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon } from 'lucide-svelte';
+	import {
+		IconBold,
+		IconCode,
+		IconItalic,
+		IconStrikethrough,
+		IconUnderline
+	} from '@tabler/icons-svelte';
 	import { writable } from 'svelte/store';
 	import ColorSelector from './color-selector.svelte';
 	import LinkSelector from './link-selector.svelte';
@@ -48,31 +54,31 @@
 			name: 'bold',
 			isActive: () => editor.isActive('bold'),
 			command: () => editor.chain().focus().toggleBold().run(),
-			icon: BoldIcon
+			icon: IconBold
 		},
 		{
 			name: 'italic',
 			isActive: () => editor.isActive('italic'),
 			command: () => editor.chain().focus().toggleItalic().run(),
-			icon: ItalicIcon
+			icon: IconItalic
 		},
 		{
 			name: 'underline',
 			isActive: () => editor.isActive('underline'),
 			command: () => editor.chain().focus().toggleUnderline().run(),
-			icon: UnderlineIcon
+			icon: IconUnderline
 		},
 		{
 			name: 'strike',
 			isActive: () => editor.isActive('strike'),
 			command: () => editor.chain().focus().toggleStrike().run(),
-			icon: StrikethroughIcon
+			icon: IconStrikethrough
 		},
 		{
 			name: 'code',
 			isActive: () => editor.isActive('code'),
 			command: () => editor.chain().focus().toggleCode().run(),
-			icon: CodeIcon
+			icon: IconCode
 		}
 	];
 
@@ -123,7 +129,7 @@
 	<NodeSelector {editor} bind:isOpen={$isNodeSelectorOpen} />
 	<LinkSelector {editor} bind:isOpen={$isLinkSelectorOpen} />
 	<div class="flex">
-		{#each items as item, index (index)}
+		{#each items as item, index}
 			<button
 				on:click={item.command}
 				class="p-2 text-stone-600 hover:bg-stone-100 active:bg-stone-200"
@@ -138,5 +144,5 @@
 			</button>
 		{/each}
 	</div>
-	<!-- <ColorSelector {editor} bind:isOpen={$isColorSelectorOpen} /> -->
+	<ColorSelector {editor} bind:isOpen={$isColorSelectorOpen} />
 </div>

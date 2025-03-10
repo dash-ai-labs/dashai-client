@@ -34,8 +34,20 @@
 				}
 			]);
 			aiSearchQuery.set(searchInput);
+
+			const currentUser = get(user);
+			if (!currentUser?.id) {
+				emailSearchList.update((list) =>
+					list.map((item) => ({
+						...item,
+						loading: false
+					}))
+				);
+				return;
+			}
+
 			const reader = await searchEmailsStreaming({
-				user: get(user)?.id.toString(),
+				user: currentUser.id.toString(),
 				search: searchInput
 			});
 			if (reader) {

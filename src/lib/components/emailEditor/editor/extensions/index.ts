@@ -104,13 +104,18 @@ export const defaultExtensions = [
 		}
 	}),
 	Placeholder.configure({
-		placeholder: ({ node }: any) => {
-			if (node.type.name === 'heading') {
-				return `Heading ${node.attrs.level}`;
+		placeholder: ({ node, editor }) => {
+			if (editor.isEmpty && node.type.name === 'paragraph') {
+				return 'Press / for commands or ++ for AI suggestions';
 			}
-			return "Press '/' for commands, or '++' for AI autocomplete...";
+
+			if (node.type.name === 'taskItem') {
+				return '';
+			}
+
+			return '';
 		},
-		includeChildren: true
+		showOnlyCurrent: true
 	}),
 	SlashCommand,
 	TiptapUnderline,
@@ -121,14 +126,15 @@ export const defaultExtensions = [
 	}),
 	TaskList.configure({
 		HTMLAttributes: {
-			class: 'not-prose pl-2'
+			class: 'task-list'
 		}
 	}),
 	TaskItem.configure({
+		nested: true,
 		HTMLAttributes: {
-			class: 'flex items-start my-4'
+			class: 'task-item'
 		},
-		nested: true
+		placeholder: ''
 	}),
 	Markdown.configure({
 		html: false,

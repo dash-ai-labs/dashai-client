@@ -1,41 +1,35 @@
 <script lang="ts">
 	import {
-		Check,
-		ChevronDown,
-		Heading1,
-		Heading2,
-		Heading3,
-		TextQuote,
-		ListOrdered,
-		TextIcon,
-		Code,
-		CheckSquare
-	} from 'lucide-svelte';
-	import { Popover } from 'melt/builders';
+		IconCheck,
+		IconChevronDown,
+		IconH1,
+		IconH2,
+		IconH3,
+		IconQuote,
+		IconListNumbers,
+		IconLetterT,
+		IconCode,
+		IconSquareCheck
+	} from '@tabler/icons-svelte';
+	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 
 	let { editor, isOpen = $bindable() } = $props();
+	let dropdownOpen = false;
+	let buttonElement;
 
-	const popover = new Popover({
-		computePositionOptions: {
-			placement: 'bottom-start'
-		},
-		open: isOpen,
-		onOpenChange(value) {
-			isOpen = value;
-			return value;
-		}
+	$effect(() => {
+		dropdownOpen = isOpen;
 	});
 
 	$effect(() => {
-		console.log('isOpen', isOpen);
+		isOpen = dropdownOpen;
 	});
 
 	const items = $derived([
 		{
 			name: 'Text',
-			icon: TextIcon,
+			icon: IconLetterT,
 			command: () => editor.chain().focus().toggleNode('paragraph', 'paragraph').run(),
-			// I feel like there has to be a more efficient way to do this – feel free to PR if you know how!
 			isActive:
 				editor.isActive('paragraph') &&
 				!editor.isActive('bulletList') &&
@@ -43,50 +37,50 @@
 		},
 		{
 			name: 'Heading 1',
-			icon: Heading1,
+			icon: IconH1,
 			command: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
 			isActive: editor.isActive('heading', { level: 1 })
 		},
 		{
 			name: 'Heading 2',
-			icon: Heading2,
+			icon: IconH2,
 			command: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
 			isActive: editor.isActive('heading', { level: 2 })
 		},
 		{
 			name: 'Heading 3',
-			icon: Heading3,
+			icon: IconH3,
 			command: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
 			isActive: editor.isActive('heading', { level: 3 })
 		},
 		{
 			name: 'To-do List',
-			icon: CheckSquare,
+			icon: IconSquareCheck,
 			command: () => editor.chain().focus().toggleTaskList().run(),
 			isActive: editor.isActive('taskItem')
 		},
 		{
 			name: 'Bullet List',
-			icon: ListOrdered,
+			icon: IconListNumbers,
 			command: () => editor.chain().focus().toggleBulletList().run(),
 			isActive: editor.isActive('bulletList')
 		},
 		{
 			name: 'Numbered List',
-			icon: ListOrdered,
+			icon: IconListNumbers,
 			command: () => editor.chain().focus().toggleOrderedList().run(),
 			isActive: editor.isActive('orderedList')
 		},
 		{
 			name: 'Quote',
-			icon: TextQuote,
+			icon: IconQuote,
 			command: () =>
 				editor.chain().focus().toggleNode('paragraph', 'paragraph').toggleBlockquote().run(),
 			isActive: editor.isActive('blockquote')
 		},
 		{
 			name: 'Code',
-			icon: Code,
+			icon: IconCode,
 			command: () => editor.chain().focus().toggleCodeBlock().run(),
 			isActive: editor.isActive('codeBlock')
 		}
@@ -97,41 +91,33 @@
 			name: 'Multiple'
 		}
 	);
-
-	// const {
-	// 	elements: { trigger, content },
-	// 	states: { open: localOpen }
-	// } = createPopover({
-	// 	defaultOpen: isOpen,
-	// 	onOpenChange({ next }) {
-	// 		isOpen = next;
-	// 		return next;
-	// 	}
-	// });
 </script>
 
 <div>
 	<div class="relative h-full">
 		<button
-			{...popover.trigger}
+			bind:this={buttonElement}
+			onclick={() => (dropdownOpen = !dropdownOpen)}
 			class="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-stone-600 hover:bg-stone-100 active:bg-stone-200"
 			type="button"
 		>
 			<span>{activeItem?.name}</span>
-			<ChevronDown class="h-4 w-4" />
+			<IconChevronDown class="h-4 w-4" />
 		</button>
-		<div
-			{...popover.content}
-			class="animate-in fade-in slide-in-from-top-1 z-[50] my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border border-stone-200 bg-white p-1 shadow-xl"
+
+		<Dropdown
+			placement="bottom"
+			triggeredBy={buttonElement}
+			class="z-[99999] w-48 rounded-md p-1 shadow-lg"
 		>
-			{#each items as item, index (index)}
-				<button
-					onclick={() => {
+			{#each items as item, index}
+				<DropdownItem
+					on:click={() => {
 						item.command();
+						dropdownOpen = false;
 						isOpen = false;
 					}}
-					class="flex items-center justify-between rounded-sm px-2 py-1 text-sm text-stone-600 hover:bg-stone-100"
-					type="button"
+					class="flex items-center justify-between px-2 py-1 text-sm text-stone-600 hover:bg-stone-100"
 				>
 					<div class="flex items-center space-x-2">
 						<div class="rounded-sm border border-stone-200 p-1">
@@ -140,10 +126,10 @@
 						<span>{item.name}</span>
 					</div>
 					{#if activeItem.name === item.name}
-						<Check class="h-4 w-4" />
+						<IconCheck class="h-4 w-4" />
 					{/if}
-				</button>
+				</DropdownItem>
 			{/each}
-		</div>
+		</Dropdown>
 	</div>
 </div>

@@ -90,3 +90,9 @@ export enum ComposeEmailMode {
 	Reply = 'Reply',
 	Forward = 'Forward'
 }
+
+export enum ToastType {
+	Success = 'bg-primary-green',
+	Error = 'bg-primary-red',
+	Warning = 'bg-primary-yellow'
+}
