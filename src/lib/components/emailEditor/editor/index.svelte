@@ -24,9 +24,7 @@
 	 * Additional classes to add to the editor container.
 	 * Defaults to "relative min-h-[500px] w-full max-w-screen-lg border-stone-200 bg-white p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg".
 	 */
-	let className =
-		'relative min-h-[500px] w-full max-w-screen-lg border-stone-200 bg-black p-12 pb-24 sm:pb-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg text-primary-black selection:bg-primary-black selection:text-primary-white text-primary-white';
-	export { className as class };
+	let className = 'relative min-h-[300px] px-1 py-1';
 	/**
 	 * The default value to use for the editor.
 	 * Defaults to empty string.
@@ -163,6 +161,7 @@
 
 <div id="editor" class={className} bind:this={element}>
 	<slot />
+
 	{#if editor?.isActive('image')}
 		<ImageResizer {editor} />
 	{/if}

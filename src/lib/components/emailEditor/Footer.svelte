@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PrimaryButton from '../PrimaryButton.svelte';
+	import PrimaryButton from '$lib/components/PrimaryButton.svelte';
 
 	let { onSend }: { onSend: () => void } = $props();
 </script>

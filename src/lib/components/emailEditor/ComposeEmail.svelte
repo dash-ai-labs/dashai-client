@@ -7,25 +7,17 @@
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
-	import Footer from './Footer.svelte';
 	import { user, errorMessage, showErrorModal } from '$lib/store';
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
 	import type { EditorType } from './lib';
-
 	import { showToast } from '$lib/helpers';
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import Footer from './Footer.svelte';
+
 	const toastStore = getToastStore();
-	let content = '';
-	let limit = 100;
-	let bold = true;
-	let italic = true;
-	let strike = false;
-	let underline = false;
-	let link = false;
-	let code = false;
-	let placeholder = '';
+
 	let {
 		email,
 		height = $bindable(),
@@ -262,86 +254,7 @@
         </div>
     `;
 	};
-	// onMount(() => {
-	// 	editor = new Editor({
-	// 		element: element,
-	// 		extensions: [
-	// 			EmailQuote,
-	// 			// Document,
-	// 			// Paragraph,
-	// 			// Text,
-	// 			//Bold,
-	// 			StarterKit,
-	// 			// Blockquote,
-	// 			// CustomBold,
-	// 			// 	Code,
-	// 			// Italic,
-	// 			// Strike,
-	// 			// Underline,
-	// 			Link.configure({
-	// 				validate: (href) => /^https?:\/\//.test(href),
-	// 				HTMLAttributes: { rel: null, target: null }
-	// 			}),
-	// 			BubbleMenu.configure({
-	// 				element: bmenu,
-	// 				tippyOptions: { duration: 100, theme: 'local', maxWidth: 450, appendTo: document.body }
-	// 			}),
-	// 			CharacterCount.configure({
-	// 				limit
-	// 			}),
-	// 			// HardBreak.extend({
-	// 			// 	addKeyboardShortcuts() {
-	// 			// 		return {
-	// 			// 			Enter: () => this.editor.commands.setHardBreak()
-	// 			// 		};
-	// 			// 	}
-	// 			// }).configure({ keepMarks: false }),
-	// 			Placeholder.configure({ placeholder })
-	// 		],
-	// 		content,
-	// 		editorProps: {
-	// 			attributes: {
-	// 				class: 'prose p-3 outline-none text-font-light-gray text-base min-h-[200px]'
-	// 			},
-	// 			handleKeyDown: (view, event) => {
-	// 				if (event.key === 'Tab') {
-	// 					event.preventDefault();
-	// 					setTimeout(async () => {
-	// 						if (editor) {
-	// 							console.log('Inserting content:', suggestionText);
-	// 							await editor.chain().focus().insertContent(suggestionText).scrollIntoView().run();
-	// 							console.log('Inserted after delay:', editor.getText());
-	// 						}
-	// 					}, 50);
 
-	// 					// Use setTimeout to log after the editor has updated
-	// 					setTimeout(() => {
-	// 						console.log('Editor HTML after update:', editor.getHTML());
-	// 						emailData.body = editor.getHTML();
-	// 						editor.commands.focus(); // Ensure the editor regains focus
-	// 					}, 0);
-	// 				}
-	// 			}
-	// 		},
-	// 		onCreate({ editor }) {
-	// 			// The editor is ready.
-	// 			const html = editor.getHTML();
-	// 			emailData.body = html;
-	// 		},
-	// 		onTransaction: () => {
-	// 			// force re-render so `editor.isActive` works as expected
-	// 			editor = editor;
-	// 		},
-	// 		onUpdate: ({ editor }) => {
-	// 			// const html = editor.getHTML();
-	// 			// // send the content to an API here
-	// 			// emailData.body = html;
-	// 			const updatedHtml = editor.getHTML();
-	// 			console.log('Editor updated, new HTML:', updatedHtml);
-	// 			emailData.body = updatedHtml;
-	// 		}
-	// 	});
-	// });
 	function formatEmailContent(content: string): string {
 		// Check if content is HTML by looking for DOCTYPE or HTML tags
 		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
@@ -400,20 +313,6 @@
 			`;
 		}
 	}
-	// $effect(() => {
-	// 	if (!editor) return;
-	// 	const _getSuggestion = async () => {
-	// 		const suggestion = await getSuggestion({
-	// 			user: get(user)?.id.toString(),
-	// 			email_id: email ? email.id : '',
-	// 			subject: emailData.subject,
-	// 			body: emailData.body
-	// 		});
-	// 		suggestionText = suggestion;
-	// 		console.log('Suggestion:', suggestionText);
-	// 	};
-	// 	if (emailData.subject || emailData.body) _getSuggestion();
-	// });
 
 	$effect(() => {
 		if (!editor) return;
@@ -488,7 +387,7 @@
 		/>
 	</div>
 	<div class="mx-1 my-1">
-		<Editor bind:this={editor} />
+		<Editor />
 	</div>
 	<div class="m-2 flex justify-start text-primary-gray">
 		<Footer {onSend} />

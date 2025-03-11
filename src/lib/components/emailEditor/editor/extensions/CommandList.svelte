@@ -2,7 +2,6 @@
 	import { getPrevText } from '$lib/components/emailEditor/lib/editor';
 	import { LoadingCircle } from '$lib/components/emailEditor/icons/index';
 	import type { CommandItemProps } from './slash-command';
-	import { anyify } from '$lib/components/emailEditor/lib/utils';
 	import { useCompletion } from '@ai-sdk/svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { get } from 'svelte/store';
@@ -21,7 +20,7 @@
 	} = $props();
 
 	let selectedIndex = $state(0);
-	console.log(items);
+
 	const { complete, isLoading } = useCompletion({
 		id: 'novel',
 		api: `${PUBLIC_API_URL}/user/${get(user)?.id.toString()}/suggestion`,
