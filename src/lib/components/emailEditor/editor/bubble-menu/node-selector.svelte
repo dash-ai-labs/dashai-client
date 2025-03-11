@@ -94,11 +94,11 @@
 </script>
 
 <div>
-	<div class="relative h-full">
+	<div class="relative h-full bg-primary-black text-font-light-gray">
 		<button
 			bind:this={buttonElement}
 			onclick={() => (dropdownOpen = !dropdownOpen)}
-			class="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-stone-600 hover:bg-stone-100 active:bg-stone-200"
+			class="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-font-light-gray hover:bg-stone-100 active:bg-stone-200"
 			type="button"
 		>
 			<span>{activeItem?.name}</span>
@@ -108,7 +108,7 @@
 		<Dropdown
 			placement="bottom"
 			triggeredBy={buttonElement}
-			class="z-[99999] w-48 rounded-md p-1 shadow-lg"
+			class="z-[99999] w-48 rounded-md bg-primary-black p-1 shadow-lg"
 		>
 			{#each items as item, index}
 				<DropdownItem
@@ -117,7 +117,7 @@
 						dropdownOpen = false;
 						isOpen = false;
 					}}
-					class="flex items-center justify-between px-2 py-1 text-sm text-stone-600 hover:bg-stone-100"
+					class="flex items-center justify-between px-2 py-1 text-sm text-font-light-gray hover:bg-stone-100"
 				>
 					<div class="flex items-center space-x-2">
 						<div class="rounded-sm border border-stone-200 p-1">

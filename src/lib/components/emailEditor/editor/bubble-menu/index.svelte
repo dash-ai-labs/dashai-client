@@ -124,15 +124,15 @@
 
 <div
 	bind:this={element}
-	class="flex h-12 w-fit divide-x divide-stone-200 rounded border border-stone-200 shadow-xl"
+	class="flex h-12 w-fit divide-x divide-stone-200 rounded border border-stone-200 bg-primary-black shadow-xl"
 >
-	<NodeSelector {editor} bind:isOpen={$isNodeSelectorOpen} />
+	<!-- <NodeSelector {editor} bind:isOpen={$isNodeSelectorOpen} /> -->
 	<LinkSelector {editor} bind:isOpen={$isLinkSelectorOpen} />
 	<div class="flex">
 		{#each items as item, index}
 			<button
 				on:click={item.command}
-				class="p-2 text-stone-600 hover:bg-stone-100 active:bg-stone-200"
+				class="p-2 text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
 				type="button"
 			>
 				<svelte:component
@@ -144,5 +144,5 @@
 			</button>
 		{/each}
 	</div>
-	<ColorSelector {editor} bind:isOpen={$isColorSelectorOpen} />
+	<!-- <ColorSelector {editor} bind:isOpen={$isColorSelectorOpen} /> -->
 </div>

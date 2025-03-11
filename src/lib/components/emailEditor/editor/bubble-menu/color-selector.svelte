@@ -117,7 +117,7 @@
 			dropdownOpen = !dropdownOpen;
 			isOpen = !isOpen;
 		}}
-		class="flex h-full items-center gap-1 p-2 text-sm font-medium text-stone-600 hover:bg-stone-100 active:bg-stone-200"
+		class="flex h-full items-center gap-1 p-2 text-sm font-medium text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
 	>
 		<span
 			class="rounded-sm px-1"
@@ -135,7 +135,7 @@
 		triggeredBy={buttonElement}
 		class="z-[99999] w-48 rounded-md p-1 shadow-lg"
 	>
-		<div class="my-1 px-2 text-sm text-stone-500">Color</div>
+		<div class="my-1 px-2 text-sm text-font-light-gray">Color</div>
 		{#each TEXT_COLORS as { name, color }, index}
 			<DropdownItem
 				on:click={() => {
@@ -149,7 +149,7 @@
 					dropdownOpen = false;
 					isOpen = false;
 				}}
-				class="flex items-center justify-between px-2 py-1 text-sm text-stone-600 hover:bg-stone-100"
+				class="flex items-center justify-between px-2 py-1 text-sm text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
 			>
 				<div class="flex items-center space-x-2">
 					<div class="rounded-sm border border-stone-200 px-1 py-px font-medium" style:color>A</div>

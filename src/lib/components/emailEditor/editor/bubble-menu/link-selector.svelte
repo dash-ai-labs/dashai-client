@@ -58,7 +58,7 @@
 				url = '';
 			}
 		}}
-		class="flex h-full items-center gap-1 p-2 text-stone-600 hover:bg-stone-100 active:bg-stone-200"
+		class="flex h-full items-center gap-1 p-2 text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
 		class:text-blue-500={editor.isActive('link')}
 		type="button"
 	>
