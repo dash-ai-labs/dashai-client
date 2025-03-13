@@ -2,21 +2,7 @@
 	import { preventDefault } from 'svelte/legacy';
 
 	import { onMount, onDestroy } from 'svelte';
-	import { Editor, Node } from '@tiptap/core';
-	import Document from '@tiptap/extension-document';
-	import Paragraph from '@tiptap/extension-paragraph';
-	import HardBreak from '@tiptap/extension-hard-break';
-	import Text from '@tiptap/extension-text';
-	import Bold from '@tiptap/extension-bold';
-	import Code from '@tiptap/extension-code';
-	import Italic from '@tiptap/extension-italic';
-	import Strike from '@tiptap/extension-strike';
-	import Underline from '@tiptap/extension-underline';
-	import Link from '@tiptap/extension-link';
-	import Placeholder from '@tiptap/extension-placeholder';
-	import BubbleMenu from '@tiptap/extension-bubble-menu';
-	import CharacterCount from '@tiptap/extension-character-count';
-	import Blockquote from '@tiptap/extension-blockquote';
+
 	import { ComposeEmailMode, ToastType, type Email, type EmailData } from '$lib/types';
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
@@ -28,6 +14,8 @@
 	import DOMPurify from 'dompurify';
 	import { showToast } from '$lib/helpers';
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import Composer from './composer/index.svelte';
+
 	const toastStore = getToastStore();
 	let content = '';
 	let limit = 100;
@@ -47,7 +35,6 @@
 	}: { email: Email; height: number } = $props();
 	let element: HTMLElement;
 	let bmenu: HTMLElement;
-	let editor: Editor = $state(null);
 	let dropDownSelectedOption = 0;
 	let emailData: EmailData = $state({
 		subject: '',
@@ -87,12 +74,6 @@
 		dropDownSelectedOption = option;
 	};
 
-	const CustomBold = Bold.extend({
-		renderHTML({ HTMLAttributes }) {
-			return ['b', HTMLAttributes, 0];
-		}
-	});
-
 	const ComposeOptions = [
 		{
 			label: '↰',
@@ -105,37 +86,6 @@
 			fn: () => {}
 		}
 	];
-
-	const setLink = () => {
-		if (editor.isActive('link')) {
-			editor.chain().focus().extendMarkRange('link').unsetLink().run();
-
-			return;
-		}
-
-		const previousUrl = editor.getAttributes('link').href;
-		const url = window.prompt('URL', previousUrl);
-
-		// cancelled
-		if (url === null) {
-			return;
-		}
-
-		// empty
-		if (url === '') {
-			editor.chain().focus().extendMarkRange('link').unsetLink().run();
-
-			return;
-		}
-
-		if (!/^https?:\/\//.test(url)) {
-			window.alert('DIRECCIÓN INVÁLIDA!!');
-			return;
-		}
-
-		// update link
-		editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-	};
 
 	const onSend = () => {
 		if (!emailData.from_addr) {
@@ -150,18 +100,18 @@
 			return;
 		}
 
-		if (!editor.getHTML() || editor.getHTML() === '<p></p>') {
-			errorMessage.set('Please add a message body');
-			showErrorModal.set(true);
-			return;
-		}
+		// if (!editor.getHTML() || editor.getHTML() === '<p></p>') {
+		// 	errorMessage.set('Please add a message body');
+		// 	showErrorModal.set(true);
+		// 	return;
+		// }
 
 		const _sendEmail = async () => {
 			await sendEmail({ user: $user.id, email: emailData });
 			showToast(toastStore, 'Email sent successfully', ToastType.Success);
 			_clearEmailData();
 			setShowComposeEmail(false);
-			editor.destroy();
+			// editor.destroy();
 		};
 		_sendEmail();
 	};
@@ -175,39 +125,39 @@
 		emailData.attachments = [];
 	};
 
-	const EmailQuote = Node.create({
-		name: 'emailQuote',
+	// const EmailQuote = Node.create({
+	// 	name: 'emailQuote',
 
-		group: 'block',
+	// 	group: 'block',
 
-		content: 'block+',
+	// 	content: 'block+',
 
-		defining: true,
+	// 	defining: true,
 
-		parseHTML() {
-			return [
-				{
-					tag: 'blockquote[data-type="email-quote"]'
-				}
-			];
-		},
+	// 	parseHTML() {
+	// 		return [
+	// 			{
+	// 				tag: 'blockquote[data-type="email-quote"]'
+	// 			}
+	// 		];
+	// 	},
 
-		renderHTML({ HTMLAttributes }) {
-			return [
-				'blockquote',
-				{ 'data-type': 'email-quote', class: 'pl-4 border-l-4 border-gray-300' },
-				[
-					'iframe',
-					{
-						srcdoc: 0,
-						frameborder: '0',
-						class: 'w-full h-full',
-						sandbox: 'allow-same-origin'
-					}
-				]
-			];
-		}
-	});
+	// 	renderHTML({ HTMLAttributes }) {
+	// 		return [
+	// 			'blockquote',
+	// 			{ 'data-type': 'email-quote', class: 'pl-4 border-l-4 border-gray-300' },
+	// 			[
+	// 				'iframe',
+	// 				{
+	// 					srcdoc: 0,
+	// 					frameborder: '0',
+	// 					class: 'w-full h-full',
+	// 					sandbox: 'allow-same-origin'
+	// 				}
+	// 			]
+	// 		];
+	// 	}
+	// });
 	const sanitizeHtml = (html) => {
 		// Configure DOMPurify to allow certain tags and attributes
 		// const config = {
@@ -266,63 +216,7 @@
         </div>
     `;
 	};
-	onMount(() => {
-		editor = new Editor({
-			element: element,
-			extensions: [
-				EmailQuote,
-				Document,
-				Paragraph,
-				Text,
-				//Bold,
-				Blockquote,
-				CustomBold,
-				Code,
-				Italic,
-				Strike,
-				Underline,
-				Link.configure({
-					validate: (href) => /^https?:\/\//.test(href),
-					HTMLAttributes: { rel: null, target: null }
-				}),
-				BubbleMenu.configure({
-					element: bmenu,
-					tippyOptions: { duration: 100, theme: 'local', maxWidth: 450, appendTo: document.body }
-				}),
-				CharacterCount.configure({
-					limit
-				}),
-				HardBreak.extend({
-					addKeyboardShortcuts() {
-						return {
-							Enter: () => this.editor.commands.setHardBreak()
-						};
-					}
-				}).configure({ keepMarks: false }),
-				Placeholder.configure({ placeholder })
-			],
-			content,
-			editorProps: {
-				attributes: {
-					class: 'prose p-3 outline-none text-font-light-gray text-base min-h-[200px]'
-				}
-			},
-			onCreate({ editor }) {
-				// The editor is ready.
-				const html = editor.getHTML();
-				emailData.body = html;
-			},
-			onTransaction: () => {
-				// force re-render so `editor.isActive` works as expected
-				editor = editor;
-			},
-			onUpdate: ({ editor }) => {
-				const html = editor.getHTML();
-				// send the content to an API here
-				emailData.body = html;
-			}
-		});
-	});
+
 	function formatEmailContent(content: string): string {
 		// Check if content is HTML by looking for DOCTYPE or HTML tags
 		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
@@ -383,7 +277,7 @@
 	}
 
 	$effect(() => {
-		if (!editor) return;
+		// if (!editor) return;
 
 		if (
 			composeEmailMode === ComposeEmailMode.Reply ||
@@ -395,105 +289,14 @@
 			if (composeEmailMode === ComposeEmailMode.Forward) {
 				setSubject(`Fwd: ${email.subject}`);
 			}
-			const setContent = async () => {
-				try {
-					// Clear existing content first
-					editor.commands.clearContent();
-					const formattedContent = formatEmailContent(email.raw_content);
-					// Add some spacing
-					// Try setting the raw content first
 
-					// Move cursor to top
-					await editor.commands.setTextSelection(0);
-
-					// Log the editor's content for debugging
-					console.log('Editor content:', editor.getHTML());
-				} catch (error) {
-					console.error('Error setting content:', error);
-				}
-			};
 			// setContent();
 		} else {
 			// editor.commands.clearContent();
 		}
 	});
-
-	onDestroy(() => {
-		if (editor) {
-			editor.destroy();
-		}
-	});
 </script>
 
-<div bind:this={bmenu}>
-	{#if editor}
-		{#if bold}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('bold')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleBold().run())}
-			>
-				Bold
-			</button>
-		{/if}
-
-		{#if italic}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('italic')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleItalic().run())}
-			>
-				Italic
-			</button>
-		{/if}
-
-		{#if strike}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('strike')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleStrike().run())}
-			>
-				Tachado
-			</button>
-		{/if}
-
-		{#if underline}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('underline')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleUnderline().run())}
-			>
-				Subrayado
-			</button>
-		{/if}
-
-		{#if code}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('code')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(() => editor.chain().focus().toggleCode().run())}
-			>
-				Código
-			</button>
-		{/if}
-
-		{#if link}
-			<button
-				class="mx-1 px-1 text-sm text-gray-300 hover:text-white {editor.isActive('link')
-					? 'rounded text-white ring ring-gray-100'
-					: ''}"
-				onclick={preventDefault(setLink)}
-			>
-				Link
-			</button>
-		{/if}
-	{/if}
-</div>
 <div
 	class="fixed bottom-[-10px] right-2 z-50 w-[50%] overflow-hidden rounded-2xl rounded-b-none border border-primary-gray bg-primary-black"
 >
@@ -517,7 +320,9 @@
 			{setComposeEmailMode}
 		/>
 	</div>
-	<div class="mx-1 my-1"><div bind:this={element}></div></div>
+	<div class="mx-1 my-1 py-4">
+		<Composer />
+	</div>
 	<div class="m-2 flex justify-start text-primary-gray">
 		<Footer {onSend} />
 	</div>
