@@ -11,10 +11,8 @@ import TextStyle from '@tiptap/extension-text-style';
 import TiptapUnderline from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
-import HardBreak from '@tiptap/extension-hard-break';
 import UploadImagesPlugin from '../plugins/upload-images.js';
-import SlashCommand from './slash-command.js';
-import UpdatedImage from './updated-image.js';
+import SlashCommand from './slash-command.svelte';
 
 export const defaultExtensions = [
 	StarterKit.configure({
@@ -98,24 +96,15 @@ export const defaultExtensions = [
 			class: 'rounded-lg border border-stone-200'
 		}
 	}),
-	UpdatedImage.configure({
-		HTMLAttributes: {
-			class: 'rounded-lg border border-stone-200'
-		}
-	}),
+
 	Placeholder.configure({
-		placeholder: ({ node, editor }) => {
-			if (editor.isEmpty && node.type.name === 'paragraph') {
-				return 'Press / for commands or ++ for AI suggestions';
+		placeholder: ({ node }: any) => {
+			if (node.type.name === 'heading') {
+				return `Heading ${node.attrs.level}`;
 			}
-
-			if (node.type.name === 'taskItem') {
-				return '';
-			}
-
-			return '';
-		},
-		showOnlyCurrent: true
+			return "Press '/' for commands, or '++' for AI autocomplete...";
+		}
+		// includeChildren: true
 	}),
 	SlashCommand,
 	TiptapUnderline,
@@ -126,23 +115,17 @@ export const defaultExtensions = [
 	}),
 	TaskList.configure({
 		HTMLAttributes: {
-			class: 'task-list'
+			class: 'not-prose pl-2'
 		}
 	}),
 	TaskItem.configure({
-		nested: true,
 		HTMLAttributes: {
-			class: 'task-item'
+			class: 'flex items-start my-4'
 		},
-		placeholder: ''
+		nested: true
 	}),
 	Markdown.configure({
 		html: false,
 		transformCopiedText: true
-	}),
-	HardBreak.configure({
-		HTMLAttributes: {
-			class: 'break-all'
-		}
 	})
 ];

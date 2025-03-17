@@ -19,6 +19,7 @@ import CommandList from './CommandList.svelte';
 
 import { Magic } from '$lib/components/emailEditor/icons/index';
 import type { SvelteComponent } from 'svelte';
+import { mount } from 'svelte';
 
 export interface CommandItemProps {
 	title: string;
@@ -31,6 +32,7 @@ interface CommandProps {
 	range: Range;
 }
 
+let propState: any = $state();
 const Command = Extension.create({
 	name: 'slash-command',
 	addOptions() {
@@ -38,23 +40,7 @@ const Command = Extension.create({
 			suggestion: {
 				char: '/',
 				command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
-					if (
-						range &&
-						typeof range.from === 'number' &&
-						typeof range.to === 'number' &&
-						range.from <= range.to &&
-						range.from >= 0 &&
-						range.to <= editor.state.doc.content.size
-					) {
-						props.command({ editor, range });
-					} else {
-						console.warn('Range is undefined or invalid in slash command', range);
-						const currentRange = editor.state.selection;
-						props.command({
-							editor,
-							range: { from: currentRange.from, to: currentRange.to }
-						});
-					}
+					props.command({ editor, range });
 				}
 			}
 		};
@@ -71,12 +57,12 @@ const Command = Extension.create({
 
 const getSuggestionItems = ({ query }: { query: string }) => {
 	return [
-		{
-			title: 'Continue writing',
-			description: 'Use AI to expand your thoughts.',
-			searchTerms: ['gpt'],
-			icon: Magic
-		},
+		// {
+		// 	title: 'Continue writing',
+		// 	description: 'Use AI to expand your thoughts.',
+		// 	searchTerms: ['gpt'],
+		// 	icon: Magic
+		// },
 
 		{
 			title: 'Text',
@@ -214,16 +200,10 @@ const renderItems = () => {
 	return {
 		onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
 			const el = document.createElement('div');
-			component = new CommandList({
+			propState = props;
+			component = mount(CommandList, {
 				target: el,
-				props: {
-					items: getSuggestionItems({ query: '' }),
-					command: (item: CommandItemProps) => {
-						item.command({ editor: props.editor, range: props.editor.state.selection });
-					},
-					editor: props.editor,
-					range: props.editor.state.selection
-				}
+				props: propState
 			});
 
 			popup = (tippy as any)('body', {
@@ -236,11 +216,10 @@ const renderItems = () => {
 				placement: 'bottom-start'
 			});
 		},
-		onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
-			console.log('onUpdate', props, component);
-			// if (component) {
-			// 	component.$set(props);
-			// }
+		onUpdate: (props: { editor: Editor; clientRect: DOMRect; query: string; items: any[] }) => {
+			if (component) {
+				propState.items = props.items;
+			}
 
 			popup &&
 				popup[0].setProps({
@@ -249,7 +228,6 @@ const renderItems = () => {
 		},
 		onKeyDown: (props: { event: KeyboardEvent }) => {
 			if (props.event.key === 'Escape') {
-				console.log('onKeyDown', props);
 				popup?.[0].hide();
 
 				return true;
@@ -258,8 +236,7 @@ const renderItems = () => {
 			// return component?.ref?.onKeyDown(props);
 		},
 		onExit: () => {
-			console.log('onExit');
-			popup?.[0].destroy();
+			popup?.[0]?.destroy();
 			component = null;
 		}
 	};

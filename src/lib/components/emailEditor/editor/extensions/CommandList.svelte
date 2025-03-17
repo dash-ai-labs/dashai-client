@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getPrevText } from '$lib/components/emailEditor/lib/editor';
 	import { LoadingCircle } from '$lib/components/emailEditor/icons/index';
-	import type { CommandItemProps } from './slash-command';
+	import type { CommandItemProps } from './slash-command.svelte';
 	import { useCompletion } from '@ai-sdk/svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { get } from 'svelte/store';
@@ -24,6 +24,7 @@
 	const { complete, isLoading } = useCompletion({
 		id: 'novel',
 		api: `${PUBLIC_API_URL}/user/${get(user)?.id.toString()}/suggestion`,
+		body: {},
 		credentials: 'include',
 		onResponse: (response) => {
 			if (response.status === 429) {
@@ -60,18 +61,20 @@
 		// va.track('Slash Command Used', {
 		// 	command: item.title
 		// });
+
 		if (item) {
-			if (item.title === 'Continue writing') {
-				if (isLoading) return;
-				complete(
-					getPrevText(editor, {
-						chars: 5000,
-						offset: 1
-					})
-				);
-			} else {
-				command(item);
-			}
+			command(item);
+			// if (item.title === 'Continue writing') {
+			// 	if (isLoading) return;
+			// 	complete(
+			// 		getPrevText(editor, {
+			// 			chars: 5000,
+			// 			offset: 1
+			// 		})
+			// 	);
+			// } else {
+			// 	command(item);
+			// }
 		}
 	};
 

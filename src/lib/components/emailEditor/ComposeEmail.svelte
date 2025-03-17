@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Node } from '@tiptap/core';
 	import Editor from './editor/index.svelte';
 	import Bold from '@tiptap/extension-bold';
@@ -7,7 +7,7 @@
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
-	import { user, errorMessage, showErrorModal } from '$lib/store';
+	import { user, errorMessage, showErrorModal, currentEmail } from '$lib/store';
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
@@ -46,6 +46,10 @@
 	let suggestionText = $state('');
 	let saveStatus = $state('Saved');
 	let editor: EditorType;
+
+	$effect(() => {
+		currentEmail.set(email);
+	});
 
 	const setToEmails = (emails: string[]) => {
 		emailData.to = emails;
