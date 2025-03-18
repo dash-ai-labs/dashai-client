@@ -284,7 +284,7 @@
 		{setEmailList}
 	/>
 	<div
-		class="no-scrollbar max-h-[calc(100vh-400px)] overflow-y-scroll"
+		class="no-scrollbar max-h-[calc(100vh-50px)] overflow-y-scroll"
 		bind:this={container}
 		onscroll={handleScroll}
 	>

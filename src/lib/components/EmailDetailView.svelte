@@ -234,35 +234,37 @@
 				</div>
 			</div>
 		</div>
-		<div class="no-scrollbar relative grid max-h-[850px] max-w-[1200px] p-4">
-			<iframe
-				bind:this={element}
-				title={email.subject}
-				sandbox="allow-same-origin allow-popups"
-				class="no-scrollbar w-full bg-primary-white"
-				style="height: 780px; background-color: #f0f0f0;"
-			></iframe>
+		<div
+			class="no-scrollbar relative grid h-[calc(100vh-50px)] max-h-[calc(100vh-50px)] max-w-[1200px] p-4"
+		>
+			<div class="relative h-full max-h-[70%] w-full">
+				<iframe
+					bind:this={element}
+					title={email.subject}
+					sandbox="allow-same-origin allow-popups"
+					class="no-scrollbar h-full w-full bg-primary-white"
+					style="background-color: #f0f0f0;"
+				></iframe>
 
-			<div
-				class="relative bottom-4 z-50 flex flex-row justify-items-end gap-[10px] self-end justify-self-end"
-			>
-				<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
-					<button
-						class="flex flex-row items-center gap-[10px]"
-						onclick={() => {
-							setShowComposeEmail(true);
-							setComposeEmailMode(ComposeEmailMode.Reply);
-						}}><ReplyOutline height="20" width="20" class="text-primary-white" />Reply</button
-					>
-				</div>
-				<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
-					<button
-						class="flex flex-row items-center gap-[10px]"
-						onclick={() => {
-							setShowComposeEmail(true);
-							setComposeEmailMode(ComposeEmailMode.Forward);
-						}}><ForwardOutline height="20" width="20" class="text-primary-white" />Forward</button
-					>
+				<div class="absolute bottom-10 right-4 z-10 flex flex-row justify-end gap-[10px]">
+					<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
+						<button
+							class="flex flex-row items-center gap-[10px]"
+							onclick={() => {
+								setShowComposeEmail(true);
+								setComposeEmailMode(ComposeEmailMode.Reply);
+							}}><ReplyOutline height="20" width="20" class="text-primary-white" />Reply</button
+						>
+					</div>
+					<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
+						<button
+							class="flex flex-row items-center gap-[10px]"
+							onclick={() => {
+								setShowComposeEmail(true);
+								setComposeEmailMode(ComposeEmailMode.Forward);
+							}}><ForwardOutline height="20" width="20" class="text-primary-white" />Forward</button
+						>
+					</div>
 				</div>
 			</div>
 		</div>
