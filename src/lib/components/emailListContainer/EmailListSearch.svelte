@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { searchEmails } from '$lib/api/email';
-	import { aiSearchQuery, user } from '$lib/store';
+	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import SecondaryButton from '../SecondaryButton.svelte';
 	import type { Email } from '$lib/types';
@@ -10,8 +10,8 @@
 	let searchInput = $state('');
 	let showError = $state(false);
 
-	aiSearchQuery.subscribe((query) => {
-		searchInput = query;
+	$effect(() => {
+		searchInput = get(emailServiceState).aiSearchQuery;
 	});
 
 	const handleInput = async () => {
@@ -22,6 +22,11 @@
 				search: searchInput
 			});
 			setEmailList(response);
+
+			emailServiceState.update((state) => ({
+				...state,
+				aiSearchQuery: searchInput
+			}));
 		} else {
 			showError = true;
 		}

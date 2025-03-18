@@ -96,3 +96,12 @@ export enum ToastType {
 	Error = 'bg-primary-red',
 	Warning = 'bg-primary-yellow'
 }
+
+export interface EmailServiceState {
+	currentEmail: Email;
+	emailSearchList: SearchEntry[];
+	aiSearchQuery: string;
+	emailLabels: Label[];
+	showComposeEmail: boolean;
+	emailAccount: any;
+}

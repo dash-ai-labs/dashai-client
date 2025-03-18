@@ -95,6 +95,6 @@
 			</div>
 		</div>
 		<!-- <Widgets /> -->
-		<EmailContainer class="flex-1 overflow-hidden" />
+		<EmailContainer />
 	</div>
 </div>

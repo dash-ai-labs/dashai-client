@@ -16,6 +16,7 @@
 
 	import { ComposeEmailMode, type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
+	import { emailServiceState } from '$lib/store';
 
 	export const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
@@ -48,7 +49,7 @@
 	const { selectEmail, setShowComposeEmail, setComposeEmailMode } = $props();
 	let _emailList = $state<Email[]>(get(emailList));
 	let container = $state<HTMLElement | null>(null);
-	let _emailAccount = $state<EmailAccount | undefined>(get(emailAccount));
+	let _emailAccount = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
 	let pageNumber = $state(1);
 	let limit = $state(30);
 	let listEnd = $state(false);
@@ -58,15 +59,16 @@
 	let isToggleLoading = $state(false); // Loading state for toggle change
 	let lastFilter = $state(['INBOX']);
 	let disableTransition = $state(false); // New state variable to disable transition
-	let previousAccountValue = $state<EmailAccount | undefined>(get(emailAccount));
+	let previousAccountValue = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
 	let selectedToggleOption: number = $state(0);
 
-	emailSearchList.subscribe((searchList) => {
-		if (searchList && searchList.length > 0) {
+	$effect(() => {
+		const state = get(emailServiceState);
+		if (state.emailSearchList && state.emailSearchList.length > 0) {
 			const _searchEmails = async () => {
 				const emailResults = await searchEmails({
 					user: get(user)?.id.toString(),
-					search: searchList[0].query
+					search: state.emailSearchList[0].query
 				});
 				_emailList = emailResults;
 			};
@@ -75,19 +77,20 @@
 	});
 
 	$effect(() => {
-		const unsubscribe = emailAccount.subscribe((value) => {
+		const unsubscribe = emailServiceState.subscribe((state) => {
 			if (
-				value &&
+				state.emailAccount &&
 				previousAccountValue &&
-				(!previousAccountValue.email || value.email !== previousAccountValue.email)
+				(!previousAccountValue.email || state.emailAccount.email !== previousAccountValue.email)
 			) {
 				pageNumber = 1; // Reset page number for new account
 				_emailList = []; // Clear existing emails
-				_emailAccount = value;
+				_emailAccount = state.emailAccount;
 				loadNextPage();
 
 				// Update the previous value to prevent repeated calls
-				previousAccountValue = value;
+				previousAccountValue = state.emailAccount;
+				handleAccountChange();
 			}
 		});
 
@@ -241,6 +244,10 @@
 
 		pageNumber++; // Increment after a successful fetch
 		isLoading = false;
+	};
+
+	const handleAccountChange = () => {
+		// Implement the logic to handle account change
 	};
 </script>
 

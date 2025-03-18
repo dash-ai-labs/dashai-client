@@ -11,7 +11,7 @@
 	import { ForwardOutline, ReplyOutline } from 'flowbite-svelte-icons';
 	import { getEmailContent } from '$lib/api/email';
 	import { get } from 'svelte/store';
-	import { user } from '$lib/store';
+	import { user, emailServiceState } from '$lib/store';
 	import AddEmailLabel from './AddEmailLabel.svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import EmailLabelChip from './EmailLabelChip.svelte';
@@ -19,7 +19,6 @@
 		removeEmail,
 		archiveEmail,
 		markEmailAsUnread,
-		email,
 		setShowComposeEmail,
 		setComposeEmailMode,
 		addLabelToEmail,
@@ -28,15 +27,22 @@
 		removeEmail: (email: Email) => void;
 		archiveEmail: (email: Email) => void;
 		markEmailAsUnread: (email: Email) => void;
-		email: Email;
 		setShowComposeEmail: (show: boolean) => void;
 		setComposeEmailMode: (mode: ComposeEmailMode) => void;
 		addLabelToEmail: (email: Email, emailLabel: Label) => void;
 		removeLabelFromEmail: (email: Email, emailLabel: Label) => void;
 	} = $props();
 	let element = $state<HTMLIFrameElement | null>(null);
+	const email = $derived(get(emailServiceState).currentEmail);
 
 	$effect(() => {
+		const currentEmail = get(emailServiceState).currentEmail;
+		if (currentEmail) {
+			loadEmailContent(currentEmail);
+		}
+	});
+
+	function loadEmailContent(email: Email) {
 		if (element && email?.content) {
 			const loadContent = async () => {
 				const userData = get(user);
@@ -50,7 +56,8 @@
 			};
 			loadContent();
 		}
-	});
+	}
+
 	const addLabelPopup: PopupSettings = {
 		// Represents the type of event that opens/closed the popup
 		event: 'click',
@@ -251,7 +258,7 @@
 
 					<!-- Fixed position buttons that will always be visible -->
 					<div
-						class="absolute bottom-[100px] right-[10px] z-50 flex flex-row justify-end gap-[10px]"
+						class="absolute bottom-[120px] right-[10px] z-50 flex flex-row justify-end gap-[10px]"
 					>
 						<div
 							class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2 shadow-lg"

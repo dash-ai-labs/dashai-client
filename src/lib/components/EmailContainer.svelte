@@ -5,16 +5,23 @@
 	import EmailDetailView from './EmailDetailView.svelte';
 	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
 	import EmailList from './emailListContainer/EmailList.svelte';
-	import { user } from '$lib/store';
+	import { emailServiceState, user } from '$lib/store';
+	import EmailCommandBar from './emailCommandBar/EmailCommandBar.svelte';
 
 	let email = $state<Email | undefined>(undefined);
 	let emailList: EmailList | undefined = undefined;
 	let emailDetailView: EmailDetailView | undefined = undefined;
-	let showComposeEmail = $state(false);
+	let showComposeEmail = $derived(get(emailServiceState).showComposeEmail);
 	let composeEmailMode = $state<ComposeEmailMode>(ComposeEmailMode.NewEmail);
 
 	const selectEmail = (selectedEmail: Email) => {
-		if (emailDetailView) email = selectedEmail; // Set the email to be passed as a prop
+		if (emailDetailView) {
+			email = selectedEmail;
+			emailServiceState.update((state) => ({
+				...state,
+				currentEmail: selectedEmail
+			}));
+		} // Set the email to be passed as a prop
 	};
 
 	const removeEmail = (removedEmail: Email) => {
@@ -67,7 +74,10 @@
 	};
 
 	const setShowComposeEmail = (show: boolean) => {
-		showComposeEmail = show;
+		emailServiceState.update((state) => ({
+			...state,
+			showComposeEmail: show
+		}));
 	};
 
 	const setComposeEmailMode = (mode: ComposeEmailMode) => {
@@ -76,31 +86,27 @@
 </script>
 
 <!-- <div class="relative"> -->
-<div class="flex h-full flex-row gap-[20px] overflow-hidden">
-	<EmailList
-		{setShowComposeEmail}
-		{selectEmail}
-		{setComposeEmailMode}
-		bind:this={emailList}
-		class="h-full flex-shrink-0"
-	/>
-	<div class="relative h-full w-full">
-		<EmailDetailView
-			{email}
-			{removeEmail}
-			{archiveEmail}
-			{markEmailAsUnread}
-			{setShowComposeEmail}
-			{setComposeEmailMode}
-			{addLabelToEmail}
-			{removeLabelFromEmail}
-			bind:this={emailDetailView}
-		/>
-		{#if showComposeEmail}
-			{#key showComposeEmail}
-				<ComposeEmail {email} {setShowComposeEmail} {composeEmailMode} {setComposeEmailMode} />
-			{/key}
-		{/if}
+<div class="flex h-full flex-1 flex-col overflow-hidden">
+	<EmailCommandBar class="flex-shrink-0" />
+	<div class="flex flex-1 flex-row gap-[20px] overflow-hidden">
+		<EmailList {setShowComposeEmail} {selectEmail} {setComposeEmailMode} bind:this={emailList} />
+		<div class="relative h-full w-full">
+			<EmailDetailView
+				{removeEmail}
+				{archiveEmail}
+				{markEmailAsUnread}
+				{setShowComposeEmail}
+				{setComposeEmailMode}
+				{addLabelToEmail}
+				{removeLabelFromEmail}
+				bind:this={emailDetailView}
+			/>
+			{#if showComposeEmail}
+				{#key showComposeEmail}
+					<ComposeEmail {email} {setShowComposeEmail} {composeEmailMode} {setComposeEmailMode} />
+				{/key}
+			{/if}
+		</div>
 	</div>
 </div>
 <!-- </div> -->

@@ -7,7 +7,7 @@
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
-	import { user, errorMessage, showErrorModal, currentEmail } from '$lib/store';
+	import { user, errorMessage, showErrorModal, emailServiceState } from '$lib/store';
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
@@ -48,7 +48,10 @@
 	let editor: EditorType;
 
 	$effect(() => {
-		currentEmail.set(email);
+		emailServiceState.update((state) => ({
+			...state,
+			currentEmail: email
+		}));
 	});
 
 	const setToEmails = (emails: string[]) => {

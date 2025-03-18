@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import type { SearchEntry, User, Email } from './types';
+import type { SearchEntry, User, Email, EmailServiceState } from './types';
 import { goto } from '$app/navigation';
 
 // Define the type for the user store with optional initial value
@@ -47,4 +47,14 @@ export const errorMessage: Writable<string> = writable('');
 export const emailSearchList: Writable<SearchEntry[]> = writable([]);
 export const emailList: Writable<any> = persistentWritable('emailList', []);
 export const aiSearchQuery: Writable<string> = writable('');
-export const currentEmail: Writable<Email> = writable(null);
+export const emailServiceState: Writable<EmailServiceState> = persistentWritable(
+	'emailServiceState',
+	{
+		currentEmail: null,
+		emailSearchList: [],
+		aiSearchQuery: '',
+		emailLabels: [],
+		showComposeEmail: false,
+		emailAccount: { email: 'All Emails' }
+	}
+);
