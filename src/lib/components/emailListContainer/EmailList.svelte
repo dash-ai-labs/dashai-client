@@ -244,9 +244,9 @@
 	};
 </script>
 
-<div class="w-86 rounded-lg bg-primary-container">
+<div class="w-86 flex h-full flex-col rounded-lg bg-primary-container">
 	<div
-		class="flex h-[60px] items-center justify-between border-b border-primary-gray p-[10px] text-h4"
+		class="flex h-[60px] flex-shrink-0 items-center justify-between border-b border-primary-gray p-[10px] text-h4"
 	>
 		<div class="mx-[2px] flex items-center">
 			<div>Emails</div>
@@ -282,12 +282,9 @@
 			setComposeEmailMode(ComposeEmailMode.NewEmail);
 		}}
 		{setEmailList}
+		class="flex-shrink-0"
 	/>
-	<div
-		class="no-scrollbar max-h-[calc(100vh-50px)] overflow-y-scroll"
-		bind:this={container}
-		onscroll={handleScroll}
-	>
+	<div class="no-scrollbar flex-1 overflow-y-auto" bind:this={container} onscroll={handleScroll}>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
 			<div class="w-[300px] py-4 text-center" transition:fade={{ duration: 500 }}>Loading...</div>

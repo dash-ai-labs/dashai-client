@@ -80,13 +80,13 @@
 	});
 </script>
 
-<div class="mx-[40px]">
+<div class="mx-[40px] flex h-screen flex-col overflow-hidden">
 	<div class="flex flex-row items-center">
 		<InboxSearchBar />
 		<InboxAccountDropdown />
 	</div>
 
-	<div class="mt-[40px] flex-col gap-[25px]">
+	<div class="flex flex-1 flex-col gap-[25px] overflow-hidden">
 		<div class="flex flex-row">
 			<div class="w-full text-h2">Inbox</div>
 
@@ -95,6 +95,6 @@
 			</div>
 		</div>
 		<!-- <Widgets /> -->
-		<EmailContainer />
+		<EmailContainer class="flex-1 overflow-hidden" />
 	</div>
 </div>

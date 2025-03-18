@@ -76,8 +76,14 @@
 </script>
 
 <!-- <div class="relative"> -->
-<div class="flex h-[calc(100vh-280px)] flex-row gap-[20px] overflow-hidden pt-[20px]">
-	<EmailList {setShowComposeEmail} {selectEmail} {setComposeEmailMode} bind:this={emailList} />
+<div class="flex h-full flex-row gap-[20px] overflow-hidden">
+	<EmailList
+		{setShowComposeEmail}
+		{selectEmail}
+		{setComposeEmailMode}
+		bind:this={emailList}
+		class="h-full flex-shrink-0"
+	/>
 	<div class="relative h-full w-full">
 		<EmailDetailView
 			{email}

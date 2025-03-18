@@ -237,17 +237,26 @@
 		<div
 			class="no-scrollbar relative grid h-[calc(100vh-50px)] max-h-[calc(100vh-50px)] max-w-[1200px] p-4"
 		>
-			<div class="relative h-full max-h-[70%] w-full">
-				<iframe
-					bind:this={element}
-					title={email.subject}
-					sandbox="allow-same-origin allow-popups"
-					class="no-scrollbar h-full w-full bg-primary-white"
-					style="background-color: #f0f0f0;"
-				></iframe>
+			<div class="relative flex h-full flex-col overflow-hidden">
+				<!-- Email content container with proper height constraints -->
+				<div class=" min-h-0 flex-1 overflow-auto">
+					<!-- If you're using an iframe for email content -->
+					<iframe
+						bind:this={element}
+						title={email.subject}
+						sandbox="allow-same-origin allow-popups"
+						class="no-scrollbar h-full w-full bg-primary-white"
+						style="background-color: #f0f0f0;"
+					></iframe>
 
-				<div class="absolute bottom-10 right-4 z-10 flex flex-row justify-end gap-[10px]">
-					<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
+					<!-- Move buttons outside the iframe container but still at the bottom right -->
+				</div>
+
+				<!-- Position buttons fixed to the bottom right of the entire email container -->
+				<div class="absolute bottom-5 right-5 z-50 flex flex-row justify-end gap-[10px]">
+					<div
+						class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2 shadow-lg"
+					>
 						<button
 							class="flex flex-row items-center gap-[10px]"
 							onclick={() => {
@@ -256,7 +265,9 @@
 							}}><ReplyOutline height="20" width="20" class="text-primary-white" />Reply</button
 						>
 					</div>
-					<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
+					<div
+						class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2 shadow-lg"
+					>
 						<button
 							class="flex flex-row items-center gap-[10px]"
 							onclick={() => {
@@ -291,5 +302,17 @@
 		position: absolute;
 		top: 0;
 		left: 1;
+	}
+
+	/* Make sure iframe doesn't exceed its container */
+	iframe {
+		max-height: 100%;
+		box-sizing: border-box;
+	}
+
+	/* If you're using direct HTML rendering */
+	.email-content {
+		max-height: 100%;
+		overflow: auto;
 	}
 </style>
