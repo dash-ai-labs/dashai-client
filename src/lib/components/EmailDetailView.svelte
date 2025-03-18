@@ -244,7 +244,7 @@
 			></iframe>
 
 			<div
-				class="absolute bottom-2 z-50 flex flex-row justify-items-end gap-[10px] self-end justify-self-end px-3"
+				class="relative bottom-4 z-50 flex flex-row justify-items-end gap-[10px] self-end justify-self-end"
 			>
 				<div class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2">
 					<button
