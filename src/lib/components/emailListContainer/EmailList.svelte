@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { emailAccount, emailList, emailSearchList, user } from '$lib/store';
+	import { emailList, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import {
 		archive,
@@ -14,7 +14,7 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import { IconReload } from '@tabler/icons-svelte';
 
-	import { ComposeEmailMode, type Email, type EmailAccount } from '$lib/types';
+	import { type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
 	import { emailServiceState } from '$lib/store';
 
@@ -46,8 +46,10 @@
 		_archive();
 	};
 
-	const { selectEmail, setShowComposeEmail, setComposeEmailMode } = $props();
-	let _emailList = $state<Email[]>(get(emailList));
+	let {
+		selectEmail,
+		_emailList = $bindable()
+	}: { selectEmail: (email: Email) => void; _emailList: Email[] } = $props();
 	let container = $state<HTMLElement | null>(null);
 	let _emailAccount = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
 	let pageNumber = $state(1);
@@ -64,11 +66,11 @@
 
 	$effect(() => {
 		const state = get(emailServiceState);
-		if (state.emailSearchList && state.emailSearchList.length > 0) {
+		if (state.emailSearchQueryList && state.emailSearchQueryList.length > 0) {
 			const _searchEmails = async () => {
 				const emailResults = await searchEmails({
 					user: get(user)?.id.toString(),
-					search: state.emailSearchList[0].query
+					search: state.emailSearchQueryList[0].query
 				});
 				_emailList = emailResults;
 			};
@@ -251,24 +253,17 @@
 	};
 </script>
 
-<div class="w-86 flex h-full flex-col rounded-lg bg-primary-container">
-	<div
-		class="flex h-[60px] flex-shrink-0 items-center justify-between border-b border-primary-gray p-[10px] text-h4"
-	>
-		<div class="mx-[2px] flex items-center">
+<div class="email-container">
+	<div class="email-header">
+		<div class="header-left">
 			<div>Emails</div>
-			<button
-				class="ml-2 rounded-full p-1 hover:bg-primary-gray/20"
-				onclick={refreshEmails}
-				aria-label="Refresh emails"
-			>
+			<button class="refresh-button" onclick={refreshEmails} aria-label="Refresh emails">
 				<IconReload size="18" color="gray" />
 			</button>
 		</div>
 		<RadioGroup
 			active="variant-filled-primary"
-			hover="hover:variant-soft-primary"
-			border={'border-0'}
+			border={0}
 			rounded={'rounded-md'}
 			size={'sm'}
 			background={'bg-primary-black'}
@@ -283,18 +278,11 @@
 			{/each}
 		</RadioGroup>
 	</div>
-	<EmailListSearch
-		setShowComposeEmail={() => {
-			setShowComposeEmail(true);
-			setComposeEmailMode(ComposeEmailMode.NewEmail);
-		}}
-		{setEmailList}
-		class="flex-shrink-0"
-	/>
-	<div class="no-scrollbar flex-1 overflow-y-auto" bind:this={container} onscroll={handleScroll}>
+	<EmailListSearch {refreshEmails} {setEmailList} />
+	<div class="email-list-container" bind:this={container} onscroll={handleScroll}>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
-			<div class="w-[300px] py-4 text-center" transition:fade={{ duration: 500 }}>Loading...</div>
+			<div class="loading-indicator" transition:fade={{ duration: 500 }}>Loading...</div>
 		{:else}
 			{#each _emailList as email (email.id)}
 				{#if !disableTransition}
@@ -314,13 +302,85 @@
 				{/if}
 			{/each}
 			{#if listEnd}
-				<div
-					class="w-full py-4 text-center font-light text-primary-gray"
-					transition:fade={{ duration: 500 }}
-				>
-					No more emails.
-				</div>
+				<div class="end-of-list" transition:fade={{ duration: 500 }}>No more emails.</div>
 			{/if}
 		{/if}
 	</div>
 </div>
+
+<style>
+	.email-container {
+		width: 320px;
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+		border-radius: 0.5rem;
+		background-color: var(--color-primary-container);
+	}
+
+	.email-header {
+		display: flex;
+		height: 60px;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid var(--color-primary-gray);
+		padding: 10px;
+		font-size: var(--text-h4);
+	}
+
+	.radio-item {
+		text-wrap: nowrap;
+	}
+
+	.header-left {
+		margin-left: 2px;
+		margin-right: 2px;
+		display: flex;
+		align-items: center;
+		font-size: var(--text-section-header);
+	}
+
+	.refresh-button {
+		margin-left: 0.5rem;
+		border-radius: 9999px;
+		padding: 0.25rem;
+	}
+
+	.refresh-button:hover {
+		background-color: var(--color-primary-dark-gray);
+	}
+
+	.email-list-container {
+		flex: 1;
+		overflow-y: auto;
+		width: 400px;
+	}
+
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	.email-list-container::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Hide scrollbar for IE, Edge and Firefox */
+	.email-list-container {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
+
+	.loading-indicator {
+		width: 300px;
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+		text-align: center;
+	}
+
+	.end-of-list {
+		width: 100%;
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+		text-align: center;
+		font-weight: 300;
+		color: var(--color-primary-gray);
+	}
+</style>

@@ -2,10 +2,28 @@
 	let { color, children, onclick } = $props();
 </script>
 
-<button
-	class="flex w-full flex-row gap-[10px] rounded-md px-[6px] py-[4px] hover:bg-primary-dark-gray"
-	{onclick}
->
-	<div class="h-[25px] w-[25px] rounded-md" style:background-color={color}></div>
+<button {onclick}>
+	<div class="color-box" style:background-color={color}></div>
 	{@render children?.()}
 </button>
+
+<style>
+	button {
+		display: flex;
+		width: 100%;
+		flex-direction: row;
+		gap: 10px;
+		border-radius: 0.375rem;
+		padding: 4px 6px;
+	}
+
+	button:hover {
+		background-color: var(--color-primary-dark-gray);
+	}
+
+	.color-box {
+		height: 25px;
+		width: 25px;
+		border-radius: 0.375rem;
+	}
+</style>

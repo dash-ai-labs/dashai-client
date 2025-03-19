@@ -99,9 +99,10 @@ export enum ToastType {
 
 export interface EmailServiceState {
 	currentEmail: Email;
-	emailSearchList: SearchEntry[];
+	emailSearchQueryList: SearchEntry[];
 	aiSearchQuery: string;
 	emailLabels: Label[];
 	showComposeEmail: boolean;
+	composeEmailMode: ComposeEmailMode;
 	emailAccount: any;
 }

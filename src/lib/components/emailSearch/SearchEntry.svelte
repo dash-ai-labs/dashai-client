@@ -76,23 +76,86 @@
 	});
 </script>
 
-<div class="flex flex-row items-center gap-2 py-2">
-	<div class="flex w-full flex-col items-center gap-2">
-		<div class="flex flex-row gap-1 self-end">
+<div class="search-entry">
+	<div class="content-container">
+		<div class="query-container">
 			{#if loading}
-				<IconLoader2 class="animate-spin items-center" />
+				<IconLoader2 class="spinner" />
 			{/if}
-			<div class="rounded-lg bg-primary-container px-3 py-1 text-primary-white">{query}</div>
+			<div class="query-bubble">{query}</div>
 		</div>
 		{#if searchResultsHTML.length > 0}
-			<div class="justify-start overflow-hidden overflow-y-auto py-2">
-				<div
-					class="markdown prose prose-invert flex flex-col gap-2 rounded-lg text-primary-white"
-					transition:fade={{ duration: 200 }}
-				>
+			<div class="results-container">
+				<div class="markdown-content" transition:fade={{ duration: 200 }}>
 					{@html searchResultsHTML}
 				</div>
 			</div>
 		{/if}
 	</div>
 </div>
+
+<style>
+	.search-entry {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 0;
+	}
+
+	.content-container {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.query-container {
+		display: flex;
+		flex-direction: row;
+		gap: 0.25rem;
+		align-self: flex-end;
+	}
+
+	.query-bubble {
+		border-radius: 0.5rem;
+		background-color: var(--color-primary-container);
+		color: var(--color-primary-white);
+		padding: 0.25rem 0.75rem;
+	}
+
+	.results-container {
+		justify-content: flex-start;
+		overflow: hidden;
+		overflow-y: auto;
+		padding: 0.5rem 0;
+	}
+
+	.markdown-content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		border-radius: 0.5rem;
+		color: var(--color-primary-white);
+	}
+
+	.markdown-content :global(.markdown),
+	.markdown-content :global(.prose),
+	.markdown-content :global(.prose-invert) {
+		/* Preserve any global styles applied to markdown content */
+	}
+
+	.spinner {
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+</style>

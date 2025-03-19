@@ -26,14 +26,12 @@
 </script>
 
 <div
-	class="mx-[12px] border-b-[1px] border-primary-dark-gray py-4 text-primary-active-button-highlight hover:cursor-pointer {selected
-		? 'bg-secondary-active-button-background  hover:bg-secondary-active-button-background-hover'
-		: 'hover:bg-secondary-active-button-background'}"
+	class="email-list-item {selected ? 'email-list-item-selected' : 'email-list-item-unselected'}"
 	onclick={onClick}
 >
-	<div class="flex items-center justify-between">
-		<div class="flex w-[210px] flex-row truncate text-body font-medium">
-			<div class="px-1">
+	<div class="item-header">
+		<div class="sender-container">
+			<div class="sender-padding">
 				{#if email.sender_name && email.sender_name.length > 0}
 					{email.sender_name.join(', ')}
 				{:else if email.sender && email.sender.length > 0}
@@ -41,7 +39,7 @@
 				{/if}
 			</div>
 			{#if unread}
-				<div class="justify-center self-center">
+				<div class="unread-indicator-container">
 					<svg
 						width="9"
 						height="9"
@@ -54,30 +52,26 @@
 				</div>
 			{/if}
 		</div>
-		<div class="flex items-center">
-			<div class="px-2 text-subheader">
+		<div class="date-container">
+			<div class="date-text">
 				{formatDate(email.date)}
 			</div>
-			<RightChevron
-				fill={selected
-					? 'fill-secondary-active-button-highlight'
-					: 'fill-secondary-inactive-button-highlight'}
-			/>
+			<RightChevron class={selected ? 'chevron-selected' : 'chevron-unselected'} />
 		</div>
 	</div>
 	{#if email.summary}
-		<div class="flex px-1">
-			<div class="px-1">
+		<div class="summary-container">
+			<div class="icon-padding">
 				<Summary width={15} height={18} />
 			</div>
-			<div class="max-w-[230px] truncate text-wrap text-subheader">{email.summary}</div>
+			<div class="summary-text">{email.summary}</div>
 		</div>
 	{:else}
-		<div class="px-1">
-			<div class="max-w-[250px] truncate text-subheader">{email.subject}</div>
+		<div class="subject-padding">
+			<div class="subject-text">{email.subject}</div>
 		</div>
 	{/if}
-	<div class="flex flex-row">
+	<div class="labels-container">
 		{#each email.email_labels as emailLabel}
 			<IconLabelImportantFilled color={emailLabel.color} size={20} />
 		{/each}
@@ -85,4 +79,111 @@
 </div>
 
 <style>
+	.email-list-item {
+		margin-left: 12px;
+		margin-right: 12px;
+		border-bottom: 1px solid var(--primary-dark-gray);
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+		color: var(--color-primary-active-button-highlight);
+		cursor: pointer;
+		width: 400px;
+	}
+
+	.email-list-item-selected {
+		background-color: var(--color-secondary-active-button-background);
+	}
+
+	.email-list-item-selected:hover {
+		background-color: var(--color-secondary-active-button-background-hover);
+	}
+
+	.email-list-item-unselected:hover {
+		background-color: var(--color-secondary-active-button-background-hover);
+	}
+
+	.item-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.sender-container {
+		display: flex;
+		width: 210px;
+		flex-direction: row;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		font-size: var(--text-body);
+		font-weight: 600;
+	}
+
+	.sender-padding {
+		padding-left: 0.25rem;
+		padding-right: 0.25rem;
+	}
+
+	.unread-indicator-container {
+		display: flex;
+		justify-content: center;
+		align-self: center;
+	}
+
+	.date-container {
+		display: flex;
+		align-items: center;
+	}
+
+	.date-text {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		font-size: var(--text-subheader);
+	}
+
+	.chevron-selected {
+		fill: var(--color-secondary-active-button-highlight);
+	}
+
+	.chevron-unselected {
+		fill: var(--color-secondary-inactive-button-highlight);
+	}
+
+	.summary-container {
+		display: flex;
+		padding-left: 0.25rem;
+		padding-right: 0.25rem;
+	}
+
+	.icon-padding {
+		padding-left: 0.25rem;
+		padding-right: 0.25rem;
+	}
+
+	.summary-text {
+		max-width: 230px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		text-wrap: wrap;
+		font-size: var(--text-subheader);
+	}
+
+	.subject-padding {
+		padding-left: 0.25rem;
+		padding-right: 0.25rem;
+	}
+
+	.subject-text {
+		max-width: 250px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		font-size: var(--text-subheader);
+	}
+
+	.labels-container {
+		display: flex;
+		flex-direction: row;
+	}
 </style>

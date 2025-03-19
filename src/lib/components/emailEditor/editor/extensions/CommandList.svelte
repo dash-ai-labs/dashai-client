@@ -103,22 +103,15 @@
 <svelte:window on:keydown={onKeyDown} />
 
 {#if items.length > 0}
-	<div
-		id="slash-command"
-		class="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-stone-200 bg-white px-1 py-2 shadow-md transition-all"
-		bind:this={container}
-	>
+	<div id="slash-command" class="slash-command-container" bind:this={container}>
 		{#each items as item, index (index)}
 			<button
-				class="flex w-full scroll-my-2 items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-stone-900 hover:bg-stone-100
-				{index === selectedIndex ? 'bg-stone-100 text-stone-900' : ''}"
+				class="command-item {index === selectedIndex ? 'selected' : ''}"
 				onclick={() => selectItem(index)}
 				data-index={index}
 				type="button"
 			>
-				<div
-					class="flex h-10 w-10 items-center justify-center rounded-md border border-stone-200 bg-white"
-				>
+				<div class="icon-container">
 					{#if item.title === 'Continue writing' && isLoading}
 						<LoadingCircle />
 					{:else}
@@ -127,10 +120,70 @@
 					{/if}
 				</div>
 				<div>
-					<p class="font-medium">{item.title}</p>
-					<p class="text-xs text-stone-500">{item.description}</p>
+					<p class="item-title">{item.title}</p>
+					<p class="item-description">{item.description}</p>
 				</div>
 			</button>
 		{/each}
 	</div>
 {/if}
+
+<style>
+	.slash-command-container {
+		z-index: 50;
+		height: auto;
+		max-height: 330px;
+		width: 18rem;
+		overflow-y: auto;
+		border-radius: 0.375rem;
+		border: 1px solid #e5e7eb;
+		background-color: white;
+		padding: 0.5rem 0.25rem;
+		box-shadow:
+			0 4px 6px -1px rgba(0, 0, 0, 0.1),
+			0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		transition: all;
+	}
+
+	.command-item {
+		display: flex;
+		width: 100%;
+		scroll-margin: 0.5rem;
+		align-items: center;
+		gap: 0.5rem;
+		border-radius: 0.375rem;
+		padding: 0.25rem 0.5rem;
+		text-align: left;
+		font-size: 0.875rem;
+		color: #1c1917;
+	}
+
+	.command-item:hover {
+		background-color: #f5f5f4;
+	}
+
+	.command-item.selected {
+		background-color: #f5f5f4;
+		color: #1c1917;
+	}
+
+	.icon-container {
+		display: flex;
+		height: 2.5rem;
+		width: 2.5rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.375rem;
+		border: 1px solid #e5e7eb;
+		background-color: white;
+	}
+
+	.item-title {
+		font-weight: 500;
+	}
+
+	.item-description {
+		font-size: 0.75rem;
+		color: #78716c;
+	}
+</style>

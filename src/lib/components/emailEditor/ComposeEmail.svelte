@@ -15,21 +15,18 @@
 	import { showToast } from '$lib/helpers';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import Footer from './Footer.svelte';
+	import { setShowComposeEmail } from '$lib/actions';
 
 	const toastStore = getToastStore();
 
 	let {
 		email,
 		height = $bindable(),
-		composeEmailMode,
-		setShowComposeEmail,
-		setComposeEmailMode
+		composeEmailMode
 	}: {
 		email: Email;
 		height: number;
 		composeEmailMode: ComposeEmailMode;
-		setShowComposeEmail: (show: boolean) => void;
-		setComposeEmailMode: (mode: ComposeEmailMode) => void;
 	} = $props();
 	let element: HTMLElement;
 	let bmenu: HTMLElement;
@@ -160,6 +157,7 @@
 		};
 		_sendEmail();
 	};
+
 	const _clearEmailData = () => {
 		emailData.subject = '';
 		emailData.body = '';
@@ -347,7 +345,6 @@
 					await editor.commands.setTextSelection(0);
 
 					// Log the editor's content for debugging
-					console.log('Editor content:', editor.getHTML());
 				} catch (error) {
 					console.error('Error setting content:', error);
 				}
@@ -390,11 +387,10 @@
 			{setBccEmails}
 			{setFromEmail}
 			{setSubject}
-			{setComposeEmailMode}
 		/>
 	</div>
 	<div class="mx-1 my-1">
-		<Editor />
+		<Editor email={emailData} />
 	</div>
 	<div class="m-2 flex justify-start text-primary-gray">
 		<Footer {onSend} />

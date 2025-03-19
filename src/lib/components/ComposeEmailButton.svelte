@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { emailServiceState } from '$lib/store';
-	import SecondaryButton from './SecondaryButton.svelte';
+	import { IconPencil } from '@tabler/icons-svelte';
+	import PrimaryButton from './PrimaryButton.svelte';
 	const setShowComposeEmail = () => {
 		emailServiceState.update((state) => ({
 			...state,
@@ -9,9 +10,11 @@
 	};
 </script>
 
-<SecondaryButton
-	extraClasses="bg-primary-blue"
+<PrimaryButton
 	on:click={() => {
 		setShowComposeEmail();
-	}}>Compose</SecondaryButton
+	}}><IconPencil size={20} color="white" />Compose</PrimaryButton
 >
+
+<style>
+</style>

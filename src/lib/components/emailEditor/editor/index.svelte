@@ -1,25 +1,19 @@
 <script lang="ts">
 	// import 'cal-sans';
-	import './styles/index.css';
-	import './styles/prosemirror.css';
-	import './styles/tailwind.css';
 
 	import { getPrevText } from '../lib/editor';
-	import { createLocalStorageStore } from '../lib/utils';
-	import { Editor, Extension, type JSONContent } from '@tiptap/core';
-	import type { EditorProps } from '@tiptap/pm/view';
+	import { Editor } from '@tiptap/core';
 	import ImageResizer from './extensions/ImageResizer.svelte';
 	import { onMount } from 'svelte';
-	import { useCompletion } from '@ai-sdk/svelte';
 	import { defaultExtensions } from './extensions/index.svelte';
 	import { defaultEditorProps } from './props';
 
 	import EditorBubbleMenu from './bubble-menu/index.svelte';
-	import { PUBLIC_API_URL } from '$env/static/public';
 	import { user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { EditorType } from '../lib';
-	import type { Email } from '$lib/types';
+	import type { EmailData } from '$lib/types';
+	import { writeEmailSuggestion } from '$lib/api/compose';
 
 	/**
 	 * Additional classes to add to the editor container.
@@ -31,86 +25,104 @@
 	 * Defaults to empty string.
 	 */
 	let {
-		defaultValue = '',
-		extensions,
-		editorProps,
-		onUpdate,
-		onDebouncedUpdate,
-		debounceDuration,
-		storageKey = 'email_ed',
-		disableLocalStorage,
-		editor,
-		email
+		email = $bindable()
 	}: {
-		defaultValue: JSONContent | string;
-		extensions: Extension[];
-		editorProps: EditorProps;
-		onUpdate: (editor?: Editor) => void | Promise<void>;
-		onDebouncedUpdate: (editor?: Editor) => void | Promise<void>;
-		debounceDuration: number;
-		storageKey: string;
-		disableLocalStorage: boolean;
-		editor: EditorType;
-		email: Email;
+		email: EmailData;
 	} = $props();
 	/**
 	 * Disable local storage read/save.
 	 * @default false
 	 */
+	let editor: EditorType | undefined = $state();
 	let element: Element;
 
-	const { complete, completion, isLoading, stop } = useCompletion({
-		id: 'novel',
-		api: `${PUBLIC_API_URL}/user/${get(user)?.id.toString()}/suggestion`,
-		credentials: 'include',
-		streamProtocol: 'text',
-		body: {
-			email_id: [email?.email_id ?? ''],
-			subject: email?.subject ?? '',
-			body: email?.raw_content ?? ''
-		},
-		onFinish: (_prompt, completion) => {
-			editor?.commands.setTextSelection({
-				from: editor.state.selection.from - completion.length,
-				to: editor.state.selection.from
-			});
-		},
-		onError: (err) => {
-			// addToast({
-			// 	data: {
-			// 		text: err.message,
-			// 		type: 'error'
-			// 	}
-			// });
-			// if (err.message === 'You have reached your request limit for the day.') {
-			// 	va.track('Rate Limit Reached');
-			// }
-		}
-	});
+	let isLoading = $state(false);
 
-	const content = createLocalStorageStore(storageKey, defaultValue);
-	let hydrated = false;
-	$effect(() => {
-		if (editor && !hydrated) {
-			const value = disableLocalStorage ? defaultValue : $content;
+	// const { complete, completion, isLoading, stop } = useCompletion({
+	// 	id: 'novel',
+	// 	api: `${PUBLIC_API_URL}/user/${get(user)?.id.toString()}/suggestion`,
+	// 	credentials: 'include',
+	// 	streamProtocol: 'text',
+	// 	body: {
+	// 		email_id: [email?.email_id ?? ''],
+	// 		subject: email?.subject ?? '',
+	// 		body: email?.raw_content ?? ''
+	// 	},
+	// 	onFinish: (_prompt, completion) => {
+	// 		editor?.commands.setTextSelection({
+	// 			from: editor.state.selection.from - completion.length,
+	// 			to: editor.state.selection.from
+	// 		});
+	// 	},
+	// 	onError: (err) => {
+	// 		// addToast({
+	// 		// 	data: {
+	// 		// 		text: err.message,
+	// 		// 		type: 'error'
+	// 		// 	}
+	// 		// });
+	// 		// if (err.message === 'You have reached your request limit for the day.') {
+	// 		// 	va.track('Rate Limit Reached');
+	// 		// }
+	// 	}
+	// });
 
-			if (value) {
-				editor.commands.setContent(value);
-			}
+	// const content = createLocalStorageStore(storageKey, defaultValue);
+	// let hydrated = false;
 
-			hydrated = true;
-		}
-	});
+	// $effect(() => {
+	// 	if (editor && !hydrated) {
+	// 		const value = disableLocalStorage ? defaultValue : $content;
+
+	// 		if (value) {
+	// 			editor.commands.setContent(value);
+	// 		}
+
+	// 		hydrated = true;
+	// 	}
+	// });
 
 	let prev = '';
 
-	completion.subscribe((value) => {
-		if (value) {
-			const diff = value.slice(prev.length);
-			prev = value;
-			editor?.commands.insertContent(diff);
+	const readStream = async (
+		resultReader: ReadableStreamDefaultReader<Uint8Array<ArrayBufferLike>>
+	) => {
+		let buffer = '';
+		const decoder = new TextDecoder('utf-8');
+
+		try {
+			while (true) {
+				const { done, value } = await resultReader!.read();
+				if (done) break;
+				const chunk = decoder.decode(value);
+				buffer += chunk;
+
+				// Add artificial delay
+				await new Promise((resolve) => setTimeout(resolve, 50));
+
+				let boundary = buffer.indexOf('\n'); // Assume newline-separated JSON
+				while (boundary !== -1) {
+					const jsonString = buffer.slice(0, boundary); // Extract one JSON object
+					buffer = buffer.slice(boundary + 1); // Remove processed part
+					boundary = buffer.indexOf('\n');
+
+					try {
+						const { data } = JSON.parse(jsonString);
+
+						editor?.commands.insertContent(data);
+					} catch (error) {
+						console.error('Error parsing JSON string:', jsonString, error);
+					}
+				}
+			}
+		} catch (error) {
+			console.error('Error reading search stream:', error);
+		} finally {
+			isLoading = false;
+
+			// email.body =editor?.getHTML();
 		}
-	});
+	};
 
 	onMount(() => {
 		editor = new Editor({
@@ -121,24 +133,32 @@
 			},
 			extensions: [...defaultExtensions],
 			editorProps: {
-				...defaultEditorProps,
-				...editorProps
+				...defaultEditorProps
+				// ...editorProps
 			},
 			onUpdate: (e) => {
 				const selection = e.editor.state.selection;
 				const lastTwo = getPrevText(e.editor, {
 					chars: 2
 				});
-				if (lastTwo === '++' && !$isLoading) {
+				if (lastTwo === '++' && !isLoading) {
+					isLoading = true;
 					e.editor.commands.deleteRange({
 						from: selection.from - 2,
 						to: selection.from
 					});
-					complete(
-						getPrevText(e.editor, {
-							chars: 5000
-						})
-					);
+					const _writeEmailSuggestion = async () => {
+						const reader = await writeEmailSuggestion({
+							user: get(user)?.id.toString(),
+							subject: email?.subject,
+							body: e.editor.storage.markdown.getMarkdown()
+						});
+						if (reader) {
+							readStream(reader);
+						}
+					};
+					_writeEmailSuggestion();
+
 					// complete(e.editor.storage.markdown.getMarkdown());
 				} else {
 					// onUpdate(e.editor);
@@ -161,7 +181,7 @@
 		<ImageResizer {editor} />
 	{/if}
 
-	{#if $isLoading}
+	{#if isLoading}
 		<div class="loading-spinner">
 			<div class="spinner"></div>
 		</div>

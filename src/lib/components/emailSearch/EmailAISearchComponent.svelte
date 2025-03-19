@@ -68,12 +68,10 @@
 </script>
 
 {#if $modalStore[0]}
-	<div
-		class="z-50 flex max-h-[80vh] w-[80%] flex-col gap-6 self-start rounded-xl bg-primary-dark-gray/95 p-6"
-	>
+	<div class="email-search-container">
 		<!-- Search Input Area -->
 
-		<div class="h-full w-full overflow-y-auto" bind:this={containerDiv}>
+		<div class="search-content" bind:this={containerDiv}>
 			{#each $emailSearchList as emailSearch}
 				<SearchEntry
 					query={emailSearch.query}
@@ -86,7 +84,7 @@
 					type="text"
 					bind:value={searchQuery}
 					placeholder="Ask Smart Search"
-					class="w-full rounded-xl bg-primary-dark-container p-4 pr-12 text-primary-white"
+					class="search-input"
 				/>
 				<!-- Microphone Icon -->
 				<!-- <button class="absolute right-4 top-1/2 -translate-y-1/2 text-primary-gray">
@@ -147,3 +145,33 @@
 		</div> -->
 	</div>
 {/if}
+
+<style>
+	.email-search-container {
+		z-index: 50;
+		display: flex;
+		max-height: 80vh;
+		width: 80%;
+		flex-direction: column;
+		gap: 1.5rem;
+		align-self: flex-start;
+		border-radius: 0.75rem;
+		background-color: rgba(61, 66, 73, 0.95); /* bg-primary-dark-gray/95 */
+		padding: 1.5rem;
+	}
+
+	.search-content {
+		height: 100%;
+		width: 100%;
+		overflow-y: auto;
+	}
+
+	.search-input {
+		width: 100%;
+		border-radius: 0.75rem;
+		background-color: var(--color-primary-dark-container);
+		padding: 1rem;
+		padding-right: 3rem;
+		color: var(--color-primary-white);
+	}
+</style>

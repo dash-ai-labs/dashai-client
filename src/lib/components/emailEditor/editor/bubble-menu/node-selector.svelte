@@ -94,22 +94,18 @@
 </script>
 
 <div>
-	<div class="relative h-full bg-primary-black text-font-light-gray">
+	<div class="menu-container relative">
 		<button
 			bind:this={buttonElement}
 			onclick={() => (dropdownOpen = !dropdownOpen)}
-			class="flex h-full items-center gap-1 whitespace-nowrap p-2 text-sm font-medium text-font-light-gray hover:bg-stone-100 active:bg-stone-200"
+			class="menu-button"
 			type="button"
 		>
 			<span>{activeItem?.name}</span>
-			<IconChevronDown class="h-4 w-4" />
+			<IconChevronDown class="chevron-icon" />
 		</button>
 
-		<Dropdown
-			placement="bottom"
-			triggeredBy={buttonElement}
-			class="z-[99999] w-48 rounded-md bg-primary-black p-1 shadow-lg"
-		>
+		<Dropdown placement="bottom" triggeredBy={buttonElement} class="dropdown">
 			{#each items as item, index}
 				<DropdownItem
 					on:click={() => {
@@ -117,19 +113,96 @@
 						dropdownOpen = false;
 						isOpen = false;
 					}}
-					class="flex items-center justify-between px-2 py-1 text-sm text-font-light-gray hover:bg-stone-100"
+					class="dropdown-item"
 				>
-					<div class="flex items-center space-x-2">
-						<div class="rounded-sm border border-stone-200 p-1">
-							<svelte:component this={item.icon} class="h-3 w-3" />
+					<div class="item-content">
+						<div class="icon-container">
+							<svelte:component this={item.icon} class="icon" />
 						</div>
 						<span>{item.name}</span>
 					</div>
 					{#if activeItem.name === item.name}
-						<IconCheck class="h-4 w-4" />
+						<IconCheck class="check-icon" />
 					{/if}
 				</DropdownItem>
 			{/each}
 		</Dropdown>
 	</div>
 </div>
+
+<style>
+	.menu-container {
+		height: 100%;
+		background-color: var(--color-primary-black);
+		color: var(--color-font-light-gray);
+	}
+
+	.menu-button {
+		display: flex;
+		height: 100%;
+		align-items: center;
+		gap: 0.25rem;
+		white-space: nowrap;
+		padding: 0.5rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--color-font-light-gray);
+	}
+
+	.menu-button:hover {
+		background-color: rgb(245 245 244);
+	}
+
+	.menu-button:active {
+		background-color: rgb(231 229 228);
+	}
+
+	.chevron-icon {
+		height: 1rem;
+		width: 1rem;
+	}
+
+	.dropdown {
+		z-index: 99999;
+		width: 12rem;
+		border-radius: 0.375rem;
+		background-color: var(--color-primary-black);
+		padding: 0.25rem;
+		box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+	}
+
+	.dropdown-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.25rem 0.5rem;
+		font-size: 0.875rem;
+		color: var(--color-font-light-gray);
+	}
+
+	.dropdown-item:hover {
+		background-color: rgb(245 245 244);
+	}
+
+	.item-content {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.icon-container {
+		border-radius: 0.125rem;
+		border: 1px solid rgb(231 229 228);
+		padding: 0.25rem;
+	}
+
+	.icon {
+		height: 0.75rem;
+		width: 0.75rem;
+	}
+
+	.check-icon {
+		height: 1rem;
+		width: 1rem;
+	}
+</style>

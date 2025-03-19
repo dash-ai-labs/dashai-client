@@ -62,44 +62,38 @@
 	emailLabels.subscribe((value) => {
 		emailLabelList = value;
 	});
-
-	// Base Classes
-	const cBase =
-		'overflow-hidden rounded-lg border border-primary-dark-gray bg-primary-black p-[24px] text-font-light-gray';
-	const cHeader = 'text-2xl font-bold';
-	const cForm = 'max-w-md rounded-md bg-primary-black ';
 </script>
 
 <!-- @component This example creates a simple form modal. -->
 
 {#if $modalStore[0]}
-	<div class="modal-example-form {cBase}">
-		<header class={cHeader}>{$modalStore[0].title ?? '(title missing)'}</header>
+	<div class="modal-example-form">
+		<header class="modal-header">{$modalStore[0].title ?? '(title missing)'}</header>
 		<article>{$modalStore[0].body ?? '(body missing)'}</article>
 		<!-- Enable for debugging: -->
 
-		<form class="modal-form {cForm}">
-			<div class="my-[10px] flex w-[300px] flex-col gap-[24px]">
+		<form class="modal-form">
+			<div class="form-container">
 				<label class="label">
 					<input
 						bind:value={nameInput}
 						type="text"
-						class="w-full rounded-md border-0 bg-primary-container focus:outline-none focus:ring-0"
+						class="input-field"
 						placeholder="Enter label name"
 						on:keydown={handleEnterKey}
 					/>
 					{#if nameError}
-						<div class="text-body text-primary-red">
+						<div class="error-message">
 							{nameErrorMessage}
 						</div>
 					{/if}
 				</label>
 			</div>
 		</form>
-		<div class="my-2 flex max-h-[400px] flex-col overflow-y-auto">
+		<div class="label-list">
 			{#each emailLabelList as emailLabel, index}
 				<div>
-					<div class="mb-[8px]">
+					<div class="label-item">
 						<EmailLabel {emailLabel} {index} />
 
 						<!-- {#if showEditEmailLabelModal && selectedEmailLabel && emailLabel.id === selectedEmailLabel.id}
@@ -125,10 +119,76 @@
 			{/each}
 		</div>
 		<!-- prettier-ignore -->
-		<footer class="modal-footer text-primary-white {parent.regionFooter}">
+		<footer class="modal-footer {parent.regionFooter}">
             
 			<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
 			<button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>{parent.buttonTextSubmit}</button>
 		</footer>
 	</div>
 {/if}
+
+<style>
+	.modal-example-form {
+		overflow: hidden;
+		border-radius: 0.5rem;
+		border: 1px solid var(--color-primary-dark-gray);
+		background-color: var(--color-primary-black);
+		padding: 24px;
+		color: var(--color-font-light-gray);
+	}
+
+	.modal-header {
+		font-size: 1.5rem;
+		line-height: 2rem;
+		font-weight: 700;
+	}
+
+	.modal-form {
+		max-width: 28rem;
+		border-radius: 0.375rem;
+		background-color: var(--color-primary-black);
+	}
+
+	.form-container {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		display: flex;
+		width: 300px;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.input-field {
+		width: 100%;
+		border-radius: 0.375rem;
+		border: 0;
+		background-color: var(--color-primary-container);
+	}
+
+	.input-field:focus {
+		outline: none;
+		box-shadow: none;
+	}
+
+	.error-message {
+		font-size: var(--text-body);
+		color: var(--color-primary-red);
+	}
+
+	.label-list {
+		margin-top: 0.5rem;
+		margin-bottom: 0.5rem;
+		display: flex;
+		max-height: 400px;
+		flex-direction: column;
+		overflow-y: auto;
+	}
+
+	.label-item {
+		margin-bottom: 8px;
+	}
+
+	.modal-footer {
+		color: var(--color-primary-white);
+	}
+</style>

@@ -58,28 +58,44 @@
 	});
 </script>
 
-<div class="flex w-[200px] justify-end">
-	<Button>{$emailAccount?.email || 'All Emails'}<ChevronDownOutline class="ms-2 h-6 w-6" /></Button>
-	<Dropdown color="#00000" class="rounded-lg bg-primary-container">
+<div class="dropdown-container">
+	<Button>
+		{$emailAccount?.email || 'All Emails'}
+		<ChevronDownOutline class="chevron-icon" />
+	</Button>
+	<Dropdown class="dropdown-menu">
 		{#each options as option}
 			<DropdownItem
-				class="flex flex-row justify-center {option === selectedOption
-					? 'bg-secondary-active-button-background'
-					: ''} hover:bg-secondary-active-button-background"
+				class="dropdown-item {option === selectedOption ? 'selected' : ''}"
 				on:click={() => onSelectOption(option)}
 			>
 				{#if option.icon}
-					<img src={option.icon} alt={option.label} class="h-6 w-6 rounded-full" />
+					<img src={option.icon} alt={option.label} class="account-icon" />
 				{/if}
-				<p class="ml-2 self-center">{option.label}</p>
+				<p class="option-label">{option.label}</p>
 			</DropdownItem>
 		{/each}
-		{#snippet footer()}
-			<DropdownItem
-				onclick={addAccount}
-				class="rounded-lg bg-primary-container hover:bg-secondary-active-button-background"
-				>+ Add Email</DropdownItem
-			>
-		{/snippet}
+		<!-- {#snippet footer()} -->
+		<DropdownItem class="dropdown-item" on:click={addAccount}>+ Add Email</DropdownItem>
+		<!-- {/snippet} -->
 	</Dropdown>
 </div>
+
+<style>
+	.dropdown-container {
+		display: flex;
+		width: 200px;
+		justify-content: flex-end;
+	}
+
+	.account-icon {
+		height: 1.5rem;
+		width: 1.5rem;
+		border-radius: 9999px;
+	}
+
+	.option-label {
+		margin-left: 0.5rem;
+		align-self: center;
+	}
+</style>

@@ -11,8 +11,8 @@
 	let email = $state<Email | undefined>(undefined);
 	let emailList: EmailList | undefined = undefined;
 	let emailDetailView: EmailDetailView | undefined = undefined;
-	let showComposeEmail = $derived(get(emailServiceState).showComposeEmail);
-	let composeEmailMode = $state<ComposeEmailMode>(ComposeEmailMode.NewEmail);
+	let showComposeEmail = $state(get(emailServiceState).showComposeEmail);
+	let composeEmailMode = $state(get(emailServiceState).composeEmailMode);
 
 	const selectEmail = (selectedEmail: Email) => {
 		if (emailDetailView) {
@@ -23,6 +23,12 @@
 			}));
 		} // Set the email to be passed as a prop
 	};
+	emailServiceState.subscribe((state) => {
+		if (showComposeEmail !== state.showComposeEmail) {
+			showComposeEmail = state.showComposeEmail;
+			composeEmailMode = state.composeEmailMode;
+		}
+	});
 
 	const removeEmail = (removedEmail: Email) => {
 		if (emailList) emailList.removeEmail(removedEmail);
@@ -72,41 +78,54 @@
 		};
 		_removeLabelFromEmail();
 	};
-
-	const setShowComposeEmail = (show: boolean) => {
-		emailServiceState.update((state) => ({
-			...state,
-			showComposeEmail: show
-		}));
-	};
-
-	const setComposeEmailMode = (mode: ComposeEmailMode) => {
-		composeEmailMode = mode;
-	};
 </script>
 
-<!-- <div class="relative"> -->
-<div class="flex h-full flex-1 flex-col overflow-hidden">
-	<EmailCommandBar class="flex-shrink-0" />
-	<div class="flex flex-1 flex-row gap-[20px] overflow-hidden">
-		<EmailList {setShowComposeEmail} {selectEmail} {setComposeEmailMode} bind:this={emailList} />
-		<div class="relative h-full w-full">
+<div class="container">
+	<EmailCommandBar class="command-bar" {removeEmail} {archiveEmail} {markEmailAsUnread} />
+	<div class="content">
+		<EmailList {selectEmail} bind:this={emailList} />
+		<div class="detail-view">
 			<EmailDetailView
 				{removeEmail}
 				{archiveEmail}
 				{markEmailAsUnread}
-				{setShowComposeEmail}
-				{setComposeEmailMode}
 				{addLabelToEmail}
 				{removeLabelFromEmail}
 				bind:this={emailDetailView}
 			/>
 			{#if showComposeEmail}
 				{#key showComposeEmail}
-					<ComposeEmail {email} {setShowComposeEmail} {composeEmailMode} {setComposeEmailMode} />
+					<ComposeEmail {email} {composeEmailMode} />
 				{/key}
 			{/if}
 		</div>
 	</div>
 </div>
-<!-- </div> -->
+
+<style>
+	.container {
+		display: flex;
+		height: 100%;
+		flex: 1;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.command-bar {
+		flex-shrink: 0;
+	}
+
+	.content {
+		display: flex;
+		flex: 1;
+		flex-direction: row;
+		gap: 20px;
+		overflow: hidden;
+	}
+
+	.detail-view {
+		position: relative;
+		height: 100%;
+		width: 100%;
+	}
+</style>

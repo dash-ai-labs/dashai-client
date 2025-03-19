@@ -102,28 +102,76 @@
 	};
 </script>
 
-<div
-	class="ml-auto mt-4 overflow-visible rounded-lg border-[0.5px] border-primary-dark-gray bg-primary-black p-[24px] text-font-light-gray"
-	style="max-width: none; max-height: none;"
->
-	<div class=" flex w-[300px] flex-col gap-[24px]">
-		<div class="flex flex-col items-start gap-[10px]">
+<div class="edit-email-label-container">
+	<div class="edit-email-label-wrapper">
+		<div class="form-group">
 			<input
 				bind:value={nameInput}
 				type="text"
-				class="w-full rounded-md border-0 bg-primary-container focus:outline-none focus:ring-0"
+				class="label-input"
 				placeholder={emailLabel.name}
 				on:keydown={handleEnterKey}
 			/>
 			{#if nameError}
-				<div class="text-body text-primary-red">
+				<div class="error-message">
 					{nameErrorMessage}
 				</div>
 			{/if}
 			<Button onclick={_editLabel}><LabelOutline />Edit Label</Button>
 			<Button onclick={_deleteLabel}><TrashBinOutline />Delete</Button>
-			<hr class="w-full border-t border-primary-dark-gray" />
+			<hr class="divider" />
 			<ColorPicker selectColor={_selectColor} />
 		</div>
 	</div>
 </div>
+
+<style>
+	.edit-email-label-container {
+		margin-left: auto;
+		margin-top: 1rem;
+		overflow: visible;
+		border-radius: 0.5rem;
+		border: 0.5px solid var(--color-primary-dark-gray);
+		background-color: var(--color-primary-black);
+		padding: 24px;
+		color: var(--color-font-light-gray);
+		max-width: none;
+		max-height: none;
+	}
+
+	.edit-email-label-wrapper {
+		display: flex;
+		width: 300px;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.form-group {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	.label-input {
+		width: 100%;
+		border-radius: 0.375rem;
+		border: 0;
+		background-color: var(--color-primary-container);
+	}
+
+	.label-input:focus {
+		outline: none;
+		box-shadow: none;
+	}
+
+	.error-message {
+		font-size: var(--text-body);
+		color: var(--color-primary-red);
+	}
+
+	.divider {
+		width: 100%;
+		border-top: 1px solid var(--color-primary-dark-gray);
+	}
+</style>
