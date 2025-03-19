@@ -11,46 +11,60 @@
 	import { ForwardOutline, ReplyOutline } from 'flowbite-svelte-icons';
 	import { getEmailContent } from '$lib/api/email';
 	import { get } from 'svelte/store';
-	import { user } from '$lib/store';
+	import { user, emailServiceState } from '$lib/store';
 	import AddEmailLabel from './AddEmailLabel.svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import EmailLabelChip from './EmailLabelChip.svelte';
+	import { setShowComposeEmail, setComposeEmailMode } from '$lib/actions';
 	const {
 		removeEmail,
 		archiveEmail,
 		markEmailAsUnread,
-		email,
-		setShowComposeEmail,
-		setComposeEmailMode,
 		addLabelToEmail,
 		removeLabelFromEmail
 	}: {
 		removeEmail: (email: Email) => void;
 		archiveEmail: (email: Email) => void;
 		markEmailAsUnread: (email: Email) => void;
-		email: Email;
-		setShowComposeEmail: (show: boolean) => void;
-		setComposeEmailMode: (mode: ComposeEmailMode) => void;
 		addLabelToEmail: (email: Email, emailLabel: Label) => void;
 		removeLabelFromEmail: (email: Email, emailLabel: Label) => void;
 	} = $props();
 	let element = $state<HTMLIFrameElement | null>(null);
+	let email = $state<Email | undefined>(undefined);
+	let isLoading = $state(false);
 
-	$effect(() => {
-		if (element && email?.content) {
+	emailServiceState.subscribe((state) => {
+		const currentEmail = state.currentEmail;
+		if (currentEmail && currentEmail.id !== email?.id) {
+			email = currentEmail;
+
+			loadEmailContent(currentEmail);
+		}
+	});
+
+	function loadEmailContent(email: Email) {
+		if (email?.content) {
+			isLoading = true;
 			const loadContent = async () => {
 				const userData = get(user);
-				const content = await getEmailContent({
-					user: userData?.id.toString(),
-					email_id: email.email_id
-				});
-				if (element && content) {
-					element.srcdoc = content;
+				try {
+					const content = await getEmailContent({
+						user: userData?.id.toString(),
+						email_id: email.email_id
+					});
+					if (element && content) {
+						element.srcdoc = content;
+					}
+				} catch (error) {
+					console.error('Error loading email content:', error);
+				} finally {
+					isLoading = false;
 				}
 			};
 			loadContent();
 		}
-	});
+	}
+
 	const addLabelPopup: PopupSettings = {
 		// Represents the type of event that opens/closed the popup
 		event: 'click',
@@ -138,12 +152,6 @@
 		}
 	}
 
-	onMount(() => {
-		if (element && email?.raw_content) {
-			element.srcdoc = formatEmailContent(email.raw_content);
-		}
-	});
-
 	const formatDate = (date: Date): string => {
 		let dateObj = new Date(date);
 		const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -165,11 +173,11 @@
 	};
 </script>
 
-<div class="h-full min-w-[740px] max-w-[1200px] rounded-lg bg-primary-container">
+<div class="email-detail-container">
 	{#if email}
 		<!-- Header -->
-		<header class="flex h-[60px] items-center gap-2 border-b border-primary-gray px-3">
-			<div class="mx-[24px] flex gap-[24px]">
+		<header class="email-header">
+			<div class="button-group">
 				<EmailButton
 					onclick={() => email && archiveEmail(email)}
 					ariaLabel="Archive"
@@ -181,9 +189,7 @@
 					<Trash />
 				</EmailButton>
 			</div>
-			<div
-				class="border-r-red flex border-l-[1px] border-secondary-inactive-button-highlight px-[24px]"
-			>
+			<div class="separator-border">
 				<EmailButton
 					onclick={() => markEmailAsUnread(email)}
 					ariaLabel="Mark as Unread"
@@ -195,85 +201,73 @@
 		</header>
 
 		<!-- Message Content -->
-		<div class="border-b border-primary-gray p-6">
-			<div class="flex items-start gap-4">
-				<div
-					class="flex h-10 w-10 items-center justify-center rounded-full bg-green-600 font-medium text-white"
-				>
+		<div class="message-header">
+			<div class="sender-info">
+				<div class="avatar">
 					{email.sender_name && email.sender_name[0]
 						? email.sender_name[0][0]
 						: email.sender && email.sender[0]
 							? email.sender[0][0]
 							: ''}
 				</div>
-				<div class="flex-1">
-					<div class="flex items-start justify-between">
+				<div class="content-wrapper">
+					<div class="header-row">
 						<div>
-							<h1 class="text-lg">{email.subject}</h1>
-							<p class="text-sm text-gray-400">Reply To: {email.sender[0]}</p>
+							<h1 class="subject">{email.subject}</h1>
+							<p class="reply-to">Reply To: {email.sender[0]}</p>
 						</div>
-						<div class="flex flex-col gap-1">
-							<div class="flex flex-row items-center justify-end gap-1">
+						<div class="header-actions">
+							<div class="labels-container">
 								{#each email.email_labels as label}
 									<EmailLabelChip {label} {onLabelClick} />
 								{/each}
-								<button
-									use:popup={addLabelPopup}
-									class="whitespace-nowrap rounded-lg border-[1px] border-dashed border-primary-gray px-4 text-primary-gray"
-									>+ Label</button
-								>
+								<button use:popup={addLabelPopup} class="add-label-button">+ Label</button>
 							</div>
 							<div data-popup="addLabelPopup">
 								<AddEmailLabel {email} {addLabelToEmail} />
 							</div>
-							<span class="items-center text-right text-sm text-gray-400"
-								>{formatDate(email.date)}</span
-							>
+							<span class="date-display">{formatDate(email.date)}</span>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div
-			class="no-scrollbar relative grid h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] max-w-[1200px] p-4"
-		>
-			<div class=" flex h-full flex-col overflow-hidden">
+		<div class="email-content-container">
+			<div class="email-content-wrapper">
 				<!-- Email content container with proper height constraints -->
-				<div class="relative min-h-0 flex-1 overflow-auto">
+				<div class="iframe-container">
+					<!-- Add loading indicator -->
+					{#if isLoading}
+						<div class="loading-overlay">
+							<div class="loading-spinner"></div>
+						</div>
+					{/if}
+
 					<!-- If you're using an iframe for email content -->
 					<iframe
 						bind:this={element}
 						title={email.subject}
 						sandbox="allow-same-origin allow-popups"
-						class="no-scrollbar h-full w-full bg-primary-white"
+						class="email-iframe"
 						style="background-color: #f0f0f0;"
 					></iframe>
 
 					<!-- Fixed position buttons that will always be visible -->
-					<div
-						class="absolute bottom-[100px] right-[10px] z-50 flex flex-row justify-end gap-[10px]"
-					>
-						<div
-							class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2 shadow-lg"
-						>
+					<div class="action-buttons">
+						<div class="action-button-container">
 							<button
-								class="flex flex-row items-center gap-[10px]"
+								class="action-button"
 								onclick={() => {
-									setShowComposeEmail(true);
-									setComposeEmailMode(ComposeEmailMode.Reply);
-								}}><ReplyOutline height="20" width="20" class="text-primary-white" />Reply</button
+									setShowComposeEmail(true, ComposeEmailMode.Reply);
+								}}><ReplyOutline height="20" width="20" class="button-icon" />Reply</button
 							>
 						</div>
-						<div
-							class="max-w-sm rounded-md border border-primary-white bg-primary-black px-4 py-2 shadow-lg"
-						>
+						<div class="action-button-container">
 							<button
-								class="flex flex-row items-center gap-[10px]"
+								class="action-button"
 								onclick={() => {
-									setShowComposeEmail(true);
-									setComposeEmailMode(ComposeEmailMode.Forward);
-								}}
-								><ForwardOutline height="20" width="20" class="text-primary-white" />Forward</button
+									setShowComposeEmail(true, ComposeEmailMode.Forward);
+								}}><ForwardOutline height="20" width="20" class="button-icon" />Forward</button
 							>
 						</div>
 					</div>
@@ -283,9 +277,9 @@
 
 		<!-- Reply Box -->
 	{:else}
-		<div class="flex h-full flex-col items-center justify-center gap-[20px]">
-			<Inbox size="80" fill="fill-primary-gray" />
-			<div class="text-primary-gray">Select an email to open</div>
+		<div class="empty-state">
+			<Inbox size="80" class="empty-icon" />
+			<div class="empty-text">Select an email to open</div>
 		</div>
 	{/if}
 </div>
@@ -315,5 +309,222 @@
 	.email-content {
 		max-height: 100%;
 		overflow: auto;
+	}
+
+	/* Converted Tailwind styles */
+	.email-detail-container {
+		height: 100%;
+		min-width: 740px;
+		max-width: 1200px;
+		border-radius: 0.5rem;
+		background-color: var(--color-primary-container);
+	}
+
+	.email-header {
+		display: flex;
+		height: 60px;
+		align-items: center;
+		gap: 0.5rem;
+		border-bottom: 1px solid var(--color-primary-gray);
+		padding: 0 0.75rem;
+	}
+
+	.button-group {
+		margin: 0 24px;
+		display: flex;
+		gap: 24px;
+	}
+
+	.separator-border {
+		display: flex;
+		border-left: 1px solid var(--color-secondary-inactive-button-highlight);
+		padding: 0 24px;
+	}
+
+	.message-header {
+		border-bottom: 1px solid var(--color-primary-gray);
+		padding: 1.5rem;
+	}
+
+	.sender-info {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.avatar {
+		display: flex;
+		height: 2.5rem;
+		width: 2.5rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9999px;
+		background-color: #16a34a;
+		font-weight: 500;
+		color: white;
+	}
+
+	.content-wrapper {
+		flex: 1;
+	}
+
+	.header-row {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	.subject {
+		font-size: 1.125rem;
+		line-height: 1.75rem;
+	}
+
+	.reply-to {
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		color: #9ca3af;
+	}
+
+	.header-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.labels-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 0.25rem;
+	}
+
+	.add-label-button {
+		white-space: nowrap;
+		border-radius: 0.5rem;
+		border: 1px dashed var(--color-primary-gray);
+		padding: 0 1rem;
+		color: var(--color-primary-gray);
+	}
+
+	.date-display {
+		align-items: center;
+		text-align: right;
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		color: #9ca3af;
+	}
+
+	.email-content-container {
+		position: relative;
+		display: grid;
+		height: calc(100vh - 200px);
+		max-height: calc(100vh - 200px);
+		max-width: 1200px;
+		padding: 1rem;
+	}
+
+	.no-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+
+	.email-content-wrapper {
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.iframe-container {
+		position: relative;
+		min-height: 0;
+		flex: 1;
+		overflow: auto;
+	}
+
+	.loading-overlay {
+		position: absolute;
+		inset: 0;
+		z-index: 10;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: rgba(255, 255, 255, 0.7);
+	}
+
+	.loading-spinner {
+		height: 2rem;
+		width: 2rem;
+		animation: spin 1s linear infinite;
+		border-radius: 9999px;
+		border: 4px solid var(--color-primary-gray);
+		border-top-color: var(--color-primary-black);
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.email-iframe {
+		height: 100%;
+		width: 100%;
+		background-color: var(--color-primary-white);
+	}
+
+	.action-buttons {
+		position: absolute;
+		bottom: 120px;
+		right: 10px;
+		z-index: 50;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		gap: 10px;
+	}
+
+	.action-button-container {
+		max-width: 20rem;
+		border-radius: 0.375rem;
+		border: 1px solid var(--color-primary-white);
+		background-color: var(--color-primary-black);
+		padding: 0.5rem 1rem;
+		box-shadow:
+			0 10px 15px -3px rgba(0, 0, 0, 0.1),
+			0 4px 6px -2px rgba(0, 0, 0, 0.05);
+	}
+
+	.action-button {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.button-icon {
+		color: var(--color-primary-white);
+	}
+
+	.empty-state {
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 20px;
+	}
+
+	.empty-icon {
+		fill: var(--color-primary-gray);
+	}
+
+	.empty-text {
+		color: var(--color-primary-gray);
 	}
 </style>

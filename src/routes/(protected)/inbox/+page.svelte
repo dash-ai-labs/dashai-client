@@ -80,21 +80,62 @@
 	});
 </script>
 
-<div class="mx-[40px] flex h-screen flex-col overflow-hidden">
-	<div class="flex flex-row items-center">
+<div class="inbox-container">
+	<div class="inbox-header">
 		<InboxSearchBar />
 		<InboxAccountDropdown />
 	</div>
 
-	<div class="flex flex-1 flex-col gap-[25px] overflow-hidden">
-		<div class="flex flex-row">
-			<div class="w-full text-h2">Inbox</div>
+	<div class="inbox-content">
+		<!-- <div class="inbox-title-row">
+			<div class="inbox-title">Inbox</div>
 
-			<div class="flex w-full justify-end">
+			<div class="inbox-actions">
 				<PrimaryButton on:click={modalComponentForm}>+ Email Label</PrimaryButton>
 			</div>
-		</div>
+		</div> -->
 		<!-- <Widgets /> -->
-		<EmailContainer class="flex-1 overflow-hidden" />
+		<EmailContainer />
 	</div>
 </div>
+
+<style>
+	.inbox-container {
+		margin-left: 40px;
+		margin-right: 40px;
+		display: flex;
+		height: 100vh;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.inbox-header {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.inbox-content {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: 25px;
+		overflow: hidden;
+	}
+
+	.inbox-title-row {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.inbox-title {
+		width: 100%;
+		font-size: var(--text-h2);
+	}
+
+	.inbox-actions {
+		display: flex;
+		width: 100%;
+		justify-content: flex-end;
+	}
+</style>

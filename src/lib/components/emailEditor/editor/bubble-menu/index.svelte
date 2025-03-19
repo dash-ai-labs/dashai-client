@@ -122,27 +122,52 @@
 	});
 </script>
 
-<div
-	bind:this={element}
-	class="flex h-12 w-fit divide-x divide-stone-200 rounded border border-stone-200 bg-primary-black shadow-xl"
->
-	<!-- <NodeSelector {editor} bind:isOpen={$isNodeSelectorOpen} /> -->
+<div bind:this={element} class="bubble-menu">
 	<LinkSelector {editor} bind:isOpen={$isLinkSelectorOpen} />
-	<div class="flex">
+	<div class="button-group">
 		{#each items as item, index}
-			<button
-				on:click={item.command}
-				class="p-2 text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
-				type="button"
-			>
-				<svelte:component
-					this={item.icon}
-					class={cn('h-4 w-4', {
-						'text-blue-500': item.isActive()
-					})}
-				/>
+			<button on:click={item.command} class="format-button" type="button">
+				<svelte:component this={item.icon} class="format-icon" active={item.isActive()} />
 			</button>
 		{/each}
 	</div>
-	<!-- <ColorSelector {editor} bind:isOpen={$isColorSelectorOpen} /> -->
 </div>
+
+<style>
+	.bubble-menu {
+		display: flex;
+		height: 3rem;
+		width: fit-content;
+		border: 1px solid rgb(231 229 228);
+		border-radius: 0.25rem;
+		background-color: var(--color-primary-black);
+		box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+	}
+
+	.button-group {
+		display: flex;
+		border-left: 1px solid rgb(231 229 228);
+	}
+
+	.format-button {
+		padding: 0.5rem;
+		color: var(--color-font-light-gray);
+	}
+
+	.format-button:hover {
+		background-color: var(--color-primary-gray);
+	}
+
+	.format-button:active {
+		background-color: var(--color-primary-gray);
+	}
+
+	.format-icon {
+		height: 1rem;
+		width: 1rem;
+	}
+
+	.format-icon.active {
+		color: rgb(59 130 246);
+	}
+</style>

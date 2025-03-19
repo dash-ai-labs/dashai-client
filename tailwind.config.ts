@@ -5,6 +5,7 @@ import typography from '@tailwindcss/typography';
 import type { Config } from 'tailwindcss';
 import { skeleton } from '@skeletonlabs/tw-plugin';
 import { join } from 'path';
+
 export default {
 	content: [
 		'./src/**/*.{html,js,svelte,ts}',
@@ -12,6 +13,11 @@ export default {
 	],
 	theme: {
 		extend: {
+			fontFamily: {
+				title: ['var(--font-title)', 'system-ui', 'sans-serif'],
+				default: ['var(--font-default)', 'system-ui', 'sans-serif'],
+				inter: ['Inter', 'sans-serif']
+			},
 			keyframes: {
 				zoom: {
 					from: { transform: 'scale(0.95)' },
@@ -27,6 +33,19 @@ export default {
 				fade: 'fade 0.2s ease-out'
 			},
 			colors: {
+				white: 'var(--novel-white)',
+				stone: {
+					50: 'var(--novel-stone-50)',
+					100: 'var(--novel-stone-100)',
+					200: 'var(--novel-stone-200)',
+					300: 'var(--novel-stone-300)',
+					400: 'var(--novel-stone-400)',
+					500: 'var(--novel-stone-500)',
+					600: 'var(--novel-stone-600)',
+					700: 'var(--novel-stone-700)',
+					800: 'var(--novel-stone-800)',
+					900: 'var(--novel-stone-900)'
+				},
 				primary: {
 					red: '#ff453a',
 					orange: '#ff9f0a',
@@ -42,6 +61,7 @@ export default {
 					container: '#282A2F',
 					'dark-container': '#1a1a1a',
 					button: '#AAC7FF',
+					'button-hover': '#90B5FF',
 					'active-button-highlight': '#ecf2f8',
 					'inactive-button-highlight': '#c6cdd5',
 					brighter: 'hsl(204, 70%, 63%)',
@@ -65,14 +85,11 @@ export default {
 					'active-button-highlight': '#DAE2F9',
 					'active-button-background': {
 						DEFAULT: '#3E4759',
-						hover: 'hsl(219, 19%, 44%)'
+						hover: '#5a6a87'
 					},
 					'inactive-button-highlight': '#C4C6D0',
 					separator: '#4D4D4D'
 				}
-			},
-			fontFamily: {
-				inter: ['Inter', 'sans-serif']
 			},
 			fontSize: {
 				h1: '36px',
@@ -85,6 +102,12 @@ export default {
 			}
 		}
 	},
-
-	plugins: [typography, forms, containerQueries, aspectRatio, skeleton]
+	plugins: [
+		typography,
+		forms,
+		containerQueries,
+		aspectRatio,
+		skeleton,
+		require('tailwindcss-animate')
+	]
 } satisfies Config;

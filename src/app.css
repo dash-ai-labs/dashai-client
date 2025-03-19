@@ -2,6 +2,189 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* CSS Variables */
+:root {
+	/* Novel Editor Variables */
+	--novel-black: rgb(0 0 0);
+	--novel-white: rgb(255 255 255);
+	--novel-stone-50: rgb(250 250 249);
+	--novel-stone-100: rgb(245 245 244);
+	--novel-stone-200: rgb(231 229 228);
+	--novel-stone-300: rgb(214 211 209);
+	--novel-stone-400: rgb(168 162 158);
+	--novel-stone-500: rgb(120 113 108);
+	--novel-stone-600: rgb(87 83 78);
+	--novel-stone-700: rgb(68 64 60);
+	--novel-stone-800: rgb(41 37 36);
+	--novel-stone-900: rgb(28 25 23);
+
+	--novel-highlight-default: #ffffff;
+	--novel-highlight-purple: #f6f3f8;
+	--novel-highlight-red: #fdebeb;
+	--novel-highlight-yellow: #fbf4a2;
+	--novel-highlight-blue: #c1ecf9;
+	--novel-highlight-green: #acf79f;
+	--novel-highlight-orange: #faebdd;
+	--novel-highlight-pink: #faf1f5;
+	--novel-highlight-gray: #f1f1ef;
+
+	--font-title: 'Cal Sans', sans-serif;
+
+	/* Primary Colors */
+	--color-primary-red: #ff453a;
+	--color-primary-orange: #ff9f0a;
+	--color-primary-yellow: #ffd60a;
+	--color-primary-green: #32d74b;
+	--color-primary-light-blue: #64d2ff;
+	--color-primary-blue: #0a84ff;
+	--color-primary-purple: #5e5ce6;
+	--color-primary-violet: #bf5af2;
+	--color-primary-pink: #ff375f;
+	--color-primary-hazy-black: #212121;
+	--color-primary-black: #141414;
+	--color-primary-container: #282a2f;
+	--color-primary-dark-container: #1a1a1a;
+	--color-primary-button: #0a84ff;
+	--color-primary-button-hover: #90b5ff;
+	--color-primary-active-button-highlight: #ecf2f8;
+	--color-primary-inactive-button-highlight: #c6cdd5;
+	--color-primary-brighter: hsl(204, 70%, 63%);
+	--color-primary-light-gray: #c0c8cf;
+	--color-primary-gray: #89929b;
+	--color-primary-dark-gray: #3d4249;
+	--color-primary-white: #f0f0f0;
+
+	/* Font Colors */
+	--color-font-dark-gray: #89929b;
+	--color-font-gray: #c6cdd5;
+	--color-font-light-gray: #ecf2f8;
+
+	/* Secondary Colors */
+	--color-secondary-red: #fa7970;
+	--color-secondary-orange: #faa356;
+	--color-secondary-green: #7ce38b;
+	--color-secondary-light-blue: #a2d2fb;
+	--color-secondary-blue: #77bdfb;
+	--color-secondary-violet: #cea5fb;
+	--color-secondary-container: #191c20;
+	--color-secondary-active-button-highlight: #dae2f9;
+	--color-secondary-active-button-background: #3e4759;
+	--color-secondary-active-button-background-hover: #5a6a87;
+	--color-secondary-inactive-button-highlight: #c4c6d0;
+	--color-secondary-separator: #4d4d4d;
+
+	/* Font Sizes */
+	--text-h1: 36px;
+	--text-h2: 30px;
+	--text-h3: 24px;
+	--text-h4: 20px;
+	--text-section-header: 16px;
+	--text-body: 14px;
+	--text-subheader: 12px;
+}
+
+/* Dark Theme */
+.dark-theme {
+	--novel-black: rgb(255 255 255);
+	--novel-white: rgb(25 25 25);
+	--novel-stone-50: rgb(35 35 34);
+	--novel-stone-100: rgb(41 37 36);
+	--novel-stone-200: rgb(66 69 71);
+	--novel-stone-300: rgb(112 118 123);
+	--novel-stone-400: rgb(160 167 173);
+	--novel-stone-500: rgb(193 199 204);
+	--novel-stone-600: rgb(212 217 221);
+	--novel-stone-700: rgb(229 232 235);
+	--novel-stone-800: rgb(232 234 235);
+	--novel-stone-900: rgb(240, 240, 241);
+
+	--novel-highlight-default: #000000;
+	--novel-highlight-purple: #3f2c4b;
+	--novel-highlight-red: #5c1a1a;
+	--novel-highlight-yellow: #5c4b1a;
+	--novel-highlight-blue: #1a3d5c;
+	--novel-highlight-green: #1a5c20;
+	--novel-highlight-orange: #5c3a1a;
+	--novel-highlight-pink: #5c1a3a;
+	--novel-highlight-gray: #3a3a3a;
+}
+
+/* Remove focus outlines globally */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+*[tabindex]:focus {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+/* Keyframes */
+@keyframes zoom {
+	from {
+		transform: scale(0.95);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+@keyframes fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes spinning {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Animation Classes */
+.animate-zoom {
+	animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-fade {
+	animation: fade 0.2s ease-out;
+}
+
+/* Typography */
+body {
+	font-family: 'Inter', sans-serif;
+}
+
+.font-inter {
+	font-family: 'Inter', sans-serif;
+}
+
+/* Font Sizes */
+.text-h1 {
+	font-size: var(--text-h1);
+}
+.text-h2 {
+	font-size: var(--text-h2);
+}
+.text-h3 {
+	font-size: var(--text-h3);
+}
+.text-h4 {
+	font-size: var(--text-h4);
+}
+.text-section-header {
+	font-size: var(--text-section-header);
+}
+.text-body {
+	font-size: var(--text-body);
+}
+.text-subheader {
+	font-size: var(--text-subheader);
+}
+
 @layer utilities {
 	/* Hide scrollbar for Chrome, Safari and Opera */
 	.no-scrollbar::-webkit-scrollbar {
@@ -14,9 +197,234 @@
 	}
 }
 
-.variant-filled-primary {
-	@apply rounded-md bg-primary-dark-gray text-primary-white;
+/* Color Utility Classes */
+.bg-primary-red {
+	background-color: var(--color-primary-red);
 }
+.bg-primary-orange {
+	background-color: var(--color-primary-orange);
+}
+.bg-primary-yellow {
+	background-color: var(--color-primary-yellow);
+}
+.bg-primary-green {
+	background-color: var(--color-primary-green);
+}
+.bg-primary-light-blue {
+	background-color: var(--color-primary-light-blue);
+}
+.bg-primary-blue {
+	background-color: var(--color-primary-blue);
+}
+.bg-primary-purple {
+	background-color: var(--color-primary-purple);
+}
+.bg-primary-violet {
+	background-color: var(--color-primary-violet);
+}
+.bg-primary-pink {
+	background-color: var(--color-primary-pink);
+}
+.bg-primary-hazy-black {
+	background-color: var(--color-primary-hazy-black);
+}
+.bg-primary-black {
+	background-color: var(--color-primary-black);
+}
+.bg-primary-container {
+	background-color: var(--color-primary-container);
+}
+.bg-primary-dark-container {
+	background-color: var(--color-primary-dark-container);
+}
+.bg-primary-dark-gray {
+	background-color: var(--color-primary-dark-gray);
+}
+.bg-primary-white {
+	background-color: var(--color-primary-white);
+}
+
+.text-primary-red {
+	color: var(--color-primary-red);
+}
+.text-primary-gray {
+	color: var(--color-primary-gray);
+}
+.text-primary-white {
+	color: var(--color-primary-white);
+}
+.text-font-dark-gray {
+	color: var(--color-font-dark-gray);
+}
+.text-font-gray {
+	color: var(--color-font-gray);
+}
+.text-font-light-gray {
+	color: var(--color-font-light-gray);
+}
+
+/* Component Classes */
+.variant-filled-primary {
+	background-color: var(--color-primary-dark-gray);
+	color: var(--color-primary-white);
+}
+
 .variant-soft-primary {
-	@apply rounded-md bg-primary-blue/20 text-primary-gray !ring-0 dark:bg-primary-blue/20;
+	border-radius: 0.375rem;
+	background-color: rgba(10, 132, 255, 0.2);
+	color: var(--color-primary-gray);
+	box-shadow: none !important;
+}
+
+@media (prefers-color-scheme: dark) {
+	.variant-soft-primary {
+		background-color: rgba(10, 132, 255, 0.2);
+	}
+}
+
+/* InboxAccountDropdown.svelte styles */
+.chevron-icon {
+	margin-left: 0.5rem;
+	height: 1.5rem;
+	width: 1.5rem;
+}
+
+.dropdown-menu {
+	border-radius: 0.5rem;
+	background-color: var(--color-primary-container);
+}
+
+.dropdown-item {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	background-color: var(--color-primary-container);
+}
+
+.dropdown-item:hover {
+	background-color: var(--color-secondary-active-button-background);
+}
+
+.selected {
+	background-color: var(--color-secondary-active-button-background);
+}
+
+/* ProseMirror Styles */
+.ProseMirror {
+	height: 100%;
+}
+
+.ProseMirror .is-editor-empty:first-child::before {
+	content: attr(data-placeholder);
+	float: left;
+	color: var(--novel-stone-400);
+	pointer-events: none;
+	height: 0;
+}
+.ProseMirror .is-empty::before {
+	content: attr(data-placeholder);
+	float: left;
+	color: var(--novel-stone-400);
+	pointer-events: none;
+	height: 0;
+}
+
+/* Custom image styles */
+.ProseMirror img {
+	transition: filter 0.1s ease-in-out;
+}
+
+.ProseMirror img:hover {
+	cursor: pointer;
+	filter: brightness(90%);
+}
+
+.ProseMirror img.ProseMirror-selectednode {
+	outline: 3px solid #5abbf7;
+	filter: brightness(90%);
+}
+
+.img-placeholder {
+	position: relative;
+}
+
+.img-placeholder:before {
+	content: '';
+	box-sizing: border-box;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	border: 3px solid var(--novel-stone-200);
+	border-top-color: var(--novel-stone-800);
+	animation: spinning 0.6s linear infinite;
+}
+
+/* Custom TODO list checkboxes */
+ul[data-type='taskList'] li > label {
+	margin-right: 0.2rem;
+	user-select: none;
+}
+
+@media screen and (max-width: 768px) {
+	ul[data-type='taskList'] li > label {
+		margin-right: 0.5rem;
+	}
+}
+
+ul[data-type='taskList'] li > label input[type='checkbox'] {
+	-webkit-appearance: none;
+	appearance: none;
+	background-color: var(--novel-white);
+	margin: 0;
+	cursor: pointer;
+	width: 1.2em;
+	height: 1.2em;
+	position: relative;
+	top: 5px;
+	border: 2px solid var(--novel-stone-900);
+	margin-right: 0.3rem;
+	display: grid;
+	place-content: center;
+}
+
+ul[data-type='taskList'] li > label input[type='checkbox']:hover {
+	background-color: var(--novel-stone-50);
+}
+
+ul[data-type='taskList'] li > label input[type='checkbox']:active {
+	background-color: var(--novel-stone-200);
+}
+
+ul[data-type='taskList'] li > label input[type='checkbox']::before {
+	content: '';
+	width: 0.65em;
+	height: 0.65em;
+	transform: scale(0);
+	transition: 120ms transform ease-in-out;
+	box-shadow: inset 1em 1em;
+	transform-origin: center;
+	clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+ul[data-type='taskList'] li > label input[type='checkbox']:checked::before {
+	transform: scale(1);
+}
+
+ul[data-type='taskList'] li[data-checked='true'] > div > p {
+	color: var(--novel-stone-400);
+	text-decoration: line-through;
+	text-decoration-thickness: 2px;
+}
+
+/* Overwrite tippy-box original max-width */
+.tippy-box {
+	max-width: 400px !important;
+}
+
+/* Task item placeholder */
+.task-item .ProseMirror-placeholder {
+	display: none !important;
 }

@@ -10,6 +10,19 @@
 </script>
 
 <Modal {showModal} on:closeModal={closeModal}>
-	<header><div class="mb-4 text-h2 text-xl font-bold text-font-light-gray">Error</div></header>
-	<p class="mb-4">{error}</p>
+	<header><div class="error-header">Error</div></header>
+	<p class="error-message">{error}</p>
 </Modal>
+
+<style>
+	.error-header {
+		margin-bottom: 1rem;
+		font-size: var(--text-h2);
+		font-weight: bold;
+		color: var(--color-font-light-gray);
+	}
+
+	.error-message {
+		margin-bottom: 1rem;
+	}
+</style>

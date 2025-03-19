@@ -17,26 +17,81 @@
 	});
 </script>
 
-<div class="h-screen w-full bg-primary-black">
-	<div class="flex flex-row">
-		<div>
+<div class="auth-container">
+	<div class="auth-content">
+		<div class="vector-container">
 			<AuthScreenBackgroundVector />
-			<div class="-mt-24"><Logo height="254" width="250" /></div>
+			<div class="logo-container"><Logo height="254" width="250" /></div>
 		</div>
-		<div class="flex w-full items-center justify-center text-font-light-gray">
-			<div class="mt-[200px] flex flex-col gap-4 self-center">
-				<div>
-					<div class="text-2xl font-bold">Welcome</div>
+		<div class="form-container">
+			<div class="welcome-section">
+				<div class="welcome-content">
+					<div class="welcome-title">Welcome</div>
 					<div>Your AI dashboard awaits...</div>
 				</div>
-				<button
-					onclick={initiateGoogleLogin}
-					class=" w-[360px] rounded-md border-[1px] border-primary-gray bg-primary-container px-2 py-1"
-					><div class="flex flex-row justify-center gap-3">
+				<button onclick={initiateGoogleLogin} class="google-button">
+					<div class="button-content">
 						<GoogleLogo />Sign In with Google
-					</div></button
-				>
+					</div>
+				</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<style>
+	.auth-container {
+		height: 100vh;
+		width: 100%;
+		background-color: var(--color-primary-black);
+	}
+
+	.auth-content {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.logo-container {
+		margin-top: -6rem; /* -mt-24 (24px = 6rem) */
+	}
+
+	.form-container {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-font-light-gray);
+	}
+
+	.welcome-section {
+		margin-top: 200px;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		align-self: center;
+	}
+
+	.welcome-content {
+		/* Container for welcome text */
+	}
+
+	.welcome-title {
+		font-size: 1.5rem; /* text-2xl */
+		font-weight: 700; /* font-bold */
+	}
+
+	.google-button {
+		width: 360px;
+		border-radius: 0.375rem; /* rounded-md */
+		border: 1px solid var(--color-primary-gray);
+		background-color: var(--color-primary-container);
+		padding: 0.25rem 0.5rem; /* px-2 py-1 */
+	}
+
+	.button-content {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		gap: 0.75rem; /* gap-3 */
+	}
+</style>

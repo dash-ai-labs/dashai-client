@@ -109,7 +109,7 @@
 	let dropdownOpen = false;
 </script>
 
-<div class="relative h-full">
+<div class="color-selector">
 	<button
 		type="button"
 		bind:this={buttonElement}
@@ -117,25 +117,21 @@
 			dropdownOpen = !dropdownOpen;
 			isOpen = !isOpen;
 		}}
-		class="flex h-full items-center gap-1 p-2 text-sm font-medium text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
+		class="color-button"
 	>
 		<span
-			class="rounded-sm px-1"
+			class="color-preview"
 			style:color={activeColorItem?.color}
 			style:background-color={activeHighlightItem?.color}
 		>
 			A
 		</span>
 
-		<IconChevronDown class="h-4 w-4" />
+		<IconChevronDown class="icon" />
 	</button>
 
-	<Dropdown
-		placement="bottom"
-		triggeredBy={buttonElement}
-		class="z-[99999] w-48 rounded-md p-1 shadow-lg"
-	>
-		<div class="my-1 px-2 text-sm text-font-light-gray">Color</div>
+	<Dropdown placement="bottom" triggeredBy={buttonElement} class="color-dropdown">
+		<div class="section-label">Color</div>
 		{#each TEXT_COLORS as { name, color }, index}
 			<DropdownItem
 				on:click={() => {
@@ -149,19 +145,19 @@
 					dropdownOpen = false;
 					isOpen = false;
 				}}
-				class="flex items-center justify-between px-2 py-1 text-sm text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
+				class="dropdown-item"
 			>
-				<div class="flex items-center space-x-2">
-					<div class="rounded-sm border border-stone-200 px-1 py-px font-medium" style:color>A</div>
+				<div class="item-content">
+					<div class="color-sample" style:color>A</div>
 					<span>{name}</span>
 				</div>
 				{#if editor.isActive('textStyle', { color })}
-					<IconCheck class="h-4 w-4" />
+					<IconCheck class="icon" />
 				{/if}
 			</DropdownItem>
 		{/each}
 
-		<div class="mb-1 mt-2 px-2 text-sm text-stone-500">Background</div>
+		<div class="section-label background">Background</div>
 
 		{#each HIGHLIGHT_COLORS as { name, color }, index}
 			<DropdownItem
@@ -171,21 +167,101 @@
 					dropdownOpen = false;
 					isOpen = false;
 				}}
-				class="flex items-center justify-between px-2 py-1 text-sm text-stone-600 hover:bg-stone-100"
+				class="dropdown-item"
 			>
-				<div class="flex items-center space-x-2">
-					<div
-						class="rounded-sm border border-stone-200 px-1 py-px font-medium"
-						style:background-color={color}
-					>
-						A
-					</div>
+				<div class="item-content">
+					<div class="color-sample" style:background-color={color}>A</div>
 					<span>{name}</span>
 				</div>
 				{#if editor.isActive('highlight', { color })}
-					<IconCheck class="h-4 w-4" />
+					<IconCheck class="icon" />
 				{/if}
 			</DropdownItem>
 		{/each}
 	</Dropdown>
 </div>
+
+<style>
+	.color-selector {
+		position: relative;
+		height: 100%;
+	}
+
+	.color-button {
+		display: flex;
+		height: 100%;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.5rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--color-font-light-gray);
+	}
+
+	.color-button:hover {
+		background-color: var(--color-primary-gray);
+	}
+
+	.color-button:active {
+		background-color: var(--color-primary-gray);
+	}
+
+	.color-preview {
+		border-radius: 0.125rem;
+		padding: 0 0.25rem;
+	}
+
+	.icon {
+		height: 1rem;
+		width: 1rem;
+	}
+
+	.color-dropdown {
+		z-index: 99999;
+		width: 12rem;
+		border-radius: 0.375rem;
+		padding: 0.25rem;
+		box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+	}
+
+	.section-label {
+		margin: 0.25rem 0;
+		padding: 0 0.5rem;
+		font-size: 0.875rem;
+		color: var(--color-font-light-gray);
+	}
+
+	.section-label.background {
+		margin: 0.5rem 0 0.25rem;
+	}
+
+	.dropdown-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.25rem 0.5rem;
+		font-size: 0.875rem;
+		color: var(--color-font-light-gray);
+	}
+
+	.dropdown-item:hover {
+		background-color: var(--color-primary-gray);
+	}
+
+	.dropdown-item:active {
+		background-color: var(--color-primary-gray);
+	}
+
+	.item-content {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.color-sample {
+		border-radius: 0.125rem;
+		border: 1px solid #e5e7eb;
+		padding: 0 0.25rem;
+		font-weight: 500;
+	}
+</style>

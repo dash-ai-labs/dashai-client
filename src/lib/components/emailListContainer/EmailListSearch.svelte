@@ -1,17 +1,16 @@
 <script lang="ts">
 	import { searchEmails } from '$lib/api/email';
-	import { aiSearchQuery, user } from '$lib/store';
+	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
-	import SecondaryButton from '../SecondaryButton.svelte';
 	import type { Email } from '$lib/types';
 	import X from '$lib/assets/X.svelte';
 
-	const { setShowComposeEmail, setEmailList } = $props();
+	const { setEmailList, refreshEmails } = $props();
 	let searchInput = $state('');
 	let showError = $state(false);
 
-	aiSearchQuery.subscribe((query) => {
-		searchInput = query;
+	$effect(() => {
+		searchInput = get(emailServiceState).aiSearchQuery;
 	});
 
 	const handleInput = async () => {
@@ -22,6 +21,11 @@
 				search: searchInput
 			});
 			setEmailList(response);
+
+			emailServiceState.update((state) => ({
+				...state,
+				aiSearchQuery: searchInput
+			}));
 		} else {
 			showError = true;
 		}
@@ -33,27 +37,25 @@
 	};
 </script>
 
-<div class="flex flex-row justify-center gap-1 px-2 py-1">
-	<form
-		onsubmit={handleInput}
-		class="flex w-48 flex-row items-center justify-center rounded-lg bg-primary-black px-2"
-	>
-		<div class="relative flex w-full items-center">
+<div class="search-container flex-shrink-0">
+	<form onsubmit={handleInput} class="search-form">
+		<div class="input-container">
 			<input
 				bind:value={searchInput}
 				onchange={handleInput}
 				oninput={handleInput}
 				type="text"
 				placeholder="Search Inbox"
-				class="w-full items-center rounded-lg border-0 bg-transparent px-2 py-1 focus:outline-none focus:ring-0"
+				class="search-input"
 			/>
 			{#if searchInput.length > 0}
 				<button
 					type="button"
-					class="absolute right-0 rounded-full bg-primary-dark-gray p-1 hover:bg-primary-gray"
+					class="clear-button"
 					onclick={() => {
 						searchInput = '';
 						handleInput();
+						refreshEmails();
 					}}
 				>
 					<X stroke="stroke-primary-active-button-highlight" />
@@ -61,10 +63,57 @@
 			{/if}
 		</div>
 	</form>
-	<SecondaryButton
-		extraClasses="bg-primary-blue"
-		on:click={() => {
-			setShowComposeEmail();
-		}}>Compose</SecondaryButton
-	>
 </div>
+
+<style>
+	.search-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		gap: 0.25rem;
+		padding: 0.25rem;
+	}
+
+	.search-form {
+		display: flex;
+		width: 100%;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.5rem;
+		background-color: var(--color-primary-black);
+		padding: 0 0.5rem;
+	}
+
+	.input-container {
+		position: relative;
+		display: flex;
+		width: 100%;
+		align-items: center;
+	}
+
+	.search-input {
+		width: 100%;
+		align-items: center;
+		border-radius: 0.5rem;
+		border: 0;
+		background-color: transparent;
+		padding: 0.25rem 0.5rem;
+	}
+
+	.search-input:focus {
+		outline: none;
+	}
+
+	.clear-button {
+		position: absolute;
+		right: 0;
+		border-radius: 9999px;
+		background-color: var(--color-primary-dark-gray);
+		padding: 0.25rem;
+	}
+
+	.clear-button:hover {
+		background-color: var(--color-primary-gray);
+	}
+</style>

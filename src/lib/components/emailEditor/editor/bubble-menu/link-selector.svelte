@@ -47,7 +47,7 @@
 	}
 </script>
 
-<div class="relative h-full">
+<div class="container">
 	<button
 		bind:this={buttonElement}
 		onclick={() => {
@@ -58,20 +58,16 @@
 				url = '';
 			}
 		}}
-		class="flex h-full items-center gap-1 p-2 text-font-light-gray hover:bg-primary-gray active:bg-primary-gray"
-		class:text-blue-500={editor.isActive('link')}
+		class="link-button"
+		class:active={editor.isActive('link')}
 		type="button"
 	>
-		<IconLink class="h-4 w-4" />
+		<IconLink class="link-icon" />
 	</button>
 
-	<Dropdown
-		placement="bottom"
-		triggeredBy={buttonElement}
-		class="z-[99999] w-80 rounded-md p-1 shadow-lg"
-	>
-		<div class="p-2">
-			<div class="mb-2">
+	<Dropdown placement="bottom" triggeredBy={buttonElement} class="dropdown">
+		<div class="dropdown-content">
+			<div class="input-container">
 				<Input
 					type="url"
 					placeholder="Paste link"
@@ -84,14 +80,8 @@
 					}}
 				/>
 			</div>
-			<div class="flex items-center gap-2">
-				<button
-					onclick={applyLink}
-					class="flex-1 rounded bg-blue-500 px-2 py-1 text-sm text-white hover:bg-blue-600"
-					type="button"
-				>
-					Apply
-				</button>
+			<div class="button-container">
+				<button onclick={applyLink} class="apply-button" type="button"> Apply </button>
 				{#if editor.isActive('link')}
 					<button
 						onclick={() => {
@@ -99,10 +89,10 @@
 							dropdownOpen = false;
 							isOpen = false;
 						}}
-						class="flex items-center gap-1 rounded px-2 py-1 text-sm text-red-500 hover:bg-red-100"
+						class="remove-button"
 						type="button"
 					>
-						<IconLinkOff class="h-3 w-3" />
+						<IconLinkOff class="remove-icon" />
 						<span>Remove</span>
 					</button>
 				{/if}
@@ -110,3 +100,90 @@
 		</div>
 	</Dropdown>
 </div>
+
+<style>
+	.container {
+		position: relative;
+		height: 100%;
+	}
+
+	.link-button {
+		display: flex;
+		height: 100%;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.5rem;
+		color: var(--color-font-light-gray);
+	}
+
+	.link-button:hover {
+		background-color: var(--color-primary-gray);
+	}
+
+	.link-button:active {
+		background-color: var(--color-primary-gray);
+	}
+
+	.link-button.active {
+		color: rgb(59 130 246);
+	}
+
+	.link-icon {
+		height: 1rem;
+		width: 1rem;
+	}
+
+	.dropdown {
+		z-index: 99999;
+		width: 20rem;
+		border-radius: 0.375rem;
+		padding: 0.25rem;
+		box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+	}
+
+	.dropdown-content {
+		padding: 0.5rem;
+	}
+
+	.input-container {
+		margin-bottom: 0.5rem;
+	}
+
+	.button-container {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.apply-button {
+		flex: 1;
+		border-radius: 0.25rem;
+		background-color: rgb(59 130 246);
+		padding: 0.25rem 0.5rem;
+		font-size: 0.875rem;
+		color: white;
+	}
+
+	.apply-button:hover {
+		background-color: rgb(37 99 235);
+	}
+
+	.remove-button {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		border-radius: 0.25rem;
+		padding: 0.25rem 0.5rem;
+		font-size: 0.875rem;
+		color: rgb(239 68 68);
+	}
+
+	.remove-button:hover {
+		background-color: rgb(254 226 226);
+	}
+
+	.remove-icon {
+		height: 0.75rem;
+		width: 0.75rem;
+	}
+</style>

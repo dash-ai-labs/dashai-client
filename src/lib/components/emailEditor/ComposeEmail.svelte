@@ -7,7 +7,7 @@
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
-	import { user, errorMessage, showErrorModal, currentEmail } from '$lib/store';
+	import { user, errorMessage, showErrorModal, emailServiceState } from '$lib/store';
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
@@ -15,21 +15,18 @@
 	import { showToast } from '$lib/helpers';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import Footer from './Footer.svelte';
+	import { setShowComposeEmail } from '$lib/actions';
 
 	const toastStore = getToastStore();
 
 	let {
 		email,
 		height = $bindable(),
-		composeEmailMode,
-		setShowComposeEmail,
-		setComposeEmailMode
+		composeEmailMode
 	}: {
 		email: Email;
 		height: number;
 		composeEmailMode: ComposeEmailMode;
-		setShowComposeEmail: (show: boolean) => void;
-		setComposeEmailMode: (mode: ComposeEmailMode) => void;
 	} = $props();
 	let element: HTMLElement;
 	let bmenu: HTMLElement;
@@ -48,7 +45,10 @@
 	let editor: EditorType;
 
 	$effect(() => {
-		currentEmail.set(email);
+		emailServiceState.update((state) => ({
+			...state,
+			currentEmail: email
+		}));
 	});
 
 	const setToEmails = (emails: string[]) => {
@@ -157,6 +157,7 @@
 		};
 		_sendEmail();
 	};
+
 	const _clearEmailData = () => {
 		emailData.subject = '';
 		emailData.body = '';
@@ -344,7 +345,6 @@
 					await editor.commands.setTextSelection(0);
 
 					// Log the editor's content for debugging
-					console.log('Editor content:', editor.getHTML());
 				} catch (error) {
 					console.error('Error setting content:', error);
 				}
@@ -387,11 +387,10 @@
 			{setBccEmails}
 			{setFromEmail}
 			{setSubject}
-			{setComposeEmailMode}
 		/>
 	</div>
 	<div class="mx-1 my-1">
-		<Editor />
+		<Editor email={emailData} />
 	</div>
 	<div class="m-2 flex justify-start text-primary-gray">
 		<Footer {onSend} />

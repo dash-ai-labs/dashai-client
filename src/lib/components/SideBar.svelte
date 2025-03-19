@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import SelectedInbox from '$lib/assets/Inbox.svelte';
-	import SelectedFinance from '$lib/assets/Finance.svelte';
 	import SideBarButton from '$lib/components/SideBarButton.svelte';
 	import '@material/web/button/filled-tonal-button';
 	import '@material/web/button/text-button';
 	import '@material/web/icon/icon';
 	import LogoutButton from './LogoutButton.svelte';
 	import Logo from '$lib/assets/Logo.svelte';
+	import { Inbox } from 'lucide-svelte';
 
 	let { handleNavigation = (path: string) => {} } = $props();
 	const navItems = [
@@ -15,7 +14,7 @@
 			label: 'Inbox',
 			path: '/inbox',
 			badge: 24,
-			icon: SelectedInbox
+			icon: Inbox
 		}
 		// {
 		//   label: "Finance",
@@ -24,15 +23,11 @@
 		// },
 	];
 
-	let navDrawerClasses = $derived(
-		`flex flex-col items-start px-3 w-[180px] bg-secondary-container rounded-[16px] my-2`
-	);
-
 	let isActive = $derived((path: string) => $page.url.pathname === path);
 </script>
 
-<div class={navDrawerClasses}>
-	<Logo color="fill-primary-gray" />
+<div class="nav-drawer">
+	<Logo class="logo" />
 	<div>
 		{#each navItems as item}
 			<SideBarButton
@@ -45,7 +40,33 @@
 			>
 		{/each}
 	</div>
-	<div class="mb-2 mt-auto flex self-center">
+	<div class="logout-container">
 		<LogoutButton />
 	</div>
 </div>
+
+<style>
+	.nav-drawer {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-center;
+		padding-left: 0.75rem; /* px-3 */
+		padding-right: 0.75rem; /* px-3 */
+		width: 180px; /* w-[180px] */
+		background-color: var(--color-secondary-container); /* bg-secondary-container */
+		border-radius: 16px; /* rounded-[16px] */
+		margin-top: 0.5rem; /* my-2 */
+		margin-bottom: 0.5rem; /* my-2 */
+	}
+
+	:global(.logo) {
+		fill: var(--color-primary-gray); /* fill-primary-gray */
+	}
+
+	.logout-container {
+		margin-bottom: 0.5rem; /* mb-2 */
+		margin-top: auto; /* mt-auto */
+		display: flex; /* flex */
+		align-self: center; /* self-center */
+	}
+</style>

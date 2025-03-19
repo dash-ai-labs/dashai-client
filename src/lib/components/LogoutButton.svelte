@@ -29,9 +29,33 @@
 	};
 </script>
 
-<div class="mx-auto flex justify-center">
-	<button
-		class="flex flex-row justify-center gap-2 rounded p-2 text-center text-primary-gray hover:bg-primary-dark-gray"
-		on:click={handleLogout}><Power fill="text-primary-gray" />Logout</button
-	>
+<div class="logout-container">
+	<button class="logout-button" on:click={handleLogout}>
+		<Power fill="text-primary-gray" />
+		Logout
+	</button>
 </div>
+
+<style>
+	.logout-container {
+		margin-left: auto;
+		margin-right: auto;
+		display: flex;
+		justify-content: center;
+	}
+
+	.logout-button {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		gap: 0.5rem;
+		border-radius: 0.25rem;
+		padding: 0.5rem;
+		text-align: center;
+		color: var(--color-primary-gray);
+	}
+
+	.logout-button:hover {
+		background-color: var(--color-primary-dark-gray);
+	}
+</style>

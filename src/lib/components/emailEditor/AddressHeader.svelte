@@ -11,6 +11,7 @@
 	} from 'flowbite-svelte-icons';
 	import type { Component } from 'svelte';
 	import { ComposeEmailMode } from '$lib/types';
+	import { setComposeEmailMode } from '$lib/actions';
 
 	type ResponseAction = {
 		icon: Component | undefined;
@@ -23,7 +24,6 @@
 		setCcEmails,
 		setSubject,
 		setFromEmail,
-		setComposeEmailMode,
 		composeEmailMode
 	}: {
 		email: Email;
@@ -32,7 +32,6 @@
 		setCcEmails: (emails: string[]) => void;
 		setSubject: (subject: string) => void;
 		setFromEmail: (email: string) => void;
-		setComposeEmailMode: (mode: ComposeEmailMode) => void;
 		composeEmailMode: ComposeEmailMode;
 	} = $props();
 
