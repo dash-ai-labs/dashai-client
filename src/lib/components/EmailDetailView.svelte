@@ -1,11 +1,6 @@
 <script lang="ts">
 	import Inbox from '$lib/assets/Inbox.svelte';
-	import { onMount } from 'svelte';
 	import DOMPurify from 'dompurify';
-	import Trash from '$lib/assets/Trash.svelte';
-	import UnreadMail from '$lib/assets/UnreadMail.svelte';
-	import Archive from '$lib/assets/Archive.svelte';
-	import EmailButton from './EmailButton.svelte';
 	import type { Email, Label } from '$lib/types';
 	import { ComposeEmailMode } from '$lib/types';
 	import { ForwardOutline, ReplyOutline } from 'flowbite-svelte-icons';
@@ -15,17 +10,11 @@
 	import AddEmailLabel from './AddEmailLabel.svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import EmailLabelChip from './EmailLabelChip.svelte';
-	import { setShowComposeEmail, setComposeEmailMode } from '$lib/actions';
+	import { setShowComposeEmail } from '$lib/actions';
 	const {
-		removeEmail,
-		archiveEmail,
-		markEmailAsUnread,
 		addLabelToEmail,
 		removeLabelFromEmail
 	}: {
-		removeEmail: (email: Email) => void;
-		archiveEmail: (email: Email) => void;
-		markEmailAsUnread: (email: Email) => void;
 		addLabelToEmail: (email: Email, emailLabel: Label) => void;
 		removeLabelFromEmail: (email: Email, emailLabel: Label) => void;
 	} = $props();
@@ -175,31 +164,6 @@
 
 <div class="email-detail-container">
 	{#if email}
-		<!-- Header -->
-		<header class="email-header">
-			<div class="button-group">
-				<EmailButton
-					onclick={() => email && archiveEmail(email)}
-					ariaLabel="Archive"
-					title="Archive"
-				>
-					<Archive />
-				</EmailButton>
-				<EmailButton onclick={() => email && removeEmail(email)} ariaLabel="Delete" title="Delete">
-					<Trash />
-				</EmailButton>
-			</div>
-			<div class="separator-border">
-				<EmailButton
-					onclick={() => markEmailAsUnread(email)}
-					ariaLabel="Mark as Unread"
-					title="Mark as unread"
-				>
-					<UnreadMail />
-				</EmailButton>
-			</div>
-		</header>
-
 		<!-- Message Content -->
 		<div class="message-header">
 			<div class="sender-info">

@@ -87,7 +87,7 @@
 		padding-bottom: 1rem;
 		color: var(--color-primary-active-button-highlight);
 		cursor: pointer;
-		width: 400px;
+		width: 320px;
 	}
 
 	.email-list-item-selected {

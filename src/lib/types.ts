@@ -98,11 +98,12 @@ export enum ToastType {
 }
 
 export interface EmailServiceState {
-	currentEmail: Email;
+	currentEmail: Email | null;
 	emailSearchQueryList: SearchEntry[];
 	aiSearchQuery: string;
 	emailLabels: Label[];
 	showComposeEmail: boolean;
 	composeEmailMode: ComposeEmailMode;
 	emailAccount: any;
+	emailList: Email[];
 }
