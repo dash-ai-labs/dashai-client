@@ -55,6 +55,7 @@ export const emailServiceState: Writable<EmailServiceState> = persistentWritable
 		emailLabels: [],
 		showComposeEmail: false,
 		composeEmailMode: ComposeEmailMode.NewEmail,
-		emailAccount: { email: 'All Emails' }
+		emailAccount: { email: 'All Emails' },
+		emailList: []
 	}
 );

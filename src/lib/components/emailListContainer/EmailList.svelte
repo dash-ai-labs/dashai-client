@@ -1,55 +1,15 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { emailList, user } from '$lib/store';
+	import { emailList, user, emailServiceState } from '$lib/store';
 	import { get } from 'svelte/store';
-	import {
-		archive,
-		getEmailList,
-		markAsUnread,
-		markEmailAsRead,
-		remove,
-		searchEmails
-	} from '$lib/api/email';
+	import { getEmailList, markEmailAsRead, searchEmails } from '$lib/api/email';
 	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
-	import { IconReload } from '@tabler/icons-svelte';
 
 	import { type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
-	import { emailServiceState } from '$lib/store';
 
-	export const markEmailAsUnread = (email: Email) => {
-		const _markAsUnread = async () => {
-			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
-			if (res) {
-				_emailList = [..._emailList.map((e) => (e.email_id === email.email_id ? res : e))];
-			}
-		};
-		_markAsUnread();
-	};
-	export const removeEmail = (email: Email) => {
-		const _remove = async () => {
-			const res = await remove({ user: get(user)?.id.toString(), email_id: email.email_id });
-			if (res) {
-				_emailList = [..._emailList.filter((e) => e.email_id !== email.email_id)];
-			}
-		};
-		_remove();
-	};
-	export const archiveEmail = (email: Email) => {
-		const _archive = async () => {
-			const res = await archive({ user: get(user)?.id.toString(), email_id: email.email_id });
-			if (res) {
-				_emailList = [..._emailList.filter((e) => e.email_id !== email.email_id)];
-			}
-		};
-		_archive();
-	};
-
-	let {
-		selectEmail,
-		_emailList = $bindable()
-	}: { selectEmail: (email: Email) => void; _emailList: Email[] } = $props();
+	let { selectEmail }: { selectEmail: (email: Email) => void } = $props();
 	let container = $state<HTMLElement | null>(null);
 	let _emailAccount = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
 	let pageNumber = $state(1);
@@ -63,6 +23,7 @@
 	let disableTransition = $state(false); // New state variable to disable transition
 	let previousAccountValue = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
 	let selectedToggleOption: number = $state(0);
+	let _emailList = $state<Email[]>(get(emailServiceState).emailList);
 
 	$effect(() => {
 		const state = get(emailServiceState);
@@ -72,7 +33,10 @@
 					user: get(user)?.id.toString(),
 					search: state.emailSearchQueryList[0].query
 				});
-				_emailList = emailResults;
+				emailServiceState.update((state) => ({
+					...state,
+					emailList: emailResults
+				}));
 			};
 			_searchEmails();
 		}
@@ -99,9 +63,6 @@
 		return () => unsubscribe();
 	});
 
-	const setEmailList = (emails: Email[]) => {
-		_emailList = emails;
-	};
 	// Function to handle scroll and load next page
 	const handleScroll = () => {
 		if (!container || isLoading) return; // Prevent duplicate calls while loading
@@ -149,19 +110,27 @@
 		// Append the new emails to the existing ones, avoiding duplicates
 		if (newEmails && newEmails.length > 0) {
 			if (_emailList.length === 0) {
-				emailList.set(newEmails);
+				emailServiceState.update((state) => ({
+					...state,
+					emailList: newEmails
+				}));
 			} else {
-				emailList.update((emails: Email[]) => [
-					...emails,
-					...newEmails.filter((newEmail) => !emails.some((e) => e.id === newEmail.id))
-				]);
+				emailServiceState.update((state) => ({
+					...state,
+					emailList: [
+						...state.emailList,
+						...newEmails.filter((newEmail) => !state.emailList.some((e) => e.id === newEmail.id))
+					]
+				}));
 			}
 		}
 		isLoading = false;
 	};
 
-	emailList.subscribe((value) => {
-		_emailList = value;
+	emailServiceState.subscribe((state) => {
+		if (state.emailList) {
+			_emailList = state.emailList;
+		}
 	});
 
 	// Function to load the next page of emails
@@ -193,7 +162,10 @@
 				_emailList = _emailList.map((email: Email) =>
 					email.email_id === selectedEmail?.email_id ? newEmail : email
 				);
-				emailList.set(_emailList);
+				emailServiceState.update((state) => ({
+					...state,
+					emailList: _emailList
+				}));
 			}
 		};
 		if (selectedEmail?.labels.includes('UNREAD')) updateEmailAsRead();
@@ -255,30 +227,26 @@
 
 <div class="email-container">
 	<div class="email-header">
-		<div class="header-left">
-			<div>Emails</div>
-			<button class="refresh-button" onclick={refreshEmails} aria-label="Refresh emails">
-				<IconReload size="18" color="gray" />
-			</button>
+		<EmailListSearch />
+		<div class="radio-group-container">
+			<RadioGroup
+				active="variant-filled-primary"
+				border={0}
+				rounded={'rounded-md'}
+				size={'sm'}
+				background={'bg-primary-black'}
+			>
+				{#each toggleOptions as option, index}
+					<RadioItem
+						bind:group={selectedToggleOption}
+						name={option}
+						value={index}
+						on:click={() => handleToggleChange(index)}>{option}</RadioItem
+					>
+				{/each}
+			</RadioGroup>
 		</div>
-		<RadioGroup
-			active="variant-filled-primary"
-			border={0}
-			rounded={'rounded-md'}
-			size={'sm'}
-			background={'bg-primary-black'}
-		>
-			{#each toggleOptions as option, index}
-				<RadioItem
-					bind:group={selectedToggleOption}
-					name={option}
-					value={index}
-					on:click={() => handleToggleChange(index)}>{option}</RadioItem
-				>
-			{/each}
-		</RadioGroup>
 	</div>
-	<EmailListSearch {refreshEmails} {setEmailList} />
 	<div class="email-list-container" bind:this={container} onscroll={handleScroll}>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
@@ -320,13 +288,21 @@
 
 	.email-header {
 		display: flex;
-		height: 60px;
+		flex-direction: column;
 		flex-shrink: 0;
-		align-items: center;
-		justify-content: space-between;
+		align-items: start;
+		justify-content: center;
 		border-bottom: 1px solid var(--color-primary-gray);
-		padding: 10px;
+		padding: 0.15rem;
 		font-size: var(--text-h4);
+	}
+
+	.radio-group-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		padding: 0.15rem;
 	}
 
 	.radio-item {
@@ -354,7 +330,7 @@
 	.email-list-container {
 		flex: 1;
 		overflow-y: auto;
-		width: 400px;
+		width: 320px;
 	}
 
 	/* Hide scrollbar for Chrome, Safari and Opera */

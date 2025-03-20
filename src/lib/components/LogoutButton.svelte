@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Power from '$lib/assets/Power.svelte';
-	import { user, emailAccount, emailList, emailLabels, emailSearchList } from '$lib/store';
+	import {
+		user,
+		emailAccount,
+		emailList,
+		emailServiceState,
+		emailLabels,
+		emailSearchList
+	} from '$lib/store';
 
 	const handleLogout = async () => {
 		// First, clear or reset all stores with proper initial values
@@ -10,7 +17,7 @@
 		emailLabels.set([]);
 		emailSearchList.set([]);
 		emailAccount.set({ email: 'All Emails' });
-
+		emailServiceState.set({});
 		// Wait a small amount to allow store updates to propagate
 		await new Promise((resolve) => setTimeout(resolve, 10));
 

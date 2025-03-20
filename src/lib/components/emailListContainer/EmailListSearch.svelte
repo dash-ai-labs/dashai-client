@@ -4,8 +4,8 @@
 	import { get } from 'svelte/store';
 	import type { Email } from '$lib/types';
 	import X from '$lib/assets/X.svelte';
-
-	const { setEmailList, refreshEmails } = $props();
+	import { refreshEmailList } from '$lib/actions';
+	import { IconSearch } from '@tabler/icons-svelte';
 	let searchInput = $state('');
 	let showError = $state(false);
 
@@ -20,10 +20,10 @@
 				user: get(user)?.id.toString(),
 				search: searchInput
 			});
-			setEmailList(response);
-
 			emailServiceState.update((state) => ({
 				...state,
+				emailList: response,
+
 				aiSearchQuery: searchInput
 			}));
 		} else {
@@ -40,6 +40,7 @@
 <div class="search-container flex-shrink-0">
 	<form onsubmit={handleInput} class="search-form">
 		<div class="input-container">
+			<IconSearch size="22" color="var(--color-primary-gray)" />
 			<input
 				bind:value={searchInput}
 				onchange={handleInput}
@@ -55,7 +56,7 @@
 					onclick={() => {
 						searchInput = '';
 						handleInput();
-						refreshEmails();
+						refreshEmailList();
 					}}
 				>
 					<X stroke="stroke-primary-active-button-highlight" />
@@ -70,8 +71,9 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-		gap: 0.25rem;
-		padding: 0.25rem;
+		padding: 0.15rem;
+		height: 48px;
+		width: 100%;
 	}
 
 	.search-form {

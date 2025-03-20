@@ -4,7 +4,8 @@
 	import EmailButton from '../EmailButton.svelte';
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
 	import type { Email } from '$lib/types';
-	import { IconArchive, IconRefresh, IconTrash } from '@tabler/icons-svelte';
+	import { IconArchive, IconReload, IconTrash } from '@tabler/icons-svelte';
+	import { refreshEmailList } from '$lib/actions';
 	const {
 		removeEmail,
 		archiveEmail,
@@ -26,18 +27,18 @@
 
 <div class="command-bar">
 	<ComposeEmailButton />
-	<!-- <div class="button-group">
-		<EmailButton>
-			<IconRefresh size={24} color="var(--color-primary-light-gray)" />
+	<div class="button-group">
+		<EmailButton onclick={refreshEmailList} ariaLabel="Refresh" title="Refresh">
+			<IconReload size="22" color="var(--color-primary-light-gray)" />
 		</EmailButton>
-	</div> -->
+	</div>
 	<div class="separator-border" />
 	<div class="button-group">
 		<EmailButton onclick={() => email && archiveEmail(email)} ariaLabel="Archive" title="Archive">
-			<IconArchive size={24} color="var(--color-primary-light-gray)" />
+			<IconArchive size={22} color="var(--color-primary-light-gray)" />
 		</EmailButton>
 		<EmailButton onclick={() => email && removeEmail(email)} ariaLabel="Delete" title="Delete">
-			<IconTrash size={24} color="var(--color-primary-light-gray)" />
+			<IconTrash size={22} color="var(--color-primary-light-gray)" />
 		</EmailButton>
 	</div>
 	<div class="separator-border" />
