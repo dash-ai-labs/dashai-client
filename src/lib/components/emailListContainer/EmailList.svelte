@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { emailList, user, emailServiceState } from '$lib/store';
+	import { user, emailServiceState } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { getEmailList, markEmailAsRead, searchEmails } from '$lib/api/email';
 	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
@@ -8,6 +8,7 @@
 
 	import { type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
+	import { onMount } from 'svelte';
 
 	let { selectEmail }: { selectEmail: (email: Email) => void } = $props();
 	let container = $state<HTMLElement | null>(null);
@@ -42,25 +43,8 @@
 		}
 	});
 
-	$effect(() => {
-		const unsubscribe = emailServiceState.subscribe((state) => {
-			if (
-				state.emailAccount &&
-				previousAccountValue &&
-				(!previousAccountValue.email || state.emailAccount.email !== previousAccountValue.email)
-			) {
-				pageNumber = 1; // Reset page number for new account
-				_emailList = []; // Clear existing emails
-				_emailAccount = state.emailAccount;
-				loadNextPage();
-
-				// Update the previous value to prevent repeated calls
-				previousAccountValue = state.emailAccount;
-				handleAccountChange();
-			}
-		});
-
-		return () => unsubscribe();
+	onMount(() => {
+		loadNextPage();
 	});
 
 	// Function to handle scroll and load next page
@@ -85,7 +69,6 @@
 
 		isLoading = true;
 		let newEmails;
-
 		if (email === 'All Emails') {
 			const { emails, end } = await getEmailList({
 				user,
@@ -193,31 +176,6 @@
 
 		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
 		isToggleLoading = false; // Set loading state to false after emails are loaded
-	};
-
-	// Add a refresh function
-	const refreshEmails = async () => {
-		pageNumber = 1; // Reset page number
-		_emailList = []; // Clear existing emails
-		isLoading = true; // Set loading indicator
-		emailList.set([]); // Clear the store too
-
-		const userId = get(user)?.id;
-		if (!userId) {
-			isLoading = false;
-			return;
-		}
-
-		await loadEmails(
-			_emailAccount?.email || 'All Emails',
-			userId.toString(),
-			limit,
-			pageNumber,
-			lastFilter
-		);
-
-		pageNumber++; // Increment after a successful fetch
-		isLoading = false;
 	};
 
 	const handleAccountChange = () => {
