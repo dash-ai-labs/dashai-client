@@ -3,9 +3,9 @@
 	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { Email } from '$lib/types';
-	import X from '$lib/assets/X.svelte';
 	import { refreshEmailList } from '$lib/actions';
 	import { IconSearch } from '@tabler/icons-svelte';
+	import { XIcon } from 'lucide-svelte';
 	let searchInput = $state('');
 	let showError = $state(false);
 
@@ -57,6 +57,9 @@
 						searchInput = '';
 						handleInput();
 						refreshEmailList();
+					}}
+				>
+					<XIcon size={'22'} color="var(--color-primary-gray)" />
 				</button>
 			{/if}
 		</div>
@@ -113,6 +116,6 @@
 	}
 
 	.clear-button:hover {
-		background-color: var(--color-primary-gray);
+		background-color: var(--color-primary-light-gray);
 	}
 </style>
