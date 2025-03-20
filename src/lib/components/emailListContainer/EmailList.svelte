@@ -8,7 +8,6 @@
 
 	import { type Email, type EmailAccount } from '$lib/types';
 	import EmailListSearch from './EmailListSearch.svelte';
-	import { emailServiceState } from '$lib/store';
 
 	let { selectEmail }: { selectEmail: (email: Email) => void } = $props();
 	let container = $state<HTMLElement | null>(null);
