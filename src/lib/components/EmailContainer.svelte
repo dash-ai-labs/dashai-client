@@ -139,10 +139,6 @@
 		gap: 10px;
 		overflow: hidden;
 	}
-
 	.detail-view {
-		position: relative;
-		height: 100%;
-		width: 100%;
 	}
 </style>

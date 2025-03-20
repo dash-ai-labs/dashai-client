@@ -57,9 +57,6 @@
 						searchInput = '';
 						handleInput();
 						refreshEmailList();
-					}}
-				>
-					<X stroke="stroke-primary-active-button-highlight" />
 				</button>
 			{/if}
 		</div>
