@@ -35,7 +35,7 @@
 		gap: 0.5rem; /* gap-2 */
 		background-color: var(--color-primary-button);
 		border-radius: 10px;
-		color: var(--color-text-white);
+		color: var(--color-primary-white);
 	}
 
 	.primary-button:hover {
