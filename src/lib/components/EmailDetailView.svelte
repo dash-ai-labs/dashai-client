@@ -11,7 +11,7 @@
 	import { setShowComposeEmail } from '$lib/actions';
 
 	let element = $state<HTMLIFrameElement | null>(null);
-	let email = $state<Email | undefined>(undefined);
+	let email = $state<Email | null>(null);
 	let isLoading = $state(false);
 
 	emailServiceState.subscribe((state) => {
@@ -240,8 +240,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- Reply Box -->
 	{:else}
 		<div class="empty-state">
 			<Inbox size="80" class="empty-icon" />
