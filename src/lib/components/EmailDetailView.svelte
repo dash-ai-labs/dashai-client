@@ -2,22 +2,14 @@
 	import Inbox from '$lib/assets/Inbox.svelte';
 	import DOMPurify from 'dompurify';
 	import type { Email, Label } from '$lib/types';
-	import { ComposeEmailMode } from '$lib/types';
+	import { ComposeEmailMode, EmailLabelAction } from '$lib/types';
 	import { ForwardOutline, ReplyOutline } from 'flowbite-svelte-icons';
-	import { getEmailContent } from '$lib/api/email';
+	import { emailLabelAction, getEmailContent } from '$lib/api/email';
 	import { get } from 'svelte/store';
 	import { user, emailServiceState } from '$lib/store';
-	import AddEmailLabel from './AddEmailLabel.svelte';
-	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import EmailLabelChip from './EmailLabelChip.svelte';
 	import { setShowComposeEmail } from '$lib/actions';
-	const {
-		addLabelToEmail,
-		removeLabelFromEmail
-	}: {
-		addLabelToEmail: (email: Email, emailLabel: Label) => void;
-		removeLabelFromEmail: (email: Email, emailLabel: Label) => void;
-	} = $props();
+
 	let element = $state<HTMLIFrameElement | null>(null);
 	let email = $state<Email | undefined>(undefined);
 	let isLoading = $state(false);
@@ -53,16 +45,6 @@
 			loadContent();
 		}
 	}
-
-	const addLabelPopup: PopupSettings = {
-		// Represents the type of event that opens/closed the popup
-		event: 'click',
-		// Matches the data-popup value on your popup element
-		target: 'addLabelPopup',
-		// Defines which side of your trigger the popup will appear
-		placement: 'bottom',
-		closeQuery: ''
-	};
 
 	function formatEmailContent(content: string): string {
 		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
@@ -156,7 +138,30 @@
 
 		return `${day} ${month}/${dayOfMonth}/${year} ${hours}:${minutes}${amPm}`;
 	};
+	const removeLabelFromEmail = (_email: Email, emailLabel: Label) => {
+		const _removeLabelFromEmail = async () => {
+			const currentUser = get(user);
+			if (!currentUser?.id || !_email) return;
 
+			const res = await emailLabelAction({
+				user: currentUser.id.toString(),
+				email_id: _email.email_id,
+				label_id: emailLabel.id,
+				action: EmailLabelAction.Remove
+			});
+			if (res) {
+				email = res;
+				emailServiceState.update((state) => ({
+					...state,
+					currentEmail: state.currentEmail?.email_id === _email.email_id ? res : state.currentEmail,
+					emailList: state.emailList.map((email) =>
+						email.email_id === _email.email_id ? res : email
+					)
+				}));
+			}
+		};
+		_removeLabelFromEmail();
+	};
 	const onLabelClick = (label: Label) => {
 		removeLabelFromEmail(email, label);
 	};
@@ -185,11 +190,8 @@
 								{#each email.email_labels as label}
 									<EmailLabelChip {label} {onLabelClick} />
 								{/each}
-								<button use:popup={addLabelPopup} class="add-label-button">+ Label</button>
 							</div>
-							<div data-popup="addLabelPopup">
-								<AddEmailLabel {email} {addLabelToEmail} />
-							</div>
+
 							<span class="date-display">{formatDate(email.date)}</span>
 						</div>
 					</div>
@@ -280,6 +282,7 @@
 		height: 100%;
 		min-width: 740px;
 		max-width: 1200px;
+		width: 100%;
 		border-radius: 0.5rem;
 		background-color: var(--color-primary-container);
 	}

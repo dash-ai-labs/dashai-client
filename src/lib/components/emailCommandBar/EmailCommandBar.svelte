@@ -6,6 +6,8 @@
 	import type { Email } from '$lib/types';
 	import { IconArchive, IconReload, IconTrash } from '@tabler/icons-svelte';
 	import { refreshEmailList } from '$lib/actions';
+	import AddEmailLabel from '../AddEmailLabel.svelte';
+	import { popup } from '@skeletonlabs/skeleton';
 	const {
 		removeEmail,
 		archiveEmail,
@@ -23,6 +25,16 @@
 			email = currentEmail;
 		}
 	});
+
+	const addLabelPopup: PopupSettings = {
+		// Represents the type of event that opens/closed the popup
+		event: 'click',
+		// Matches the data-popup value on your popup element
+		target: 'addLabelPopup',
+		// Defines which side of your trigger the popup will appear
+		placement: 'bottom',
+		closeQuery: ''
+	};
 </script>
 
 <div class="command-bar">
@@ -51,9 +63,31 @@
 			<UnreadMail height={22} width={22} />
 		</EmailButton>
 	</div>
+	<div class="right-container">
+		<button use:popup={addLabelPopup} class="add-label-button">+ Label</button>
+	</div>
+	<div data-popup="addLabelPopup">
+		<AddEmailLabel {email} />
+	</div>
 </div>
 
 <style>
+	[data-popup] {
+		/* Display */
+		display: none;
+		/* Position */
+		z-index: 50;
+		position: absolute;
+		top: 0;
+		left: 1;
+	}
+	.add-label-button {
+		white-space: nowrap;
+		border-radius: 0.5rem;
+		border: 1px dashed var(--color-primary-gray);
+		padding: 0 1rem;
+		color: var(--color-primary-gray);
+	}
 	.command-bar {
 		display: flex;
 		background-color: var(--color-primary-container);
@@ -79,5 +113,13 @@
 		height: 20px;
 		width: 1px;
 		align-self: center;
+	}
+	.right-container {
+		display: flex;
+		align-items: center;
+		justify-items: end;
+		gap: 10px;
+		margin-left: auto;
+		padding-inline: 10px;
 	}
 </style>

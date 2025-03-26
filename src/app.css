@@ -55,6 +55,7 @@
 	--color-primary-white: #f0f0f0;
 
 	/* Font Colors */
+	--color-font-black: #141414;
 	--color-font-dark-gray: #89929b;
 	--color-font-gray: #c6cdd5;
 	--color-font-light-gray: #ecf2f8;
@@ -261,6 +262,9 @@ body {
 }
 .text-font-light-gray {
 	color: var(--color-font-light-gray);
+}
+.text-font-black {
+	color: var(--color-font-black);
 }
 
 /* Component Classes */

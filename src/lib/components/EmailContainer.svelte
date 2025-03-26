@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { archive, emailLabelAction, markAsUnread, remove } from '$lib/api/email';
-	import { EmailLabelAction, type Email, type Label } from '$lib/types';
+	import { archive, markAsUnread, remove } from '$lib/api/email';
+	import { type Email } from '$lib/types';
 	import { get } from 'svelte/store';
 	import EmailDetailView from './EmailDetailView.svelte';
 	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
@@ -70,50 +70,14 @@
 		};
 		_markAsUnread();
 	};
-
-	export const addLabelToEmail = (_email: Email, emailLabel: Label) => {
-		const _addLabelToEmail = async () => {
-			const currentUser = get(user);
-			if (!currentUser?.id || !_email) return;
-
-			const res = await emailLabelAction({
-				user: currentUser.id.toString(),
-				email_id: _email.email_id,
-				label_id: emailLabel.id,
-				action: EmailLabelAction.Add
-			});
-			if (res) {
-				email = res;
-			}
-		};
-		_addLabelToEmail();
-	};
-
-	export const removeLabelFromEmail = (_email: Email, emailLabel: Label) => {
-		const _removeLabelFromEmail = async () => {
-			const currentUser = get(user);
-			if (!currentUser?.id || !_email) return;
-
-			const res = await emailLabelAction({
-				user: currentUser.id.toString(),
-				email_id: _email.email_id,
-				label_id: emailLabel.id,
-				action: EmailLabelAction.Remove
-			});
-			if (res) {
-				email = res;
-			}
-		};
-		_removeLabelFromEmail();
-	};
 </script>
 
 <div class="container">
-	<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} />
-	<div class="content">
-		<EmailList {selectEmail} />
-		<div class="detail-view">
-			<EmailDetailView {addLabelToEmail} {removeLabelFromEmail} bind:this={emailDetailView} />
+	<div class="email-section">
+		<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} />
+		<div class="content">
+			<EmailList {selectEmail} />
+			<EmailDetailView bind:this={emailDetailView} />
 			{#if showComposeEmail}
 				{#key showComposeEmail}
 					<ComposeEmail {email} {composeEmailMode} />
@@ -132,13 +96,16 @@
 		overflow: hidden;
 	}
 
+	.email-section {
+		display: flex;
+		flex-direction: column;
+		width: 1200px;
+	}
 	.content {
 		display: flex;
 		flex: 1;
 		flex-direction: row;
 		gap: 10px;
 		overflow: hidden;
-	}
-	.detail-view {
 	}
 </style>
