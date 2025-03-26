@@ -13,8 +13,8 @@
 	};
 </script>
 
-<button class="label-chip" style:background-color={label.color} on:click={handleClick}>
-	<CloseOutline class="close-icon" />
+<button class="label-chip" style:background-color={label.color} onclick={handleClick}>
+	<CloseOutline height={12} width={12} color="var(--color-primary-black)" />
 	<p class="label-text">{label.name}</p>
 </button>
 
@@ -23,21 +23,12 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
-		border-radius: 0.5rem;
-		padding: 0.25rem 1rem;
+		gap: 2px;
+		border-radius: 14px;
+		padding-block: 4px;
+		padding-left: 4px;
+		padding-right: 16px;
 		width: 100px;
-	}
-
-	.close-icon {
-		height: 0.75rem;
-		width: 0.75rem;
-		color: var(--color-primary-black);
-		display: none;
-	}
-
-	.label-chip:hover .close-icon {
-		display: block;
 	}
 
 	.label-text {

@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { createLabel } from '$lib/api/label';
-	import { emailLabels, user } from '$lib/store';
+	import { emailLabels, emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
-	import { LabelColor, LabelType, type Email, type Label } from '$lib/types';
+	import { EmailLabelAction, LabelColor, LabelType, type Email, type Label } from '$lib/types';
 	import { onMount } from 'svelte';
 	import EmailLabel from './EmailLabel.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
+	import { emailLabelAction } from '$lib/api/email';
 
 	interface Props {
 		email: Email;
-		addLabelToEmail: (email: Email, emailLabel: Label) => void;
 	}
-	let { email, addLabelToEmail }: Props = $props();
+	let { email = $bindable() }: Props = $props();
 	let nameInput = $state('');
 	let emailLabelList = $state<Label[]>(get(emailLabels));
 	let nameError = $state(false);
@@ -31,6 +31,30 @@
 		refreshEmailLabels();
 	});
 
+	export const addLabelToEmail = (_email: Email, emailLabel: Label) => {
+		const _addLabelToEmail = async () => {
+			const currentUser = get(user);
+			if (!currentUser?.id || !_email) return;
+
+			const res = await emailLabelAction({
+				user: currentUser.id.toString(),
+				email_id: _email.email_id,
+				label_id: emailLabel.id,
+				action: EmailLabelAction.Add
+			});
+			if (res) {
+				email = res;
+				emailServiceState.update((state) => ({
+					...state,
+					currentEmail: state.currentEmail?.email_id === _email.email_id ? res : state.currentEmail,
+					emailList: state.emailList.map((email) =>
+						email.email_id === _email.email_id ? res : email
+					)
+				}));
+			}
+		};
+		_addLabelToEmail();
+	};
 	const submit = async () => {
 		if (nameInput.length === 0) {
 			nameError = true;

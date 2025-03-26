@@ -89,7 +89,6 @@
 			newEmails = emails;
 			listEnd = end;
 		}
-
 		// Append the new emails to the existing ones, avoiding duplicates
 		if (newEmails && newEmails.length > 0) {
 			if (_emailList.length === 0) {
@@ -261,28 +260,6 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0.15rem;
-	}
-
-	.radio-item {
-		text-wrap: nowrap;
-	}
-
-	.header-left {
-		margin-left: 2px;
-		margin-right: 2px;
-		display: flex;
-		align-items: center;
-		font-size: var(--text-section-header);
-	}
-
-	.refresh-button {
-		margin-left: 0.5rem;
-		border-radius: 9999px;
-		padding: 0.25rem;
-	}
-
-	.refresh-button:hover {
-		background-color: var(--color-primary-dark-gray);
 	}
 
 	.email-list-container {
