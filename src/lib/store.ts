@@ -59,3 +59,8 @@ export const emailServiceState: Writable<EmailServiceState> = persistentWritable
 		emailList: []
 	}
 );
+
+// Reset currentEmail on app load
+if (typeof window !== 'undefined') {
+	emailServiceState.update((state) => ({ ...state, currentEmail: null }));
+}
