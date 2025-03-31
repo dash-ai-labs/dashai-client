@@ -142,7 +142,7 @@
 			return;
 		}
 
-		if (!editor.getHTML() || editor.getHTML() === '<p></p>') {
+		if (!emailData.body.length) {
 			errorMessage.set('Please add a message body');
 			showErrorModal.set(true);
 			return;

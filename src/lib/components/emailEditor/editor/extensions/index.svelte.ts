@@ -13,6 +13,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
 import UploadImagesPlugin from '../plugins/upload-images.js';
 import SlashCommand from './slash-command.svelte';
+import IframeSvelte from './Iframe.svelte.js';
 
 export const defaultExtensions = [
 	StarterKit.configure({
@@ -54,6 +55,7 @@ export const defaultExtensions = [
 		},
 		gapcursor: false
 	}),
+	IframeSvelte,
 	// patch to fix horizontal rule bug: https://github.com/ueberdosis/tiptap/pull/3859#issuecomment-1536799740
 	HorizontalRule.extend({
 		addInputRules() {

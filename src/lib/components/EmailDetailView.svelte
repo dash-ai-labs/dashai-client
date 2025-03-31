@@ -35,6 +35,14 @@
 					});
 					if (element && content) {
 						element.srcdoc = content;
+
+						emailServiceState.update((state: EmailServiceState) => ({
+							...state,
+							currentEmail: {
+								...state.currentEmail,
+								raw_content: content
+							}
+						}));
 					}
 				} catch (error) {
 					console.error('Error loading email content:', error);

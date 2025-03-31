@@ -7,19 +7,13 @@
 	import { onMount } from 'svelte';
 	import { defaultExtensions } from './extensions/index.svelte';
 	import { defaultEditorProps } from './props';
-
 	import EditorBubbleMenu from './bubble-menu/index.svelte';
-	import { user } from '$lib/store';
+	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { EditorType } from '../lib';
-	import type { EmailData } from '$lib/types';
+	import { ComposeEmailMode, type EmailData } from '$lib/types';
 	import { writeEmailSuggestion } from '$lib/api/compose';
-
-	/**
-	 * Additional classes to add to the editor container.
-	 * Defaults to "relative min-h-[500px] w-full max-w-screen-lg border-stone-200 bg-white p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg".
-	 */
-	let className = 'relative min-h-[300px] px-1 py-1 selection:bg-primary-gray';
+	import { generateJSON } from '@tiptap/html';
 	/**
 	 * The default value to use for the editor.
 	 * Defaults to empty string.
@@ -37,50 +31,6 @@
 	let element: Element;
 
 	let isLoading = $state(false);
-
-	// const { complete, completion, isLoading, stop } = useCompletion({
-	// 	id: 'novel',
-	// 	api: `${PUBLIC_API_URL}/user/${get(user)?.id.toString()}/suggestion`,
-	// 	credentials: 'include',
-	// 	streamProtocol: 'text',
-	// 	body: {
-	// 		email_id: [email?.email_id ?? ''],
-	// 		subject: email?.subject ?? '',
-	// 		body: email?.raw_content ?? ''
-	// 	},
-	// 	onFinish: (_prompt, completion) => {
-	// 		editor?.commands.setTextSelection({
-	// 			from: editor.state.selection.from - completion.length,
-	// 			to: editor.state.selection.from
-	// 		});
-	// 	},
-	// 	onError: (err) => {
-	// 		// addToast({
-	// 		// 	data: {
-	// 		// 		text: err.message,
-	// 		// 		type: 'error'
-	// 		// 	}
-	// 		// });
-	// 		// if (err.message === 'You have reached your request limit for the day.') {
-	// 		// 	va.track('Rate Limit Reached');
-	// 		// }
-	// 	}
-	// });
-
-	// const content = createLocalStorageStore(storageKey, defaultValue);
-	// let hydrated = false;
-
-	// $effect(() => {
-	// 	if (editor && !hydrated) {
-	// 		const value = disableLocalStorage ? defaultValue : $content;
-
-	// 		if (value) {
-	// 			editor.commands.setContent(value);
-	// 		}
-
-	// 		hydrated = true;
-	// 	}
-	// });
 
 	let prev = '';
 
@@ -130,17 +80,16 @@
 			onTransaction: (props) => {
 				// force re-render so `editor.isActive` works as expected
 				editor = editor;
+
+				email.body = editor?.getHTML();
 			},
 			extensions: [...defaultExtensions],
 			editorProps: {
 				...defaultEditorProps
-				// ...editorProps
 			},
 			onUpdate: (e) => {
 				const selection = e.editor.state.selection;
-				const lastTwo = getPrevText(e.editor, {
-					chars: 2
-				});
+				const lastTwo = getPrevText(e.editor, { chars: 2 });
 				if (lastTwo === '++' && !isLoading) {
 					isLoading = true;
 					e.editor.commands.deleteRange({
@@ -158,23 +107,84 @@
 						}
 					};
 					_writeEmailSuggestion();
-
-					// complete(e.editor.storage.markdown.getMarkdown());
-				} else {
-					// onUpdate(e.editor);
-					// debouncedUpdates(e);
 				}
 			},
 			autofocus: 'end'
 		});
+
+		const composeMode = get(emailServiceState)?.composeEmailMode;
+		const currentEmail = get(emailServiceState)?.currentEmail;
+
+		if (composeMode === ComposeEmailMode.Forward || composeMode === ComposeEmailMode.Reply) {
+			if (currentEmail?.raw_content) {
+				const doc = generateJSON(currentEmail.raw_content.toString(), [...defaultExtensions]);
+
+				if (doc) {
+					const indentedContent = [
+						{
+							type: 'paragraph'
+						},
+						{
+							type: 'paragraph',
+							content: [
+								{
+									type: 'text',
+									text:
+										composeMode === ComposeEmailMode.Forward
+											? 'Forwarded message:'
+											: `On ${new Date(currentEmail?.date).toLocaleString()}, wrote:`
+								}
+							]
+						},
+						{
+							type: 'blockquote',
+							content: doc.content
+						}
+					];
+					// Insert the wrapper and header first
+					editor?.commands.insertContent(indentedContent);
+
+					// Then insert the actual content with proper indentation
+
+					// Add a final paragraph after the quoted content
+					editor?.commands.insertContent({
+						type: 'paragraph'
+					});
+				} else {
+					// Fallback to plain text if parsing fails
+					const formattedContent = `\n\n${composeMode === ComposeEmailMode.Forward ? 'Forwarded message:\n' : `On ${new Date(currentEmail?.date).toLocaleString()}, wrote:\n`}${currentEmail?.raw_content}\n\n`;
+					editor?.commands.insertContent(formattedContent);
+				}
+			}
+		}
 	});
+	export function getEmailContentForSend(): string {
+		const editorContent = editor?.getHTML() ?? '';
+		let originalEmailContent = '';
+
+		const composeMode = get(emailServiceState)?.composeEmailMode;
+		const currentEmail = get(emailServiceState)?.currentEmail;
+
+		if (composeMode === ComposeEmailMode.Forward || composeMode === ComposeEmailMode.Reply) {
+			originalEmailContent = `
+				<br>
+				<div class="quoted-email">
+					${composeMode === ComposeEmailMode.Forward ? 'Forwarded message:' : `On ${new Date(currentEmail?.date).toLocaleString()}, wrote:`}<br>
+					${currentEmail?.raw_content}
+				</div>
+				<br>
+			`;
+		}
+
+		return editorContent + originalEmailContent;
+	}
 </script>
 
 {#if editor && editor.isEditable}
 	<EditorBubbleMenu {editor} />
 {/if}
 
-<div id="editor" class={className} bind:this={element}>
+<div id="editor" bind:this={element}>
 	<slot />
 
 	{#if editor?.isActive('image')}
@@ -211,6 +221,41 @@
 	@keyframes spin {
 		to {
 			transform: rotate(360deg);
+		}
+	}
+
+	:global(.quoted-email) {
+		padding-left: 16px;
+		margin-left: 8px;
+		border-left: 2px solid #cccccc;
+		color: #505050;
+	}
+
+	#editor {
+		min-height: 300px;
+		max-height: 500px;
+		overflow-y: auto;
+	}
+	.email-iframe {
+		height: 100%;
+		width: 100%;
+		background-color: var(--color-primary-white);
+	}
+
+	.iframe-wrapper {
+		position: relative;
+		padding-bottom: 10px;
+		height: 0;
+		overflow: hidden;
+		width: 100%;
+		height: auto;
+
+		iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
 		}
 	}
 </style>
