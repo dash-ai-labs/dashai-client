@@ -60,6 +60,7 @@
 		align-items: center;
 		justify-items: center;
 		align-self: center;
+		justify-content: center;
 	}
 
 	@keyframes spin {

@@ -3,7 +3,6 @@
 	import EmailContainer from '$lib/components/EmailContainer.svelte';
 	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
-	import PrimaryButton from '$lib/components/PrimaryButton.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
 	import { emailList, user } from '$lib/store';
 	import { EmailAccountStatus, type EmailAccount } from '$lib/types';
