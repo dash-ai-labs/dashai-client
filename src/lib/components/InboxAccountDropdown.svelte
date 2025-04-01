@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { addEmailAccount, getEmailAccounts } from '$lib/api/auth';
-	import { user, emailAccount } from '$lib/store';
+	import { user, emailServiceState } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { EmailAccount } from '$lib/types';
 	import { Button, Dropdown, DropdownItem } from 'flowbite-svelte';
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
+	import { refreshEmailList } from '$lib/actions';
+	import { onMount } from 'svelte';
 
 	let emailAccounts: EmailAccount[] = [];
 	type Option = {
@@ -16,10 +16,13 @@
 	let options: Option[] = $state([{ label: 'All Emails', icon: null }]);
 	let selectedOption: Option = $state(options[0]);
 	let currentUser = $state(get(user));
-
+	let emailAccount = $state(get(emailServiceState).emailAccount);
 	// Update currentUser when user store changes
 	user.subscribe((value) => {
 		currentUser = value;
+	});
+	emailServiceState.subscribe((value) => {
+		emailAccount = value.emailAccount;
 	});
 
 	async function loadEmailAccounts() {
@@ -40,7 +43,8 @@
 	const onSelectOption = (option: Option) => {
 		if (option !== selectedOption) {
 			selectedOption = option;
-			emailAccount.set({ email: option.label });
+			emailServiceState.update((state) => ({ ...state, emailAccount: { email: option.label } }));
+			refreshEmailList();
 		}
 	};
 
@@ -50,17 +54,20 @@
 		}
 	};
 
-	run(() => {
+	onMount(() => {
 		if (currentUser?.id) {
 			loadEmailAccounts();
-			emailAccount.set({ email: selectedOption.label });
+			emailServiceState.update((state) => ({
+				...state,
+				emailAccount: { email: selectedOption.label }
+			}));
 		}
 	});
 </script>
 
 <div class="dropdown-container">
 	<Button>
-		{$emailAccount?.email || 'All Emails'}
+		{emailAccount?.email || 'All Emails'}
 		<ChevronDownOutline class="chevron-icon" />
 	</Button>
 	<Dropdown class="dropdown-menu">
@@ -84,8 +91,9 @@
 <style>
 	.dropdown-container {
 		display: flex;
-		width: 200px;
 		justify-content: flex-end;
+		padding-inline: 10px;
+		width: 100%;
 	}
 
 	.account-icon {
