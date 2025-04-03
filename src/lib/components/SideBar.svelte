@@ -6,28 +6,25 @@
 	import '@material/web/icon/icon';
 	import LogoutButton from './LogoutButton.svelte';
 	import Logo from '$lib/assets/Logo.svelte';
-	import { Inbox } from 'lucide-svelte';
-
+	import { IconInbox, IconLayoutSidebarLeftCollapse } from '@tabler/icons-svelte';
 	let { handleNavigation = (path: string) => {} } = $props();
 	const navItems = [
 		{
 			label: 'Inbox',
 			path: '/inbox',
 			badge: 24,
-			icon: Inbox
+			icon: IconInbox
 		}
-		// {
-		//   label: "Finance",
-		//   path: "/finance",
-		//   icon: SelectedFinance,
-		// },
 	];
 
 	let isActive = $derived((path: string) => $page.url.pathname === path);
 </script>
 
 <div class="nav-drawer">
-	<Logo class="logo" />
+	<div class="nav-drawer-header">
+		<Logo class="logo" />
+		<IconLayoutSidebarLeftCollapse class="collapse-icon" />
+	</div>
 	<div>
 		{#each navItems as item}
 			<SideBarButton
@@ -50,17 +47,27 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-center;
-		padding-left: 0.75rem; /* px-3 */
-		padding-right: 0.75rem; /* px-3 */
-		width: 180px; /* w-[180px] */
+		padding-left: 0.25rem; /* px-3 */
+		padding-right: 0.25rem; /* px-3 */
+		width: 200px; /* w-[180px] */
 		background-color: var(--color-secondary-container); /* bg-secondary-container */
-		border-radius: 16px; /* rounded-[16px] */
-		margin-top: 0.5rem; /* my-2 */
-		margin-bottom: 0.5rem; /* my-2 */
 	}
 
-	:global(.logo) {
-		fill: var(--color-primary-gray); /* fill-primary-gray */
+	.nav-drawer-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.5rem;
+	}
+
+	.logo {
+		fill: '#222C50'; /* fill-primary-gray */
+		padding: 0.5rem;
+	}
+
+	.collapse-icon {
+		fill: '#222C50'; /* fill-primary-gray */
+		padding: 0.5rem;
 	}
 
 	.logout-container {

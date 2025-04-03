@@ -3,7 +3,7 @@
 	import { user, emailServiceState } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { getEmailList, markEmailAsRead, searchEmails } from '$lib/api/email';
-	import EmailListItem from '$lib/components/emailListContainer/EmailListItem.svelte';
+	import EmailListItem from '$lib/components/EmailListContainer/EmailListItem.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	import { type Email, type EmailAccount } from '$lib/types';
@@ -239,7 +239,6 @@
 		display: flex;
 		height: 100%;
 		flex-direction: column;
-		border-radius: 0.5rem;
 		background-color: var(--color-primary-container);
 	}
 

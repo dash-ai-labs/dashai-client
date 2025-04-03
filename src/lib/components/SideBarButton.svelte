@@ -41,15 +41,18 @@
 		border-radius: 9999px; /* rounded-full */
 		padding-left: 20px;
 		padding-right: 20px;
-		color: var(--color-secondary-active-button-highlight);
+	}
+
+	.sidebar-button:hover {
+		background-color: var(--color-primary-dark-gray);
 	}
 
 	.active {
-		background-color: var(--color-secondary-active-button-background);
+		color: var(--color-primary-button);
 	}
 
 	.inactive {
-		background-color: var(--color-secondary-container);
+		color: var(--color-secondary-container);
 	}
 
 	:global(.icon-active) {
@@ -61,13 +64,14 @@
 	}
 
 	.button-content {
-		margin-left: 16px;
-		margin-right: 16px;
+		margin-left: 10px;
+		margin-right: 10px;
 		text-align: center;
+		align-content: center;
 	}
 
 	.content-active {
-		color: var(--color-secondary-active-button-highlight);
+		color: var(--color-primary-button);
 	}
 
 	.content-inactive {

@@ -4,30 +4,31 @@
 	import { get } from 'svelte/store';
 	import EmailDetailView from './EmailDetailView.svelte';
 	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
-	import EmailList from './emailListContainer/EmailList.svelte';
 	import { emailServiceState, user } from '$lib/store';
 	import EmailCommandBar from './emailCommandBar/EmailCommandBar.svelte';
+	import EmailList from './EmailListContainer/EmailList.svelte';
 
 	let email = $state<Email | undefined>(undefined);
 	let emailDetailView: EmailDetailView | undefined = undefined;
 	let showComposeEmail = $state(get(emailServiceState).showComposeEmail);
 	let composeEmailMode = $state(get(emailServiceState).composeEmailMode);
 
-	const selectEmail = (selectedEmail: Email) => {
-		if (emailDetailView) {
-			email = selectedEmail;
-			emailServiceState.update((state) => ({
-				...state,
-				currentEmail: selectedEmail
-			}));
-		} // Set the email to be passed as a prop
-	};
 	emailServiceState.subscribe((state) => {
 		if (showComposeEmail !== state.showComposeEmail) {
 			showComposeEmail = state.showComposeEmail;
 			composeEmailMode = state.composeEmailMode;
 		}
+		if (email !== state.currentEmail) {
+			email = state.currentEmail;
+		}
 	});
+
+	const selectEmail = (selectedEmail: Email) => {
+		emailServiceState.update((state) => ({
+			...state,
+			currentEmail: selectedEmail
+		}));
+	};
 
 	const removeEmail = (removedEmail: Email) => {
 		const _remove = async () => {
@@ -77,6 +78,7 @@
 		<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} />
 		<div class="content">
 			<EmailList {selectEmail} />
+
 			<EmailDetailView bind:this={emailDetailView} />
 			{#if showComposeEmail}
 				{#key showComposeEmail}
@@ -101,6 +103,7 @@
 		flex-direction: column;
 		width: 1200px;
 		height: 100%;
+		gap: 10px;
 	}
 	.content {
 		display: flex;

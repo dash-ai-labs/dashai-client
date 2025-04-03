@@ -4,11 +4,12 @@
 	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
-	import { emailList, user } from '$lib/store';
-	import { EmailAccountStatus, type EmailAccount } from '$lib/types';
+	import { emailList, emailServiceState, user } from '$lib/store';
+	import { EmailAccountStatus, type Email, type EmailAccount } from '$lib/types';
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	import EmailList from '$lib/components/EmailListContainer/EmailList.svelte';
 
 	let isReady = true;
 
@@ -100,8 +101,8 @@
 
 <style>
 	.inbox-container {
-		margin-left: 40px;
-		margin-right: 40px;
+		margin-left: 10px;
+		margin-right: 10px;
 		display: flex;
 		height: 100vh;
 		flex-direction: column;
@@ -118,7 +119,7 @@
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		gap: 25px;
+		gap: 10px;
 		overflow: hidden;
 	}
 

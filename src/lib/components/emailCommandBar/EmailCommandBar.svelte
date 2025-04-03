@@ -85,7 +85,6 @@
 		white-space: nowrap;
 		border-radius: 0.5rem;
 		border: 1px dashed var(--color-primary-gray);
-		padding: 0 1rem;
 		color: var(--color-primary-gray);
 	}
 	.command-bar {
@@ -94,7 +93,6 @@
 		padding-inline: 4px;
 		padding-block: 4px;
 		border-radius: 0.5rem;
-		margin-block: 10px;
 	}
 	.compose-button {
 		background-color: var(--color-primary-blue);
