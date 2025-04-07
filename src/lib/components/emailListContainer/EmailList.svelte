@@ -3,11 +3,8 @@
 	import { user, emailServiceState } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { getEmailList, markEmailAsRead, searchEmails } from '$lib/api/email';
-	import EmailListItem from '$lib/components/EmailListContainer/EmailListItem.svelte';
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
-
+	import EmailListItem from './EmailListItem.svelte';
 	import { type Email, type EmailAccount } from '$lib/types';
-	import EmailListSearch from './EmailListSearch.svelte';
 	import { onMount } from 'svelte';
 
 	let { selectEmail }: { selectEmail: (email: Email) => void } = $props();
