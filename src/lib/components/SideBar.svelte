@@ -109,8 +109,10 @@
 		{/each}
 	</div>
 	<div class="labels-container">
-		<div class="labels-header">
-			<div>Labels</div>
+		<div class="labels-header {isCollapsed ? 'collapsed' : ''}">
+			{#if !isCollapsed}
+				<div>Labels</div>
+			{/if}
 			<button class="labels-add-button" use:popup={addLabelPopup}>
 				<IconPlus size={16} />
 			</button>
@@ -122,27 +124,29 @@
 			{#each email_labels as label, index}
 				<div class="label-item">
 					<div class="label-item-icon">
-						<IconLabelFilled color={label.color} size={16} />
+						<IconLabelFilled color={label.color} size={22} />
 					</div>
-					<div class="label-item-name">{label.name}</div>
-					<button
-						class="menu-button"
-						use:popup={{
-							event: 'click',
-							target: `editEmailLabelComponentPopup-${index}`,
-							placement: 'bottom'
-						}}
-					>
-						<IconDotsVertical size={16} />
-					</button>
-					<div data-popup={`editEmailLabelComponentPopup-${index}`}>
-						<EditEmailLabel
-							closePopupMenu={() => {
-								refreshEmailLabels();
+					{#if !isCollapsed}
+						<div class="label-item-name">{label.name}</div>
+						<button
+							class="menu-button"
+							use:popup={{
+								event: 'click',
+								target: `editEmailLabelComponentPopup-sidebar-${index}`,
+								placement: 'bottom'
 							}}
-							emailLabel={label}
-						/>
-					</div>
+						>
+							<IconDotsVertical size={16} />
+						</button>
+						<div data-popup={`editEmailLabelComponentPopup-sidebar-${index}`}>
+							<EditEmailLabel
+								closePopupMenu={() => {
+									refreshEmailLabels();
+								}}
+								emailLabel={label}
+							/>
+						</div>
+					{/if}
 				</div>
 			{/each}
 		</div>
@@ -216,6 +220,7 @@
 		flex-direction: column;
 		align-items: flex-start;
 		color: var(--color-primary-light-gray);
+		padding-block: 1rem;
 	}
 
 	.labels-header {
@@ -227,6 +232,10 @@
 		width: 100%;
 		padding-inline: 0.5rem;
 		padding-block: 0.65rem;
+	}
+
+	.labels-header.collapsed {
+		justify-content: center;
 	}
 
 	.labels-add-button {
