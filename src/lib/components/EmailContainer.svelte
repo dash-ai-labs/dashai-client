@@ -6,7 +6,7 @@
 	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
 	import { emailServiceState, user } from '$lib/store';
 	import EmailCommandBar from './emailCommandBar/EmailCommandBar.svelte';
-	import EmailList from './EmailListContainer/EmailList.svelte';
+	import EmailList from '$lib/components/emailListContainer/EmailList.svelte';
 
 	let email = $state<Email | undefined>(undefined);
 	let emailDetailView: EmailDetailView | undefined = undefined;
