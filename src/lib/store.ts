@@ -56,11 +56,22 @@ export const emailServiceState: Writable<EmailServiceState> = persistentWritable
 		showComposeEmail: false,
 		composeEmailMode: ComposeEmailMode.NewEmail,
 		emailAccount: { email: 'All Emails' },
-		emailList: []
+		emailList: [],
+		emailListFilter: []
 	}
 );
 
 // Reset currentEmail on app load
 if (typeof window !== 'undefined') {
-	emailServiceState.update((state) => ({ ...state, currentEmail: null }));
+	emailServiceState.update((state) => ({
+		...state,
+		currentEmail: null,
+		showComposeEmail: false,
+		emailList: [],
+		emailListFilter: ['INBOX'],
+		composeEmailMode: ComposeEmailMode.NewEmail,
+		emailSearchQueryList: [],
+		emailLabels: [],
+		emailAccount: { email: 'All Emails' }
+	}));
 }

@@ -42,9 +42,9 @@
 	--color-primary-pink: #ff375f;
 	--color-primary-hazy-black: #212121;
 	--color-primary-black: #141414;
-	--color-primary-container: #282a2f;
+	--color-primary-container: #1f1f21;
 	--color-primary-dark-container: #1a1a1a;
-	--color-primary-button: #aac7ff;
+	--color-primary-button: #2658c9;
 	--color-primary-button-hover: #90b5ff;
 	--color-primary-active-button-highlight: #ecf2f8;
 	--color-primary-inactive-button-highlight: #c6cdd5;
@@ -68,8 +68,9 @@
 	--color-secondary-blue: #77bdfb;
 	--color-secondary-violet: #cea5fb;
 	--color-secondary-container: #191c20;
+	--color-secondary-active-button: #90b5ff;
 	--color-secondary-active-button-highlight: #dae2f9;
-	--color-secondary-active-button-background: #3e4759;
+	--color-secondary-active-button-background: #2c2c2e;
 	--color-secondary-active-button-background-hover: #5a6a87;
 	--color-secondary-inactive-button-highlight: #c4c6d0;
 	--color-secondary-separator: #4d4d4d;

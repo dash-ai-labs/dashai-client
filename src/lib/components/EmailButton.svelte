@@ -9,7 +9,7 @@
 <style>
 	.email-button {
 		border-radius: 0.5rem;
-		padding: 0.5rem;
+		padding: 0.4rem 0.55rem;
 	}
 
 	.email-button:hover {

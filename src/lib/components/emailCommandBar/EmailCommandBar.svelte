@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { emailServiceState } from '$lib/store';
-	import ComposeEmailButton from '../ComposeEmailButton.svelte';
 	import EmailButton from '../EmailButton.svelte';
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
-	import type { Email } from '$lib/types';
+	import type { Email, EmailServiceState } from '$lib/types';
 	import { IconArchive, IconReload, IconTrash } from '@tabler/icons-svelte';
 	import { refreshEmailList } from '$lib/actions';
-	import AddEmailLabel from '../AddEmailLabel.svelte';
-	import { popup } from '@skeletonlabs/skeleton';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	const {
 		removeEmail,
 		archiveEmail,
@@ -19,6 +17,10 @@
 	} = $props();
 	// const emailLabels = $derived(get(emailServiceState).emailLabels);
 	let email = $state<Email | undefined>(undefined);
+	let toggleOptions = $state(['All Mail', 'Unread']);
+	let lastFilter: string[] = $state(['INBOX']);
+	let selectedToggleOption: number = $state(0);
+
 	emailServiceState.subscribe((state) => {
 		const currentEmail = state.currentEmail;
 		if (currentEmail && currentEmail.id !== email?.id) {
@@ -26,19 +28,41 @@
 		}
 	});
 
-	const addLabelPopup: PopupSettings = {
-		// Represents the type of event that opens/closed the popup
-		event: 'click',
-		// Matches the data-popup value on your popup element
-		target: 'addLabelPopup',
-		// Defines which side of your trigger the popup will appear
-		placement: 'bottom',
-		closeQuery: ''
+	const handleToggleChange = async (value: number) => {
+		if (value !== 0) {
+			if (!lastFilter.includes(toggleOptions[value].toUpperCase())) {
+				lastFilter.push(toggleOptions[value].toUpperCase());
+			}
+		} else {
+			lastFilter.pop();
+		}
+		await emailServiceState.update((state: EmailServiceState) => ({
+			...state,
+			emailListFilter: lastFilter
+		}));
+		refreshEmailList(lastFilter);
 	};
 </script>
 
 <div class="command-bar">
-	<ComposeEmailButton />
+	<div class="radio-group-container">
+		<RadioGroup
+			active="bg-primary-container"
+			border={0}
+			rounded={'rounded-md'}
+			size={'sm'}
+			background={'bg-primary-dark-gray'}
+		>
+			{#each toggleOptions as option, index}
+				<RadioItem
+					bind:group={selectedToggleOption}
+					name={option}
+					value={index}
+					on:click={() => handleToggleChange(index)}>{option}</RadioItem
+				>
+			{/each}
+		</RadioGroup>
+	</div>
 	<div class="button-group">
 		<EmailButton onclick={refreshEmailList} ariaLabel="Refresh" title="Refresh">
 			<IconReload size="22" color="var(--color-primary-light-gray)" />
@@ -63,24 +87,9 @@
 			<UnreadMail height={22} width={22} />
 		</EmailButton>
 	</div>
-	<div class="right-container">
-		<button use:popup={addLabelPopup} class="add-label-button">+ Label</button>
-	</div>
-	<div data-popup="addLabelPopup">
-		<AddEmailLabel {email} />
-	</div>
 </div>
 
 <style>
-	[data-popup] {
-		/* Display */
-		display: none;
-		/* Position */
-		z-index: 50;
-		position: absolute;
-		top: 0;
-		left: 1;
-	}
 	.add-label-button {
 		white-space: nowrap;
 		border-radius: 0.5rem;
@@ -90,12 +99,17 @@
 	.command-bar {
 		display: flex;
 		background-color: var(--color-primary-container);
-		padding-inline: 4px;
-		padding-block: 4px;
-		border-radius: 0.5rem;
+		border-bottom: 1px solid var(--color-primary-dark-gray);
 	}
 	.compose-button {
 		background-color: var(--color-primary-blue);
+	}
+	.radio-group-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		padding: 0.15rem;
 	}
 	.right-separator {
 		border-right: 1px solid var(--color-secondary-inactive-button-highlight);

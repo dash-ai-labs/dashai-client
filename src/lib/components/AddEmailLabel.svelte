@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createLabel } from '$lib/api/label';
-	import { emailLabels, emailServiceState, user } from '$lib/store';
+	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { EmailLabelAction, LabelColor, LabelType, type Email, type Label } from '$lib/types';
 	import { onMount } from 'svelte';
@@ -13,7 +13,7 @@
 	}
 	let { email = $bindable() }: Props = $props();
 	let nameInput = $state('');
-	let emailLabelList = $state<Label[]>(get(emailLabels));
+	let emailLabelList = $state<Label[]>(get(emailServiceState).emailLabels);
 	let nameError = $state(false);
 	let nameErrorMessage = $state('');
 
@@ -23,8 +23,8 @@
 		}
 	};
 
-	emailLabels.subscribe((value) => {
-		emailLabelList = value;
+	emailServiceState.subscribe((value) => {
+		emailLabelList = value.emailLabels;
 	});
 
 	onMount(() => {

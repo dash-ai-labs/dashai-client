@@ -96,12 +96,14 @@
 		flex: 1;
 		flex-direction: column;
 		overflow: hidden;
+		background-color: var(--color-primary-container);
+		border-radius: 10px;
+		padding-block: 4px;
 	}
 
 	.email-section {
 		display: flex;
 		flex-direction: column;
-		width: 1200px;
 		height: 100%;
 		gap: 10px;
 	}
@@ -109,7 +111,6 @@
 		display: flex;
 		flex: 1;
 		flex-direction: row;
-		gap: 10px;
-		overflow: hidden;
+		overflow: scroll;
 	}
 </style>

@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { getLabelList } from './api/label';
 import { LabelType, ToastType } from './types';
-import { emailLabels, user } from './store';
+import { emailServiceState, user } from './store';
 import { type ToastSettings } from '@skeletonlabs/skeleton';
 
 export const refreshEmailLabels = async () => {
@@ -9,7 +9,10 @@ export const refreshEmailLabels = async () => {
 		user: get(user)?.id.toString(),
 		type: LabelType.Email
 	});
-	emailLabels.set(emailLabelList);
+	await emailServiceState.update((state) => ({
+		...state,
+		emailLabels: emailLabelList
+	}));
 };
 
 export const showToast = (toastStore: any, message: string, type: ToastType) => {

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import RightChevron from '$lib/assets/ChevronRight.svelte';
 	import Summary from '$lib/assets/Summary.svelte';
 	import type { Email } from '$lib/types';
 	import { formatDate } from '$lib/utils/dateTime';
 	import { createEventDispatcher } from 'svelte';
 	import EmailLabelDot from '../EmailLabelDot.svelte';
+	import { IconChevronRight } from '@tabler/icons-svelte';
 	const dispatch = createEventDispatcher();
 
 	interface Props {
@@ -27,7 +27,11 @@
 </script>
 
 <div
-	class="email-list-item {selected ? 'email-list-item-selected' : 'email-list-item-unselected'}"
+	class="email-list-item {selected
+		? 'email-list-item-selected'
+		: 'email-list-item-unselected'} {unread
+		? 'unread-indicator-container'
+		: 'read-indicator-container'}"
 	onclick={onClick}
 	onmouseover={() => {
 		showLabel = true;
@@ -46,31 +50,25 @@
 					{email.sender.join(', ')}
 				{/if}
 			</div>
-			{#if unread}
-				<div class="unread-indicator-container">
-					<svg
-						width="9"
-						height="9"
-						viewBox="0 0 10 10"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<circle cx="4.5" cy="4.5" r="4.5" fill="#45A8FF" />
-					</svg>
-				</div>
-			{/if}
 		</div>
 		<div class="date-container">
 			<div class="date-text">
 				{formatDate(email.date)}
 			</div>
-			<RightChevron class={selected ? 'chevron-selected' : 'chevron-unselected'} />
+			<IconChevronRight
+				size={18}
+				color={selected ? 'var(--color-primary-light-gray)' : 'var(--color-primary-gray)'}
+			/>
 		</div>
 	</div>
 	{#if email.summary}
 		<div class="summary-container">
 			<div class="icon-padding">
-				<Summary width={15} height={18} />
+				<Summary
+					width={15}
+					height={18}
+					color={unread ? 'var(--color-primary-light-gray)' : 'var(--color-primary-gray)'}
+				/>
 			</div>
 			<div class="summary-text">{email.summary}</div>
 		</div>
@@ -79,29 +77,31 @@
 			<div class="subject-text">{email.subject}</div>
 		</div>
 	{/if}
-	<div class="labels-container">
-		{#each email.email_labels as emailLabel}
-			<EmailLabelDot {emailLabel} {showLabel} />
-		{/each}
-	</div>
+	{#if email.email_labels.length > 0}
+		<div class="labels-container">
+			{#each email.email_labels as emailLabel}
+				<EmailLabelDot {emailLabel} {showLabel} />
+			{/each}
+		</div>
+	{/if}
 </div>
+{#if !selected}
+	<div class="separator"></div>
+{/if}
 
 <style>
 	.email-list-item {
-		margin-left: 12px;
-		margin-right: 12px;
-		border-bottom: 1px solid var(--primary-dark-gray);
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
 		color: var(--color-primary-active-button-highlight);
 		cursor: pointer;
-		width: 320px;
-		height: 140px;
+		height: 130px;
 		align-content: center;
 	}
 
 	.email-list-item-selected {
 		background-color: var(--color-secondary-active-button-background);
+		border-radius: 6px;
 	}
 
 	.email-list-item-selected:hover {
@@ -135,14 +135,16 @@
 	}
 
 	.unread-indicator-container {
-		display: flex;
-		justify-content: center;
-		align-self: center;
+		color: var(--color-primary-light-gray);
+	}
+	.read-indicator-container {
+		color: var(--color-primary-gray);
 	}
 
 	.date-container {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 	}
 
 	.date-text {
@@ -162,6 +164,20 @@
 		padding-right: 0.25rem;
 	}
 
+	/* .separator:hover {
+		border-bottom: var(--color-primary-light-gray);
+		border-bottom: 1px solid;
+		margin-left: 0.25rem;
+		margin-right: 0.25rem;
+		align-self: center;
+	} */
+
+	.separator {
+		border-bottom: 1px solid var(--color-primary-gray);
+		margin-left: 0.25rem;
+		margin-right: 0.25rem;
+		align-self: center;
+	}
 	.summary-text {
 		max-width: 230px;
 		text-overflow: ellipsis;

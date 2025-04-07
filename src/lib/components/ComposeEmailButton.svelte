@@ -8,13 +8,19 @@
 			showComposeEmail: true
 		}));
 	};
+
+	let { small = false } = $props();
 </script>
 
 <PrimaryButton
 	on:click={() => {
 		setShowComposeEmail();
-	}}><IconPencil size={20} color="white" />Compose</PrimaryButton
->
+	}}
+	><IconPencil size={16} color="white" />
+	{#if !small}
+		Compose
+	{/if}
+</PrimaryButton>
 
 <style>
 </style>

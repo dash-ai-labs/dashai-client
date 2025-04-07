@@ -184,7 +184,7 @@
 	<EditorBubbleMenu {editor} />
 {/if}
 
-<div id="editor" bind:this={element}>
+<div id="editor" bind:this={element} class="editor-container">
 	<slot />
 
 	{#if editor?.isActive('image')}
@@ -241,6 +241,32 @@
 		width: 100%;
 		background-color: var(--color-primary-white);
 	}
+	.editor-container {
+		padding: 10px;
+		border-radius: 10px;
+	}
+
+	/* Standard selection styling */
+	::selection {
+		background-color: var(--color-primary-dark-gray);
+	}
+
+	/* Mozilla based browsers */
+	::-moz-selection {
+		background-color: var(--color-primary-dark-gray);
+	}
+
+	/* Apply selection styles to editor content */
+	:global(.ProseMirror ::selection) {
+		background-color: var(--color-primary-dark-gray);
+	}
+
+	:global(.ProseMirror ::-moz-selection) {
+		background-color: var(--color-primary-dark-gray);
+	}
+
+	/* Remove non-standard selectors that aren't supported */
+	/* Note: Only ::selection and ::-moz-selection are standard */
 
 	.iframe-wrapper {
 		position: relative;

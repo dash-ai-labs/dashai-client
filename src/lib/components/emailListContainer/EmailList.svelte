@@ -161,21 +161,6 @@
 	// };
 
 	// Handle toggle change and load emails based on selected option
-	const handleToggleChange = async (value: number) => {
-		pageNumber = 1; // Reset page number for new filter
-		isToggleLoading = true; // Set loading state to true when toggling
-		_emailList = []; // Clear the email list to reload for the new filter
-		if (value !== 0) {
-			if (!lastFilter.includes(toggleOptions[value].toUpperCase())) {
-				lastFilter.push(toggleOptions[value].toUpperCase());
-			}
-		} else {
-			lastFilter.pop();
-		}
-
-		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
-		isToggleLoading = false; // Set loading state to false after emails are loaded
-	};
 
 	const handleAccountChange = () => {
 		// Implement the logic to handle account change
@@ -183,27 +168,6 @@
 </script>
 
 <div class="email-container">
-	<div class="email-header">
-		<EmailListSearch />
-		<div class="radio-group-container">
-			<RadioGroup
-				active="variant-filled-primary"
-				border={0}
-				rounded={'rounded-md'}
-				size={'sm'}
-				background={'bg-primary-black'}
-			>
-				{#each toggleOptions as option, index}
-					<RadioItem
-						bind:group={selectedToggleOption}
-						name={option}
-						value={index}
-						on:click={() => handleToggleChange(index)}>{option}</RadioItem
-					>
-				{/each}
-			</RadioGroup>
-		</div>
-	</div>
 	<div class="email-list-container" bind:this={container} onscroll={handleScroll}>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
@@ -238,44 +202,15 @@
 		width: 320px;
 		display: flex;
 		height: 100%;
+		margin: 2px;
 		flex-direction: column;
 		background-color: var(--color-primary-container);
-	}
-
-	.email-header {
-		display: flex;
-		flex-direction: column;
-		flex-shrink: 0;
-		align-items: start;
-		justify-content: center;
-		border-bottom: 1px solid var(--color-primary-gray);
-		padding: 0.15rem;
-		font-size: var(--text-h4);
-	}
-
-	.radio-group-container {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		padding: 0.15rem;
 	}
 
 	.email-list-container {
 		flex: 1;
 		overflow-y: auto;
 		width: 320px;
-	}
-
-	/* Hide scrollbar for Chrome, Safari and Opera */
-	.email-list-container::-webkit-scrollbar {
-		display: none;
-	}
-
-	/* Hide scrollbar for IE, Edge and Firefox */
-	.email-list-container {
-		-ms-overflow-style: none; /* IE and Edge */
-		scrollbar-width: none; /* Firefox */
 	}
 
 	.loading-indicator {
