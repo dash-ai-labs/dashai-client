@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { getEmailList } from '$lib/api/email';
 	import EmailContainer from '$lib/components/EmailContainer.svelte';
 	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
-	import { emailList, user } from '$lib/store';
+	import { user } from '$lib/store';
 	import { EmailAccountStatus, type EmailAccount } from '$lib/types';
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
@@ -67,16 +66,6 @@
 	$effect(() => {
 		checkEmailAccountStatus();
 	});
-
-	onMount(async () => {
-		const { emails, end } = await getEmailList({
-			user: get(user)?.id.toString(),
-			limit: 30,
-			page: 1,
-			filter: ['INBOX']
-		});
-		emailList.set(emails);
-	});
 </script>
 
 <div class="inbox-container">
@@ -100,8 +89,8 @@
 
 <style>
 	.inbox-container {
-		margin-left: 40px;
-		margin-right: 40px;
+		margin-left: 10px;
+		margin-right: 10px;
 		display: flex;
 		height: 100vh;
 		flex-direction: column;
@@ -118,8 +107,8 @@
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		gap: 25px;
 		overflow: hidden;
+		padding-block: 10px;
 	}
 
 	.inbox-title-row {

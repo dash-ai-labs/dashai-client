@@ -17,7 +17,7 @@ const setComposeEmailMode = (mode: ComposeEmailMode) => {
 	}));
 };
 
-const refreshEmailList = () => {
+const refreshEmailList = (filter: string[] = ['INBOX']) => {
 	const _getEmailList = async () => {
 		const emailList = await getEmailList({
 			user: get(user)?.id.toString(),
@@ -26,7 +26,8 @@ const refreshEmailList = () => {
 					? undefined
 					: get(emailServiceState).emailAccount.email,
 			limit: 30,
-			page: 1
+			page: 1,
+			filter: filter
 		});
 		emailServiceState.update((state) => ({
 			...state,

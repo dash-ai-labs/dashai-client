@@ -4,7 +4,7 @@
 	import { LabelColor, LabelType, type Label } from '$lib/types';
 	import { createLabel } from '$lib/api/label';
 	import { get } from 'svelte/store';
-	import { emailLabels, user } from '$lib/store';
+	import { emailServiceState, user } from '$lib/store';
 	import { refreshEmailLabels } from '$lib/helpers';
 	import { type PopupSettings } from '@skeletonlabs/skeleton';
 	import EmailLabel from './EmailLabel.svelte';
@@ -17,7 +17,7 @@
 	let nameInput = $state('');
 	let nameError = $state(false);
 	let nameErrorMessage = $state('');
-	let emailLabelList = $state<Label[]>(get(emailLabels));
+	let emailLabelList = $state<Label[]>(get(emailServiceState).emailLabels);
 
 	// Form Data
 
@@ -59,8 +59,8 @@
 		if ($modalStore[0].response) $modalStore[0].response(formData);
 		modalStore.close();
 	}
-	emailLabels.subscribe((value) => {
-		emailLabelList = value;
+	emailServiceState.subscribe((value) => {
+		emailLabelList = value.emailLabels;
 	});
 </script>
 

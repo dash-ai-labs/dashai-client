@@ -106,4 +106,5 @@ export interface EmailServiceState {
 	composeEmailMode: ComposeEmailMode;
 	emailAccount: any;
 	emailList: Email[];
+	emailListFilter: string[];
 }

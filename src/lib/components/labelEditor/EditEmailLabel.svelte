@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
 	import { createLabel, deleteLabel, editLabel } from '$lib/api/label';
-	import { emailLabels, user } from '$lib/store';
+	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { LabelColor, LabelType, type Label } from '$lib/types';
 	import { onMount } from 'svelte';
@@ -18,7 +18,7 @@
 
 	let { showModal = $bindable(true), emailLabel, closePopupMenu }: Props = $props();
 	let nameInput = $state(emailLabel.name);
-	let emailLabelList = $state<Label[]>(get(emailLabels));
+	let emailLabelList = $state<Label[]>(get(emailServiceState).emailLabels);
 	let nameError = $state(false);
 	let nameErrorMessage = $state('');
 	let colorInput = $state(emailLabel.color);
@@ -33,8 +33,8 @@
 		}
 	};
 
-	emailLabels.subscribe((value) => {
-		emailLabelList = value;
+	emailServiceState.subscribe((value) => {
+		emailLabelList = value.emailLabels;
 	});
 
 	onMount(() => {

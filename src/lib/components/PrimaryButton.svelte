@@ -25,14 +25,12 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-
 		align-items: center;
-		padding-left: 1.5rem; /* px-6 */
-		padding-right: 1.5rem; /* px-6 */
-		padding-top: 0.625rem; /* py-2.5 */
-		padding-bottom: 0.625rem; /* py-2.5 */
-		height: 2.5rem; /* h-10 */
-		gap: 0.5rem; /* gap-2 */
+		padding-left: 16px;
+		padding-right: 16px;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		gap: 8px;
 		background-color: var(--color-primary-button);
 		border-radius: 10px;
 		color: var(--color-primary-white);

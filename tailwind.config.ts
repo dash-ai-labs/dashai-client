@@ -54,6 +54,7 @@ export default {
 					'light-blue': '#64d2ff',
 					blue: '#0a84ff',
 					purple: '#5e5ce6',
+					'dark-blue': '#222C50',
 					violet: '#bf5af2',
 					pink: '#ff375f',
 					'hazy-black': '#212121',
