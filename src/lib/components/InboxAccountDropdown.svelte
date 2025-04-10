@@ -5,7 +5,7 @@
 	import type { EmailAccount } from '$lib/types';
 	import { Button, Dropdown, DropdownItem } from 'flowbite-svelte';
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
-	import { refreshEmailList } from '$lib/actions';
+	import { refreshEmailList } from '$lib/actions/email';
 	import { onMount } from 'svelte';
 
 	let emailAccounts: EmailAccount[] = [];

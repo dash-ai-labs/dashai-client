@@ -5,7 +5,7 @@
 	import '@material/web/button/filled-tonal-button';
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
 	import { Toast } from '@skeletonlabs/skeleton';
-
+	import TaskList from '$lib/components/taskList/TaskList.svelte';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -33,6 +33,7 @@
 			{@render children?.()}
 		</div>
 	</main>
+	<TaskList />
 	<Toast />
 </div>
 
@@ -41,6 +42,7 @@
 		display: flex;
 		background-color: #1a1a1a;
 		color: white;
+		width: 100%;
 	}
 
 	.main-content {

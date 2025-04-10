@@ -11,7 +11,7 @@
 	} from 'flowbite-svelte-icons';
 	import type { Component } from 'svelte';
 	import { ComposeEmailMode } from '$lib/types';
-	import { setComposeEmailMode } from '$lib/actions';
+	import { setComposeEmailMode } from '$lib/actions/compose';
 
 	type ResponseAction = {
 		icon: Component | undefined;

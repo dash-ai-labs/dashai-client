@@ -8,7 +8,7 @@
 	import { get } from 'svelte/store';
 	import { user, emailServiceState } from '$lib/store';
 	import EmailLabelChip from './EmailLabelChip.svelte';
-	import { setShowComposeEmail } from '$lib/actions';
+	import { setShowComposeEmail } from '$lib/actions/compose';
 
 	let element = $state<HTMLIFrameElement | null>(null);
 	let email = $state<Email | null>(null);
@@ -287,7 +287,6 @@
 	.email-detail-container {
 		height: 100%;
 		min-width: 740px;
-		max-width: 1200px;
 		width: 100%;
 		border-radius: 0.5rem;
 		background-color: var(--color-primary-container);
@@ -393,7 +392,6 @@
 		display: grid;
 		height: calc(100vh - 200px);
 		max-height: calc(100vh - 200px);
-		max-width: 1200px;
 		padding: 1rem;
 	}
 
