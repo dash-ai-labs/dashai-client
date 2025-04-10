@@ -3,7 +3,7 @@
 	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { Email } from '$lib/types';
-	import { refreshEmailList } from '$lib/actions';
+	import { refreshEmailList } from '$lib/actions/email';
 	import { IconSearch } from '@tabler/icons-svelte';
 	import { XIcon } from 'lucide-svelte';
 	let searchInput = $state('');

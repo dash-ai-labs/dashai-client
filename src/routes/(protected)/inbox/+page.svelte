@@ -2,6 +2,7 @@
 	import EmailContainer from '$lib/components/EmailContainer.svelte';
 	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
+	import ToggleTaskListButton from '$lib/components/taskList/ToggleTaskListButton.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
 	import { user } from '$lib/store';
 	import { EmailAccountStatus, type EmailAccount } from '$lib/types';
@@ -71,7 +72,9 @@
 <div class="inbox-container">
 	<div class="inbox-header">
 		<InboxSearchBar />
-		<InboxAccountDropdown />
+		<div class="header-buttons-container">
+			<ToggleTaskListButton />
+		</div>
 	</div>
 
 	<div class="inbox-content">
@@ -89,10 +92,10 @@
 
 <style>
 	.inbox-container {
-		margin-left: 10px;
-		margin-right: 10px;
+		padding-inline: 10px;
 		display: flex;
 		height: 100vh;
+		width: 100%;
 		flex-direction: column;
 		overflow: hidden;
 	}
@@ -101,6 +104,8 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		justify-content: space-between;
+		width: 100%;
 	}
 
 	.inbox-content {
@@ -109,6 +114,7 @@
 		flex-direction: column;
 		overflow: hidden;
 		padding-block: 10px;
+		width: 100%;
 	}
 
 	.inbox-title-row {
@@ -124,6 +130,12 @@
 	.inbox-actions {
 		display: flex;
 		width: 100%;
+		justify-content: flex-end;
+	}
+	.header-buttons-container {
+		align-self: center;
+		gap: 10px;
+		display: flex;
 		justify-content: flex-end;
 	}
 </style>

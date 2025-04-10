@@ -17,7 +17,7 @@ export const getEmailList = async ({
 	account: string | undefined;
 	limit: number;
 	page: number;
-	filter?: string[];
+	filter?: string;
 }): Promise<EmailListResponse> => {
 	const limitString = limit.toString();
 	const pageString = page.toString();
@@ -73,6 +73,21 @@ export const getEmailContent = async ({ user, email_id }: { user: string; email_
 	}
 };
 
+export const getEmail = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await apiRequest(`user/${user}/email/${email_id}`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};
 export const archive = async ({ user, email_id }: { user: string; email_id: string }) => {
 	try {
 		const response = await apiRequest(`user/${user}/email/${email_id}/archive`, {

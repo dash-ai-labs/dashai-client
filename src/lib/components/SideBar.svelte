@@ -14,7 +14,8 @@
 		IconTrashX,
 		IconLabelFilled,
 		IconPlus,
-		IconDotsVertical
+		IconDotsVertical,
+		IconLayoutSidebarRightCollapse
 	} from '@tabler/icons-svelte';
 	import { emailServiceState } from '$lib/store';
 	import type { EmailServiceState, Label } from '$lib/types';
@@ -77,13 +78,13 @@
 		<div class={`nav-drawer-header ${isCollapsed ? 'collapsed' : ''}`}>
 			<Logo class="logo" {isCollapsed} />
 			<button class="collapse-icon" onclick={() => (isCollapsed = !isCollapsed)}>
-				<IconLayoutSidebarLeftCollapse />
+				<IconLayoutSidebarLeftCollapse color="var(--color-primary-gray)" />
 			</button>
 		</div>
 	{:else}
 		<div class={`nav-drawer-header ${isCollapsed ? 'collapsed' : ''}`}>
 			<button class="collapse-icon" onclick={() => (isCollapsed = !isCollapsed)}>
-				<IconLayoutSidebarLeftCollapse />
+				<IconLayoutSidebarRightCollapse color="var(--color-primary-gray)" />
 			</button>
 			<Logo class="logo" {isCollapsed} />
 		</div>
@@ -262,7 +263,8 @@
 		font-size: 14px;
 		padding-block: 10px;
 		width: 100%;
-		padding-inline: 20px;
+		padding-left: 20px;
+		padding-right: 10px;
 		border-radius: 4px;
 	}
 

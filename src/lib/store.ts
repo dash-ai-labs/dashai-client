@@ -57,7 +57,9 @@ export const emailServiceState: Writable<EmailServiceState> = persistentWritable
 		composeEmailMode: ComposeEmailMode.NewEmail,
 		emailAccount: { email: 'All Emails' },
 		emailList: [],
-		emailListFilter: []
+		emailListFilter: [],
+		taskList: [],
+		showTaskList: false
 	}
 );
 
@@ -69,9 +71,11 @@ if (typeof window !== 'undefined') {
 		showComposeEmail: false,
 		emailList: [],
 		emailListFilter: ['INBOX'],
+		taskList: [],
 		composeEmailMode: ComposeEmailMode.NewEmail,
 		emailSearchQueryList: [],
 		emailLabels: [],
-		emailAccount: { email: 'All Emails' }
+		emailAccount: { email: 'All Emails' },
+		showTaskList: false
 	}));
 }

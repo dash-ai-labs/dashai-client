@@ -97,6 +97,33 @@ export enum ToastType {
 	Warning = 'bg-primary-yellow'
 }
 
+export enum TaskStatus {
+	PENDING = 'pending',
+	COMPLETED = 'completed',
+	ARCHIVED = 'archived'
+}
+
+export enum TaskAction {
+	CREATE = 'create',
+	UPDATE = 'update',
+	ARCHIVE = 'archive'
+}
+
+export interface Task {
+	id: string;
+	title: string;
+	description: string;
+	status: TaskStatus;
+	due_date: string;
+	created_at: string;
+	updated_at: string;
+	url?: string;
+	url_text?: string;
+	thumbnail_url?: string;
+	email_id: string;
+	email_account_id: string;
+}
+
 export interface EmailServiceState {
 	currentEmail: Email | null;
 	emailSearchQueryList: SearchEntry[];
@@ -107,4 +134,6 @@ export interface EmailServiceState {
 	emailAccount: any;
 	emailList: Email[];
 	emailListFilter: string[];
+	taskList: Task[];
+	showTaskList: boolean;
 }

@@ -73,7 +73,7 @@
 	};
 </script>
 
-<div class="container">
+<div class="email-container">
 	<div class="email-section">
 		<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} />
 		<div class="content">
@@ -90,12 +90,9 @@
 </div>
 
 <style>
-	.container {
-		display: flex;
+	.email-container {
 		height: 100%;
-		flex: 1;
-		flex-direction: column;
-		overflow: hidden;
+		width: 100%;
 		background-color: var(--color-primary-container);
 		border-radius: 10px;
 		padding-block: 4px;
@@ -106,11 +103,12 @@
 		flex-direction: column;
 		height: 100%;
 		gap: 10px;
+		width: 100%;
 	}
 	.content {
 		display: flex;
-		flex: 1;
 		flex-direction: row;
-		overflow: scroll;
+		overflow: hidden;
+		width: 100%;
 	}
 </style>

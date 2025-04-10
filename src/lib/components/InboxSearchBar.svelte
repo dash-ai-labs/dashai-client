@@ -92,12 +92,14 @@
 	.search-container {
 		display: flex;
 		flex-direction: column;
+		max-width: 600px;
+		width: 100%;
 	}
 
 	.search-bar {
 		border-radius: 0.5rem;
 		background-color: var(--color-primary-container);
-		width: 60vw;
+		width: 100%;
 		align-items: center;
 		margin-top: 10px;
 		margin-bottom: 10px;

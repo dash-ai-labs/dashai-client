@@ -3,9 +3,10 @@
 	import EmailButton from '../EmailButton.svelte';
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
 	import type { Email, EmailServiceState } from '$lib/types';
-	import { IconArchive, IconReload, IconTrash } from '@tabler/icons-svelte';
-	import { refreshEmailList } from '$lib/actions';
+	import { IconArchive, IconChecklist, IconReload, IconTrash } from '@tabler/icons-svelte';
+	import { refreshEmailList } from '$lib/actions/email';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { createTaskAction } from '$lib/actions/task';
 	const {
 		removeEmail,
 		archiveEmail,
@@ -86,6 +87,13 @@
 		>
 			<UnreadMail height={22} width={22} />
 		</EmailButton>
+		<EmailButton
+			onclick={() => email && createTaskAction(email.id)}
+			ariaLabel="Create Task"
+			title="Create Task"
+		>
+			<IconChecklist height={22} width={22} color="var(--color-primary-light-gray)" />
+		</EmailButton>
 	</div>
 </div>
 
@@ -100,6 +108,7 @@
 		display: flex;
 		background-color: var(--color-primary-container);
 		border-bottom: 1px solid var(--color-primary-dark-gray);
+		width: 100%;
 	}
 	.compose-button {
 		background-color: var(--color-primary-blue);

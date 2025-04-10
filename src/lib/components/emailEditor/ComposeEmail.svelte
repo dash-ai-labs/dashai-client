@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { Node } from '@tiptap/core';
 	import Editor from './editor/index.svelte';
 	import Bold from '@tiptap/extension-bold';
@@ -15,7 +15,7 @@
 	import { showToast } from '$lib/helpers';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import Footer from './Footer.svelte';
-	import { setShowComposeEmail } from '$lib/actions';
+	import { setShowComposeEmail } from '$lib/actions/compose';
 
 	const toastStore = getToastStore();
 
