@@ -6,7 +6,7 @@
 	import { IconArchive, IconChecklist, IconReload, IconTrash } from '@tabler/icons-svelte';
 	import { refreshEmailList } from '$lib/actions/email';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
-	import { createTaskAction } from '$lib/actions/task';
+	import { createTaskAction, toggleTaskListAction } from '$lib/actions/task';
 	const {
 		removeEmail,
 		archiveEmail,
@@ -42,6 +42,7 @@
 			emailListFilter: lastFilter
 		}));
 		refreshEmailList(lastFilter);
+		toggleTaskListAction();
 	};
 </script>
 
