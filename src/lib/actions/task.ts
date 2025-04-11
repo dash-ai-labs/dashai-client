@@ -42,13 +42,14 @@ const archiveTaskAction = async ({ task_id, email_id }: { task_id: string; email
 	});
 	if (task) {
 		await refreshTaskListAction();
+		toggleTaskListAction(true);
 	}
 };
 
-const toggleTaskListAction = async () => {
+const toggleTaskListAction = async (show?: boolean) => {
 	emailServiceState.update((state) => ({
 		...state,
-		showTaskList: !state.showTaskList
+		showTaskList: show ?? !state.showTaskList
 	}));
 };
 
