@@ -84,8 +84,8 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		width: 80px;
-		height: 80px;
+		width: 60px;
+		height: 60px;
 		border-radius: 10px;
 		padding: 4px;
 		background-color: var(--color-primary-white);
