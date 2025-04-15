@@ -3,7 +3,7 @@
 	import AuthScreenBackgroundVector from '$lib/assets/AuthScreenBackgroundVector.svelte';
 	import GoogleLogo from '$lib/assets/GoogleLogo.svelte';
 	import { initiateGoogleLogin } from '$lib/api/auth';
-	import Logo from '$lib/assets/Logo.svelte';
+	import Logo_Login from '$lib/assets/Logo_Login.svelte';
 	import { user } from '$lib/store';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -21,7 +21,7 @@
 	<div class="auth-content">
 		<div class="vector-container">
 			<AuthScreenBackgroundVector />
-			<div class="logo-container"><Logo height="254" width="250" /></div>
+			<div class="logo-container"><Logo_Login height="254" width="250" /></div>
 		</div>
 		<div class="form-container">
 			<div class="welcome-section">
