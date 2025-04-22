@@ -17,7 +17,7 @@
 	let isLoading = $state(false); // Track if data is being fetched
 	let toggleOptions = $state(['All Mail', 'Unread']);
 	let isToggleLoading = $state(false); // Loading state for toggle change
-	let lastFilter = $state(['INBOX']);
+	let lastFilter = $state([]);
 	let disableTransition = $state(false); // New state variable to disable transition
 	let previousAccountValue = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
 	let selectedToggleOption: number = $state(0);
@@ -60,7 +60,7 @@
 		user: string,
 		limit: number = 30,
 		page: number = 1,
-		filter: string[] = []
+		filter: { key: string; value: string }[] = []
 	) => {
 		// Only load emails if the filter has changed
 
@@ -147,7 +147,7 @@
 				}));
 			}
 		};
-		if (selectedEmail?.labels.includes('UNREAD')) updateEmailAsRead();
+		if (!selectedEmail?.is_read) updateEmailAsRead();
 
 		// After the update, reset the transition state
 		disableTransition = false;

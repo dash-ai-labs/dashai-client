@@ -56,6 +56,7 @@ export interface Email {
 	email_labels: Label[];
 	date: Date;
 	processed: boolean;
+	is_read: boolean;
 }
 
 export enum EmailAccountStatus {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addEmailAccount, getEmailAccounts } from '$lib/api/auth';
+	import { getEmailAccounts } from '$lib/api/auth';
 	import { user, emailServiceState } from '$lib/store';
 	import { get } from 'svelte/store';
 	import type { EmailAccount } from '$lib/types';
@@ -48,12 +48,6 @@
 		}
 	};
 
-	const addAccount = async () => {
-		if (currentUser?.id) {
-			await addEmailAccount(currentUser.id.toString());
-		}
-	};
-
 	onMount(() => {
 		if (currentUser?.id) {
 			loadEmailAccounts();
@@ -82,9 +76,6 @@
 				<p class="option-label">{option.label}</p>
 			</DropdownItem>
 		{/each}
-		<!-- {#snippet footer()} -->
-		<DropdownItem class="dropdown-item" on:click={addAccount}>+ Add Email</DropdownItem>
-		<!-- {/snippet} -->
 	</Dropdown>
 </div>
 

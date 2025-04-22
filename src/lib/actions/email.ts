@@ -3,7 +3,7 @@ import { getEmail, getEmailList } from '$lib/api/email';
 import { emailServiceState, user } from '$lib/store';
 import type { Email } from '$lib/types';
 
-const refreshEmailList = (filter: string[] = ['INBOX']) => {
+const refreshEmailList = (filter: { key: string; value: string }[]) => {
 	const _getEmailList = async () => {
 		const emailList = await getEmailList({
 			user: get(user)?.id.toString(),
@@ -13,7 +13,7 @@ const refreshEmailList = (filter: string[] = ['INBOX']) => {
 					: get(emailServiceState).emailAccount.email,
 			limit: 30,
 			page: 1,
-			filter: filter.join(',')
+			filter
 		});
 		emailServiceState.update((state) => ({
 			...state,

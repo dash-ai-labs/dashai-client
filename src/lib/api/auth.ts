@@ -9,6 +9,12 @@ export async function initiateGoogleLogin() {
 	window.location.href = url;
 }
 
+export async function initiateOutlookLogin() {
+	const response = await apiRequest(`auth/outlook/url`, { credentials: 'include' });
+	const { url } = await response.json();
+	window.location.href = url;
+}
+
 export const getUserProfile = async (user_id: string) => {
 	const response = await apiRequest(`user/${user_id}/profile`, {
 		method: 'GET',
@@ -20,9 +26,29 @@ export const getUserProfile = async (user_id: string) => {
 	return response.json();
 };
 
-export const handleCallback = async (code: string, state: string) => {
+export const handleGoogleCallback = async (code: string, state: string) => {
 	try {
 		const response = await apiRequest(`auth/google/callback`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ code, state })
+		});
+		user.set(await response.json());
+		goto('/inbox');
+	} catch (error) {
+		console.error('Authentication error:', error);
+	}
+};
+
+export const handleOutlookCallback = async (
+	code: string,
+	state: string | undefined = undefined
+) => {
+	try {
+		const response = await apiRequest(`auth/outlook/callback`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -60,9 +86,23 @@ export async function logout(): Promise<void> {
 	});
 }
 
-export const addEmailAccount = async (user: string) => {
+export const addGoogleAccount = async (user: string) => {
 	try {
-		const response = await apiRequest(`user/${user}/email_accounts/register`, {
+		const response = await apiRequest(`user/${user}/email_accounts/register_google`, {
+			method: 'POST',
+			credentials: 'include'
+		});
+		const { url } = await response.json();
+		window.location.href = url;
+	} catch (error) {
+		console.error('Error adding email account:', error);
+		return [];
+	}
+};
+
+export const addOutlookAccount = async (user: string) => {
+	try {
+		const response = await apiRequest(`user/${user}/email_accounts/register_outlook`, {
 			method: 'POST',
 			credentials: 'include'
 		});

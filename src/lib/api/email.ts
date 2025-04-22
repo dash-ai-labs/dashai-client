@@ -17,13 +17,17 @@ export const getEmailList = async ({
 	account: string | undefined;
 	limit: number;
 	page: number;
-	filter?: string;
+	filter?: { key: string; value: string }[];
 }): Promise<EmailListResponse> => {
 	const limitString = limit.toString();
 	const pageString = page.toString();
 	try {
 		const params = new URLSearchParams({ limit: limitString, page: pageString });
-		if (filter) params.append('filter', filter.toString());
+		if (filter && filter.length > 0) {
+			filter.forEach((item) => {
+				params.append(`filter[${item.key}]`, item.value);
+			});
+		}
 		if (!!account) params.append('account', account);
 
 		const url = `user/${user}/emails?${params.toString()}`;

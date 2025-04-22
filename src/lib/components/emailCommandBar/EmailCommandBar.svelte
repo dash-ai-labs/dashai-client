@@ -19,7 +19,7 @@
 	// const emailLabels = $derived(get(emailServiceState).emailLabels);
 	let email = $state<Email | undefined>(undefined);
 	let toggleOptions = $state(['All Mail', 'Unread']);
-	let lastFilter: string[] = $state(['INBOX']);
+	let lastFilter: { key: string; value: string }[] = $state([]);
 	let selectedToggleOption: number = $state(0);
 
 	emailServiceState.subscribe((state) => {
@@ -30,18 +30,17 @@
 	});
 
 	const handleToggleChange = async (value: number) => {
-		if (value !== 0) {
-			if (!lastFilter.includes(toggleOptions[value].toUpperCase())) {
-				lastFilter.push(toggleOptions[value].toUpperCase());
-			}
-		} else {
-			lastFilter.pop();
+		if (toggleOptions[value] === 'All Mail') {
+			refreshEmailList([]);
+			lastFilter = [];
+		} else if (toggleOptions[value] === 'Unread') {
+			refreshEmailList([{ key: 'is_read', value: 'false' }]);
+			lastFilter = [{ key: 'is_read', value: 'false' }];
 		}
 		await emailServiceState.update((state: EmailServiceState) => ({
 			...state,
 			emailListFilter: lastFilter
 		}));
-		refreshEmailList(lastFilter);
 		toggleTaskListAction();
 	};
 </script>
