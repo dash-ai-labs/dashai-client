@@ -79,7 +79,7 @@ export const getEmailContent = async ({ user, email_id }: { user: string; email_
 
 export const getEmail = async ({ user, email_id }: { user: string; email_id: string }) => {
 	try {
-		const response = await apiRequest(`user/${user}/email/${email_id}`, {
+		const response = await apiRequest(`user/${user}/email?id=${email_id}`, {
 			method: 'GET',
 			credentials: 'include',
 			headers: {
