@@ -2,8 +2,9 @@
 	import { goto } from '$app/navigation';
 	import AuthScreenBackgroundVector from '$lib/assets/AuthScreenBackgroundVector.svelte';
 	import GoogleLogo from '$lib/assets/GoogleLogo.svelte';
-	import { initiateGoogleLogin } from '$lib/api/auth';
+	import { initiateGoogleLogin, initiateOutlookLogin } from '$lib/api/auth';
 	import Logo_Login from '$lib/assets/Logo_Login.svelte';
+	import OutlookLogo from '$lib/assets/OutlookLogo.svelte';
 	import { user } from '$lib/store';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -32,6 +33,11 @@
 				<button onclick={initiateGoogleLogin} class="google-button">
 					<div class="button-content">
 						<GoogleLogo />Sign In with Google
+					</div>
+				</button>
+				<button onclick={initiateOutlookLogin} class="outlook-button">
+					<div class="button-content">
+						<OutlookLogo />Sign In with Outlook
 					</div>
 				</button>
 			</div>
@@ -81,6 +87,14 @@
 	}
 
 	.google-button {
+		width: 360px;
+		border-radius: 0.375rem; /* rounded-md */
+		border: 1px solid var(--color-primary-gray);
+		background-color: var(--color-primary-container);
+		padding: 0.25rem 0.5rem; /* px-2 py-1 */
+	}
+
+	.outlook-button {
 		width: 360px;
 		border-radius: 0.375rem; /* rounded-md */
 		border: 1px solid var(--color-primary-gray);

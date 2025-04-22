@@ -13,14 +13,16 @@
 	}
 
 	let { email = {}, selected = false }: Props = $props();
-	let unread: boolean = $state(true);
+	let unread: boolean = $state(false);
 	let showLabel: boolean = $state(false);
 	const onClick = () => {
 		dispatch('handleEmailSelect', email);
 	};
 
 	$effect(() => {
-		if (email && !email.labels.includes('UNREAD')) {
+		if (email && !email.is_read) {
+			unread = true;
+		} else {
 			unread = false;
 		}
 	});

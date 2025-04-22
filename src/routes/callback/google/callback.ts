@@ -1,4 +1,4 @@
-import { handleCallback } from '$lib/api/auth';
+import { handleGoogleCallback } from '$lib/api/auth';
 
 export function processCallback() {
 	const urlParams = new URLSearchParams(window.location.search);
@@ -6,6 +6,6 @@ export function processCallback() {
 	const state = urlParams.get('state');
 
 	if (code && state) {
-		handleCallback(code, state);
+		handleGoogleCallback(code, state);
 	}
 }
