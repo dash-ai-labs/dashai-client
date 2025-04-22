@@ -86,9 +86,23 @@ export async function logout(): Promise<void> {
 	});
 }
 
-export const addEmailAccount = async (user: string) => {
+export const addGoogleAccount = async (user: string) => {
 	try {
-		const response = await apiRequest(`user/${user}/email_accounts/register`, {
+		const response = await apiRequest(`user/${user}/email_accounts/register_google`, {
+			method: 'POST',
+			credentials: 'include'
+		});
+		const { url } = await response.json();
+		window.location.href = url;
+	} catch (error) {
+		console.error('Error adding email account:', error);
+		return [];
+	}
+};
+
+export const addOutlookAccount = async (user: string) => {
+	try {
+		const response = await apiRequest(`user/${user}/email_accounts/register_outlook`, {
 			method: 'POST',
 			credentials: 'include'
 		});
