@@ -49,7 +49,7 @@ const archiveTaskAction = async ({ task_id, email_id }: { task_id: string; email
 const toggleTaskListAction = async (show?: boolean) => {
 	emailServiceState.update((state) => ({
 		...state,
-		showTaskList: show ?? !state.showTaskList
+		showTaskList: typeof show === 'boolean' ? show : !state.showTaskList
 	}));
 };
 

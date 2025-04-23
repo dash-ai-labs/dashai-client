@@ -23,9 +23,13 @@
 	transition:slide={{ duration: 300, axis: 'x' }}
 >
 	<div class="task-list-body">
-		{#each taskList as task}
-			<TaskItem {task} />
-		{/each}
+		{#if taskList.length > 0}
+			{#each taskList as task}
+				<TaskItem {task} />
+			{/each}
+		{:else}
+			<div class="task-list-empty">No tasks created</div>
+		{/if}
 	</div>
 </div>
 
@@ -35,6 +39,7 @@
 		flex-direction: column;
 		gap: 1rem;
 		padding: 10px;
+		width: 320px;
 	}
 	.collapsed {
 		width: 0;
@@ -44,6 +49,12 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+	}
+	.task-list-empty {
+		text-align: center;
+		padding: 10px;
+		margin-top: 80px;
+		color: var(--color-primary-gray);
 	}
 
 	.task-list-body {
