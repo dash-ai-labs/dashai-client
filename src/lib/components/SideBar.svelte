@@ -15,7 +15,8 @@
 		IconLabelFilled,
 		IconPlus,
 		IconDotsVertical,
-		IconLayoutSidebarRightCollapse
+		IconLayoutSidebarRightCollapse,
+		IconSettings
 	} from '@tabler/icons-svelte';
 	import { emailServiceState } from '$lib/store';
 	import type { EmailServiceState, Label } from '$lib/types';
@@ -152,6 +153,14 @@
 			{/each}
 		</div>
 	</div>
+	<div class="settings-container">
+		<button class="settings-button {isCollapsed ? 'collapsed' : ''}">
+			<IconSettings size={24} />
+			{#if !isCollapsed}
+				<div>Settings</div>
+			{/if}
+		</button>
+	</div>
 	<div class="logout-container">
 		<LogoutButton {isCollapsed} />
 	</div>
@@ -211,9 +220,41 @@
 
 	.logout-container {
 		margin-bottom: 0.5rem; /* mb-2 */
-		margin-top: auto; /* mt-auto */
 		display: flex; /* flex */
 		align-self: center; /* self-center */
+	}
+
+	.settings-container {
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 0.5rem;
+		margin-top: auto;
+		display: flex;
+		justify-content: center;
+	}
+
+	.settings-button {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		gap: 0.5rem;
+		border-radius: 0.25rem;
+		padding-inline: 20px;
+		padding-block: 10px;
+		text-align: left;
+		color: var(--color-font-gray);
+		width: 160px;
+		margin-inline: 4px;
+	}
+
+	.settings-button.collapsed {
+		padding: 4px;
+		justify-content: center;
+		width: 40px;
+	}
+
+	.settings-button:hover {
+		background-color: var(--color-primary-dark-gray);
 	}
 
 	.labels-container {

@@ -7,6 +7,12 @@
 	import { refreshEmailList } from '$lib/actions/email';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import { createTaskAction, toggleTaskListAction } from '$lib/actions/task';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { showToast } from '$lib/helpers';
+	import { ToastType } from '$lib/types';
+
+	const toastStore = getToastStore();
+
 	const {
 		removeEmail,
 		archiveEmail,
@@ -43,6 +49,28 @@
 		}));
 		toggleTaskListAction();
 	};
+
+	const _createTask = async (email_id: string) => {
+		showToast(toastStore, 'Creating task...', ToastType.Info);
+		const task = await createTaskAction(email_id);
+		if (task) {
+			showToast(toastStore, 'Task created successfully', ToastType.Success);
+		} else {
+			showToast(toastStore, 'Something went wrong. Please try again.', ToastType.Error);
+		}
+	};
+
+	const _archiveEmail = async (email: Email) => {
+		showToast(toastStore, 'Archiving email...', ToastType.Info);
+		await archiveEmail(email);
+		showToast(toastStore, 'Email archived successfully', ToastType.Success);
+	};
+
+	const _removeEmail = async (email: Email) => {
+		showToast(toastStore, 'Deleting email...', ToastType.Info);
+		await removeEmail(email);
+		showToast(toastStore, 'Email deleted successfully', ToastType.Success);
+	};
 </script>
 
 <div class="command-bar">
@@ -71,10 +99,10 @@
 	</div>
 	<div class="separator-border" />
 	<div class="button-group">
-		<EmailButton onclick={() => email && archiveEmail(email)} ariaLabel="Archive" title="Archive">
+		<EmailButton onclick={() => email && _archiveEmail(email)} ariaLabel="Archive" title="Archive">
 			<IconArchive size={22} color="var(--color-primary-light-gray)" />
 		</EmailButton>
-		<EmailButton onclick={() => email && removeEmail(email)} ariaLabel="Delete" title="Delete">
+		<EmailButton onclick={() => email && _removeEmail(email)} ariaLabel="Delete" title="Delete">
 			<IconTrash size={22} color="var(--color-primary-light-gray)" />
 		</EmailButton>
 	</div>
@@ -88,7 +116,7 @@
 			<UnreadMail height={22} width={22} />
 		</EmailButton>
 		<EmailButton
-			onclick={() => email && createTaskAction(email.id)}
+			onclick={() => email && _createTask(email.id)}
 			ariaLabel="Create Task"
 			title="Create Task"
 		>

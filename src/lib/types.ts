@@ -95,7 +95,8 @@ export enum ComposeEmailMode {
 export enum ToastType {
 	Success = 'bg-primary-green',
 	Error = 'bg-primary-red',
-	Warning = 'bg-primary-yellow'
+	Warning = 'bg-primary-yellow',
+	Info = 'bg-primary-blue'
 }
 
 export enum TaskStatus {
