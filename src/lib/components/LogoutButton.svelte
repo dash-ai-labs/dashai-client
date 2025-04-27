@@ -64,7 +64,7 @@
 		padding-block: 10px;
 		text-align: left;
 		color: var(--color-font-gray);
-		width: 160px;
+		width: 200px;
 		margin-block: 4px;
 	}
 

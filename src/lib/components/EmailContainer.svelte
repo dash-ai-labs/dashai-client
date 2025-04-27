@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { archive, markAsUnread, remove } from '$lib/api/email';
-	import { type Email } from '$lib/types';
+	import { EmailFolder, type Email } from '$lib/types';
 	import { get } from 'svelte/store';
 	import EmailDetailView from './EmailDetailView.svelte';
 	import ComposeEmail from './emailEditor/ComposeEmail.svelte';
@@ -8,6 +8,7 @@
 	import EmailCommandBar from './emailCommandBar/EmailCommandBar.svelte';
 	import EmailList from '$lib/components/emailListContainer/EmailList.svelte';
 
+	let { folder = EmailFolder.INBOX }: { folder: EmailFolder } = $props();
 	let email = $state<Email | undefined>(undefined);
 	let emailDetailView: EmailDetailView | undefined = undefined;
 	let showComposeEmail = $state(get(emailServiceState).showComposeEmail);
@@ -75,9 +76,11 @@
 
 <div class="email-container">
 	<div class="email-section">
-		<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} />
+		{#if folder === EmailFolder.INBOX}
+			<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} />
+		{/if}
 		<div class="content">
-			<EmailList {selectEmail} />
+			<EmailList {selectEmail} {folder} />
 
 			<EmailDetailView bind:this={emailDetailView} />
 			{#if showComposeEmail}
@@ -110,5 +113,6 @@
 		flex-direction: row;
 		overflow: hidden;
 		width: 100%;
+		height: 100%;
 	}
 </style>

@@ -76,6 +76,15 @@ export interface EmailAccount {
 	status: EmailAccountStatus;
 	provider: EmailProvider;
 }
+
+export enum EmailFolder {
+	INBOX = 'inbox',
+	TRASH = 'trash',
+	SPAM = 'spam',
+	DRAFTS = 'drafts',
+	SENT = 'sent'
+}
+
 export interface EmailData {
 	from_addr: string;
 	to: string[];

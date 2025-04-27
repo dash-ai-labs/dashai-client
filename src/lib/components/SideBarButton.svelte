@@ -26,7 +26,7 @@
 >
 	{#if icon}
 		<!-- svelte-ignore svelte_component_deprecated -->
-		<svelte:component this={icon} class="button-content" size={24} />
+		<svelte:component this={icon} class="button-content" size={28} />
 	{/if}
 	{#if !isCollapsed}
 		<div class="button-content {active ? 'content-active' : 'content-inactive'}">
@@ -81,6 +81,7 @@
 		padding-left: 10px;
 		padding-right: 10px;
 		font-size: 14px;
+		width: 100%;
 	}
 
 	.content-active {

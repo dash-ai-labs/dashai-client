@@ -438,3 +438,20 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 .toast-message {
 	border-radius: 4px;
 }
+
+.inbox-container {
+	display: flex;
+	height: 97vh;
+	width: 100%;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.inbox-content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	overflow: hidden;
+	padding-block: 10px;
+	width: 100%;
+}

@@ -2,8 +2,11 @@ import { get } from 'svelte/store';
 import { getEmail, getEmailList } from '$lib/api/email';
 import { emailServiceState, user } from '$lib/store';
 import type { Email } from '$lib/types';
-
-const refreshEmailList = (filter: { key: string; value: string }[]) => {
+import { EmailFolder } from '$lib/types';
+const refreshEmailList = (
+	filter: { key: string; value: string }[],
+	folder: EmailFolder = EmailFolder.INBOX
+) => {
 	const _getEmailList = async () => {
 		const emailList = await getEmailList({
 			user: get(user)?.id.toString(),
@@ -13,7 +16,8 @@ const refreshEmailList = (filter: { key: string; value: string }[]) => {
 					: get(emailServiceState).emailAccount.email,
 			limit: 30,
 			page: 1,
-			filter
+			filter,
+			folder
 		});
 		emailServiceState.update((state) => ({
 			...state,
@@ -23,6 +27,14 @@ const refreshEmailList = (filter: { key: string; value: string }[]) => {
 	_getEmailList();
 };
 
+const clearEmails = async () => {
+	await emailServiceState.update((state) => ({
+		...state,
+		emailList: [],
+		currentEmail: null,
+		email_id: null
+	}));
+};
 const setCurrentEmail = async ({
 	email,
 	email_id
@@ -50,4 +62,4 @@ const setCurrentEmail = async ({
 	}
 };
 
-export { refreshEmailList, setCurrentEmail };
+export { refreshEmailList, setCurrentEmail, clearEmails };
