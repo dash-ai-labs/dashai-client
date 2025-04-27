@@ -9,6 +9,7 @@ const createTaskAction = async (email_id: string) => {
 		user: userId,
 		email_id
 	});
+
 	if (task) {
 		await refreshTaskListAction();
 	}

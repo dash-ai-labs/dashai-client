@@ -149,6 +149,7 @@
 		}
 
 		const _sendEmail = async () => {
+			showToast(toastStore, 'Sending email...', ToastType.Info);
 			await sendEmail({ user: $user.id, email: emailData });
 			showToast(toastStore, 'Email sent successfully', ToastType.Success);
 			_clearEmailData();

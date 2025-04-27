@@ -4,10 +4,12 @@
 	import { get } from 'svelte/store';
 	import { getEmailList, markEmailAsRead, searchEmails } from '$lib/api/email';
 	import EmailListItem from './EmailListItem.svelte';
-	import { type Email, type EmailAccount } from '$lib/types';
+	import { EmailFolder, type Email, type EmailAccount } from '$lib/types';
 	import { onMount } from 'svelte';
+	import { clearEmails } from '$lib/actions/email';
 
-	let { selectEmail }: { selectEmail: (email: Email) => void } = $props();
+	let { selectEmail, folder }: { selectEmail: (email: Email) => void; folder: EmailFolder } =
+		$props();
 	let container = $state<HTMLElement | null>(null);
 	let _emailAccount = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
 	let pageNumber = $state(1);
@@ -15,12 +17,10 @@
 	let listEnd = $state(false);
 	let selectedEmail = $state<Email | undefined>(undefined);
 	let isLoading = $state(false); // Track if data is being fetched
-	let toggleOptions = $state(['All Mail', 'Unread']);
 	let isToggleLoading = $state(false); // Loading state for toggle change
 	let lastFilter = $state([]);
 	let disableTransition = $state(false); // New state variable to disable transition
-	let previousAccountValue = $state<EmailAccount | undefined>(get(emailServiceState).emailAccount);
-	let selectedToggleOption: number = $state(0);
+
 	let _emailList = $state<Email[]>(get(emailServiceState).emailList);
 
 	$effect(() => {
@@ -41,6 +41,7 @@
 	});
 
 	onMount(() => {
+		clearEmails();
 		loadNextPage();
 	});
 
@@ -63,7 +64,6 @@
 		filter: { key: string; value: string }[] = []
 	) => {
 		// Only load emails if the filter has changed
-
 		isLoading = true;
 		let newEmails;
 		if (email === 'All Emails') {
@@ -71,7 +71,8 @@
 				user,
 				limit,
 				page,
-				filter
+				filter,
+				folder
 			});
 			newEmails = emails;
 			listEnd = end;
@@ -81,14 +82,15 @@
 				account: email,
 				limit,
 				page,
-				filter
+				filter,
+				folder
 			});
 			newEmails = emails;
 			listEnd = end;
 		}
 		// Append the new emails to the existing ones, avoiding duplicates
-		if (newEmails && newEmails.length > 0) {
-			if (_emailList.length === 0) {
+		if (newEmails) {
+			if (newEmails.length === 0) {
 				emailServiceState.update((state) => ({
 					...state,
 					emailList: newEmails

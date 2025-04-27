@@ -68,7 +68,7 @@
 	--color-secondary-light-blue: #a2d2fb;
 	--color-secondary-blue: #77bdfb;
 	--color-secondary-violet: #cea5fb;
-	--color-secondary-container: #191c20;
+	--color-secondary-container: #111111;
 	--color-secondary-active-button: #90b5ff;
 	--color-secondary-active-button-highlight: #dae2f9;
 	--color-secondary-active-button-background: #2c2c2e;
@@ -433,4 +433,25 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 /* Task item placeholder */
 .task-item .ProseMirror-placeholder {
 	display: none !important;
+}
+
+.toast-message {
+	border-radius: 4px;
+}
+
+.inbox-container {
+	display: flex;
+	height: 97vh;
+	width: 100%;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.inbox-content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	overflow: hidden;
+	padding-block: 10px;
+	width: 100%;
 }

@@ -76,6 +76,15 @@ export interface EmailAccount {
 	status: EmailAccountStatus;
 	provider: EmailProvider;
 }
+
+export enum EmailFolder {
+	INBOX = 'inbox',
+	TRASH = 'trash',
+	SPAM = 'spam',
+	DRAFTS = 'drafts',
+	SENT = 'sent'
+}
+
 export interface EmailData {
 	from_addr: string;
 	to: string[];
@@ -95,7 +104,8 @@ export enum ComposeEmailMode {
 export enum ToastType {
 	Success = 'bg-primary-green',
 	Error = 'bg-primary-red',
-	Warning = 'bg-primary-yellow'
+	Warning = 'bg-primary-yellow',
+	Info = 'bg-primary-blue'
 }
 
 export enum TaskStatus {

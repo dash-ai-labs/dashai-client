@@ -1,4 +1,4 @@
-import type { EmailLabelAction, Email, EmailData } from '$lib/types';
+import type { EmailLabelAction, Email, EmailData, EmailFolder } from '$lib/types';
 import { apiRequest } from './base';
 
 interface EmailListResponse {
@@ -11,18 +11,20 @@ export const getEmailList = async ({
 	account,
 	limit,
 	page,
-	filter
+	filter,
+	folder
 }: {
 	user: string;
 	account: string | undefined;
 	limit: number;
 	page: number;
 	filter?: { key: string; value: string }[];
+	folder: EmailFolder;
 }): Promise<EmailListResponse> => {
 	const limitString = limit.toString();
 	const pageString = page.toString();
 	try {
-		const params = new URLSearchParams({ limit: limitString, page: pageString });
+		const params = new URLSearchParams({ limit: limitString, page: pageString, folder });
 		if (filter && filter.length > 0) {
 			filter.forEach((item) => {
 				params.append(`filter[${item.key}]`, item.value);
@@ -212,5 +214,27 @@ export const emailLabelAction = async ({
 	} catch (error) {
 		console.error('Error fetching email accounts:', error);
 		return [];
+	}
+};
+
+export const getEmailFolderCount = async ({
+	user,
+	folder
+}: {
+	user: string;
+	folder: EmailFolder;
+}) => {
+	try {
+		const response = await apiRequest(`user/${user}/emails/${folder}/count`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return 0;
 	}
 };

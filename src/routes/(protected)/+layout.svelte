@@ -6,6 +6,9 @@
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
 	import { Toast } from '@skeletonlabs/skeleton';
 	import TaskList from '$lib/components/taskList/TaskList.svelte';
+	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
+	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
+	import ToggleTaskListButton from '$lib/components/taskList/ToggleTaskListButton.svelte';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -29,6 +32,13 @@
 				error={$errorMessage}
 				on:closeModal={() => ($showErrorModal = false)}
 			/>
+			<div class="inbox-header">
+				<InboxSearchBar />
+				<div class="header-buttons-container">
+					<ToggleTaskListButton />
+				</div>
+			</div>
+
 			<!-- Dynamic content based on route -->
 			{@render children?.()}
 		</div>
@@ -56,5 +66,21 @@
 		height: 100%;
 		overflow-y: auto;
 		width: 100%;
+		padding-inline: 10px;
+	}
+
+	.inbox-header {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.header-buttons-container {
+		align-self: center;
+		gap: 10px;
+		display: flex;
+		justify-content: flex-end;
 	}
 </style>

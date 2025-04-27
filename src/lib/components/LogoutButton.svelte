@@ -10,6 +10,7 @@
 		emailSearchList
 	} from '$lib/store';
 
+	let { isCollapsed } = $props();
 	const handleLogout = async () => {
 		// First, clear or reset all stores with proper initial values
 		// Using empty arrays instead of null where expected
@@ -37,9 +38,11 @@
 </script>
 
 <div class="logout-container">
-	<button class="logout-button" on:click={handleLogout}>
-		<Power fill="text-primary-gray" />
-		Logout
+	<button class="logout-button {isCollapsed ? 'collapsed' : ''}" on:click={handleLogout}>
+		<Power fill="text-font-gray" />
+		{#if !isCollapsed}
+			Logout
+		{/if}
 	</button>
 </div>
 
@@ -54,12 +57,21 @@
 	.logout-button {
 		display: flex;
 		flex-direction: row;
-		justify-content: center;
+		justify-content: flex-start;
 		gap: 0.5rem;
 		border-radius: 0.25rem;
-		padding: 0.5rem;
-		text-align: center;
-		color: var(--color-primary-gray);
+		padding-inline: 20px;
+		padding-block: 10px;
+		text-align: left;
+		color: var(--color-font-gray);
+		width: 200px;
+		margin-block: 4px;
+	}
+
+	.logout-button.collapsed {
+		padding: 4px;
+		justify-content: center;
+		width: 40px;
 	}
 
 	.logout-button:hover {

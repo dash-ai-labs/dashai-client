@@ -15,43 +15,72 @@
 		IconLabelFilled,
 		IconPlus,
 		IconDotsVertical,
-		IconLayoutSidebarRightCollapse
+		IconLayoutSidebarRightCollapse,
+		IconSettings
 	} from '@tabler/icons-svelte';
-	import { emailServiceState } from '$lib/store';
-	import type { EmailServiceState, Label } from '$lib/types';
+	import { emailServiceState, user } from '$lib/store';
+	import { EmailFolder, type EmailServiceState, type Label } from '$lib/types';
 	import EditEmailLabel from './labelEditor/EditEmailLabel.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import AddEmailLabel from './AddEmailLabel.svelte';
 	import ComposeEmailButton from './ComposeEmailButton.svelte';
+	import NewEmailLabelComponent from './NewEmailLabelComponent.svelte';
+	import { getEmailFolderCount } from '$lib/api/email';
+	import { get } from 'svelte/store';
 
 	let { handleNavigation = (path: string) => {} } = $props();
-	const navItems = [
+
+	let inboxCount = $state(0);
+	let draftsCount = $state(0);
+	let sentCount = $state(0);
+	let trashCount = $state(0);
+
+	const getFolderCount = async (folder: EmailFolder) => {
+		if (!get(user)?.id) return 0;
+		return await getEmailFolderCount({ user: get(user)?.id.toString() as string, folder });
+	};
+
+	// Load counts when component initializes
+	$effect(() => {
+		if (get(user)?.id) {
+			getFolderCount(EmailFolder.INBOX).then((count) => (inboxCount = count));
+			getFolderCount(EmailFolder.DRAFTS).then((count) => (draftsCount = count));
+			getFolderCount(EmailFolder.SENT).then((count) => (sentCount = count));
+			getFolderCount(EmailFolder.TRASH).then((count) => (trashCount = count));
+		}
+	});
+
+	let navItems = $derived([
 		{
 			label: 'Inbox',
 			path: '/inbox',
 			badge: 20,
-			icon: IconInbox
+			icon: IconInbox,
+			count: inboxCount
 		},
 		{
 			label: 'Drafts',
 			path: '/inbox/drafts',
 			badge: 20,
-			icon: IconFile
+			icon: IconFile,
+			count: draftsCount
 		},
 		{
 			label: 'Sent',
 			path: '/inbox/sent',
 			badge: 20,
-			icon: IconSend2
+			icon: IconSend2,
+			count: sentCount
 		},
 		{
 			label: 'Trash',
 			path: '/inbox/trash',
 			badge: 20,
-			icon: IconTrashX
+			icon: IconTrashX,
+			count: trashCount
 		}
-	];
+	]);
 
 	let isActive = $derived((path: string) => $page.url.pathname === path);
 	let isCollapsed = $state(false);
@@ -96,7 +125,7 @@
 		<ComposeEmailButton small={isCollapsed} />
 	</div>
 
-	<div>
+	<div class="nav-drawer-items-container">
 		{#each navItems as item}
 			<SideBarButton
 				{handleNavigation}
@@ -105,8 +134,13 @@
 				icon={item.icon}
 				{isCollapsed}
 			>
-				{item.label}</SideBarButton
-			>
+				<div class="nav-drawer-item-label-container">
+					{item.label}
+					{#if item.count > 0}
+						<span class="badge">{item.count}</span>
+					{/if}
+				</div>
+			</SideBarButton>
 		{/each}
 	</div>
 	<div class="labels-container">
@@ -152,6 +186,14 @@
 			{/each}
 		</div>
 	</div>
+	<div class="settings-container">
+		<button class="settings-button {isCollapsed ? 'collapsed' : ''}">
+			<IconSettings size={24} />
+			{#if !isCollapsed}
+				<div>Settings</div>
+			{/if}
+		</button>
+	</div>
 	<div class="logout-container">
 		<LogoutButton {isCollapsed} />
 	</div>
@@ -164,7 +206,7 @@
 		align-items: flex-center;
 		padding-left: 0.45rem; /* px-3 */
 		padding-right: 0.45rem; /* px-3 */
-		width: 200px; /* w-[180px] */
+		width: 260px; /* w-[180px] */
 		background-color: var(--color-secondary-container); /* bg-secondary-container */
 		transition:
 			width 0.3s ease,
@@ -182,6 +224,29 @@
 		border: 1px solid var(--color-primary-dark-gray);
 		margin-inline: 0.5rem;
 		margin-bottom: 0.75rem;
+	}
+
+	.nav-drawer-items-container {
+		padding-block: 4px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.nav-drawer-item-label-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 4px;
+		width: 100%;
+	}
+
+	.badge {
+		border-radius: 10px;
+		border: 1px solid var(--color-primary-dark-gray);
+		padding-block: 4px;
+		padding-inline: 10px;
 	}
 
 	.collapsed {
@@ -211,9 +276,43 @@
 
 	.logout-container {
 		margin-bottom: 0.5rem; /* mb-2 */
-		margin-top: auto; /* mt-auto */
 		display: flex; /* flex */
 		align-self: center; /* self-center */
+		width: 100%;
+	}
+
+	.settings-container {
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 0.5rem;
+		margin-top: auto;
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.settings-button {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		gap: 0.5rem;
+		border-radius: 0.25rem;
+		padding-inline: 20px;
+		padding-block: 10px;
+		text-align: left;
+		color: var(--color-font-gray);
+		width: 200px;
+		margin-block: 4px;
+	}
+
+	.settings-button.collapsed {
+		padding: 4px;
+		justify-content: center;
+		width: 40px;
+	}
+
+	.settings-button:hover {
+		background-color: var(--color-primary-dark-gray);
 	}
 
 	.labels-container {

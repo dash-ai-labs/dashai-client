@@ -1,11 +1,8 @@
 <script lang="ts">
 	import EmailContainer from '$lib/components/EmailContainer.svelte';
-	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
-	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
-	import ToggleTaskListButton from '$lib/components/taskList/ToggleTaskListButton.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
 	import { user } from '$lib/store';
-	import { EmailAccountStatus, type EmailAccount } from '$lib/types';
+	import { EmailAccountStatus, EmailFolder, type EmailAccount } from '$lib/types';
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
@@ -70,13 +67,6 @@
 </script>
 
 <div class="inbox-container">
-	<div class="inbox-header">
-		<InboxSearchBar />
-		<div class="header-buttons-container">
-			<ToggleTaskListButton />
-		</div>
-	</div>
-
 	<div class="inbox-content">
 		<!-- <div class="inbox-title-row">
 			<div class="inbox-title">Inbox</div>
@@ -86,56 +76,6 @@
 			</div>
 		</div> -->
 		<!-- <Widgets /> -->
-		<EmailContainer />
+		<EmailContainer folder={EmailFolder.INBOX} />
 	</div>
 </div>
-
-<style>
-	.inbox-container {
-		padding-inline: 10px;
-		display: flex;
-		height: 100vh;
-		width: 100%;
-		flex-direction: column;
-		overflow: hidden;
-	}
-
-	.inbox-header {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-	}
-
-	.inbox-content {
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		overflow: hidden;
-		padding-block: 10px;
-		width: 100%;
-	}
-
-	.inbox-title-row {
-		display: flex;
-		flex-direction: row;
-	}
-
-	.inbox-title {
-		width: 100%;
-		font-size: var(--text-h2);
-	}
-
-	.inbox-actions {
-		display: flex;
-		width: 100%;
-		justify-content: flex-end;
-	}
-	.header-buttons-container {
-		align-self: center;
-		gap: 10px;
-		display: flex;
-		justify-content: flex-end;
-	}
-</style>

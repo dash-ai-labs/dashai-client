@@ -18,7 +18,8 @@ export const refreshEmailLabels = async () => {
 export const showToast = (toastStore: any, message: string, type: ToastType) => {
 	const t: ToastSettings = {
 		message: message,
-		background: type
+		background: type,
+		classes: 'toast-message'
 	};
 	toastStore.trigger(t);
 };

@@ -46,7 +46,7 @@ export const createTask = async ({
 }: {
 	user: string;
 	email_id: string;
-}): Promise<Task | null> => {
+}): Promise<Task[] | null> => {
 	try {
 		const response = await apiRequest(`user/${user}/task`, {
 			method: 'POST',
