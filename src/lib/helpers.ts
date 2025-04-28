@@ -6,7 +6,7 @@ import { type ToastSettings } from '@skeletonlabs/skeleton';
 
 export const refreshEmailLabels = async () => {
 	const emailLabelList = await getLabelList({
-		user: get(user)?.id.toString(),
+		user: get(user).id?.toString(),
 		type: LabelType.Email
 	});
 	await emailServiceState.update((state) => ({

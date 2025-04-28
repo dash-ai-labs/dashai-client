@@ -105,6 +105,10 @@
 		margin-bottom: 10px;
 		display: flex;
 		padding: 4px;
+		border: 1px solid var(--color-primary-dark-gray);
+	}
+
+	.search-bar:focus-within {
 		border: 1px solid var(--color-primary-gray);
 	}
 

@@ -4,11 +4,13 @@
 	import SideBar from '$lib/components/SideBar.svelte';
 	import '@material/web/button/filled-tonal-button';
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
-	import { Toast } from '@skeletonlabs/skeleton';
+	import { popup, Toast, type PopupSettings } from '@skeletonlabs/skeleton';
 	import TaskList from '$lib/components/taskList/TaskList.svelte';
 	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
 	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
 	import ToggleTaskListButton from '$lib/components/taskList/ToggleTaskListButton.svelte';
+	import { IconBell, IconNotification } from '@tabler/icons-svelte';
+	import NotificationList from '$lib/components/notifications/notificationList.svelte';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -19,6 +21,15 @@
 	function handleNavigation(path: string) {
 		goto(path);
 	}
+	const notificationPopup: PopupSettings = {
+		// Represents the type of event that opens/closed the popup
+		event: 'click',
+		// Matches the data-popup value on your popup element
+		target: 'notificationPopup',
+		// Defines which side of your trigger the popup will appear
+		placement: 'bottom-end',
+		closeQuery: ''
+	};
 </script>
 
 <div class="dashboard">
@@ -35,7 +46,13 @@
 			<div class="inbox-header">
 				<InboxSearchBar />
 				<div class="header-buttons-container">
+					<button class="notification-button" use:popup={notificationPopup}>
+						<IconBell size="22" color="var(--color-primary-gray)" />
+					</button>
 					<ToggleTaskListButton />
+				</div>
+				<div data-popup="notificationPopup">
+					<NotificationList />
 				</div>
 			</div>
 
@@ -82,5 +99,15 @@
 		gap: 10px;
 		display: flex;
 		justify-content: flex-end;
+	}
+	.notification-button {
+		background-color: var(--color-primary-light-container);
+		border-radius: 10px;
+		padding-inline: 10px;
+		padding-block: 5px;
+		border: 1px solid var(--color-primary-dark-gray);
+	}
+	.notification-button:hover {
+		background-color: var(--color-primary-dark-gray);
 	}
 </style>

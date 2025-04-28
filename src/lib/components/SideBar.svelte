@@ -35,10 +35,11 @@
 	let draftsCount = $state(0);
 	let sentCount = $state(0);
 	let trashCount = $state(0);
+	const user_id = $derived(get(user)?.id?.toString());
 
 	const getFolderCount = async (folder: EmailFolder) => {
 		if (!get(user)?.id) return 0;
-		return await getEmailFolderCount({ user: get(user)?.id.toString() as string, folder });
+		return await getEmailFolderCount({ user: user_id, folder });
 	};
 
 	// Load counts when component initializes

@@ -99,6 +99,7 @@
 		background-color: var(--color-primary-container);
 		border-radius: 10px;
 		padding-block: 4px;
+		border: 1px solid var(--color-primary-dark-gray);
 	}
 
 	.email-section {

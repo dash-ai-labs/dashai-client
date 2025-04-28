@@ -9,6 +9,7 @@
 		emailLabels,
 		emailSearchList
 	} from '$lib/store';
+	import type { EmailServiceState } from '$lib/types';
 
 	let { isCollapsed } = $props();
 	const handleLogout = async () => {
@@ -18,7 +19,7 @@
 		emailLabels.set([]);
 		emailSearchList.set([]);
 		emailAccount.set({ email: 'All Emails' });
-		emailServiceState.set({});
+		emailServiceState.set({} as EmailServiceState);
 		// Wait a small amount to allow store updates to propagate
 		await new Promise((resolve) => setTimeout(resolve, 10));
 

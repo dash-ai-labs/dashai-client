@@ -199,6 +199,8 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
+		text-wrap: wrap;
+		padding-left: 2px;
 		font-size: var(--text-subheader);
 	}
 
