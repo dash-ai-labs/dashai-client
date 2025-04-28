@@ -50,7 +50,7 @@
 	}
 
 	const checkEmailAccountStatus = () => {
-		const emailAccounts: EmailAccount[] | undefined = get(user)?.email_accounts;
+		const emailAccounts: EmailAccount[] | undefined = get(user)?.profile?.email_accounts;
 		if (emailAccounts && emailAccounts.length > 0) {
 			if (
 				emailAccounts.some((emailAccount) => emailAccount.status === EmailAccountStatus.SUCCESS)

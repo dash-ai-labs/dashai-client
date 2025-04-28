@@ -35,7 +35,12 @@ function persistentWritable(key: string, initialValue: any): Writable<any> {
 	return store;
 }
 
-export const user: Writable<User | null> = persistentWritable('user', null);
+export const user: Writable<User | null> = persistentWritable('user', {
+	id: null,
+	email: null,
+	name: null,
+	profile: null
+});
 export const nonce: Writable<string | null> = writable(null);
 export const emailAccount: Writable<any> = persistentWritable('emailAccount', {
 	email: 'All Emails'
@@ -77,5 +82,18 @@ if (typeof window !== 'undefined') {
 		emailLabels: [],
 		emailAccount: { email: 'All Emails' },
 		showTaskList: false
+	}));
+	user.update((state) => ({
+		...state,
+		profile: {
+			...state?.profile,
+			notifications: [],
+			email_accounts: [],
+			id: 0,
+			email: null,
+			name: null,
+			profile_pic: null,
+			last_login: null
+		}
 	}));
 }

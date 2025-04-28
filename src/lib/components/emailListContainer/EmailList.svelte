@@ -20,6 +20,7 @@
 	let isToggleLoading = $state(false); // Loading state for toggle change
 	let lastFilter = $state([]);
 	let disableTransition = $state(false); // New state variable to disable transition
+	let user_id = $derived(get(user)?.id?.toString());
 
 	let _emailList = $state<Email[]>(get(emailServiceState).emailList);
 
@@ -28,7 +29,7 @@
 		if (state.emailSearchQueryList && state.emailSearchQueryList.length > 0) {
 			const _searchEmails = async () => {
 				const emailResults = await searchEmails({
-					user: get(user)?.id.toString(),
+					user: user_id,
 					search: state.emailSearchQueryList[0].query
 				});
 				emailServiceState.update((state) => ({
@@ -89,21 +90,14 @@
 			listEnd = end;
 		}
 		// Append the new emails to the existing ones, avoiding duplicates
-		if (newEmails) {
-			if (newEmails.length === 0) {
-				emailServiceState.update((state) => ({
-					...state,
-					emailList: newEmails
-				}));
-			} else {
-				emailServiceState.update((state) => ({
-					...state,
-					emailList: [
-						...state.emailList,
-						...newEmails.filter((newEmail) => !state.emailList.some((e) => e.id === newEmail.id))
-					]
-				}));
-			}
+		if (newEmails && newEmails.length > 0) {
+			emailServiceState.update((state) => ({
+				...state,
+				emailList: [
+					...state.emailList,
+					...newEmails.filter((newEmail) => !state.emailList.some((e) => e.id === newEmail.id))
+				]
+			}));
 		}
 		isLoading = false;
 	};
@@ -117,7 +111,7 @@
 	// Function to load the next page of emails
 	const loadNextPage = async () => {
 		if (isLoading) return; // Prevent concurrent calls
-		await loadEmails(_emailAccount?.email, get(user)?.id.toString(), limit, pageNumber, lastFilter);
+		await loadEmails(_emailAccount?.email, user_id, limit, pageNumber, lastFilter);
 		pageNumber++; // Increment after a successful fetch
 	};
 
@@ -131,7 +125,7 @@
 
 		const updateEmailAsRead = async () => {
 			const newEmail = await markEmailAsRead({
-				user: get(user)?.id.toString(),
+				user: user_id,
 				email_id: selectedEmail?.email_id
 			});
 			const index = _emailList.findIndex(

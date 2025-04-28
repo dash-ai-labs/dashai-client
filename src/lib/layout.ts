@@ -10,14 +10,16 @@ export function initializeLayout() {
 			goto('/auth');
 			return;
 		}
-
-		if (!isUpdating) {
+		if (!isUpdating && !$user.profile) {
 			isUpdating = true;
 			(async () => {
 				try {
-					const response = await getUserProfile($user.id.toString());
+					const response = await getUserProfile($user.id?.toString());
 					if (response) {
-						user.set(response);
+						user.update((state) => ({
+							...state,
+							profile: response
+						}));
 						goto('/inbox');
 					}
 				} catch (error) {

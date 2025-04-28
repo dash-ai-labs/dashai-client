@@ -1,10 +1,18 @@
 export interface User {
+	id: number | null;
+	email: string | null;
+	name: string | null;
+	profile: Profile | null;
+}
+
+export interface Profile {
 	id: number;
 	email: string;
 	name: string;
 	profile_pic: string;
 	last_login: Date;
 	email_accounts: EmailAccount[];
+	notifications: Notification[];
 }
 export enum LabelType {
 	Email = 'EMAIL'
@@ -133,6 +141,21 @@ export interface Task {
 	thumbnail_url?: string;
 	email_id: string;
 	email_account_id: string;
+}
+
+export enum NotificationStatus {
+	UNREAD = 'UNREAD',
+	READ = 'READ',
+	ARCHIVED = 'ARCHIVED'
+}
+
+export interface Notification {
+	id: string;
+	title: string;
+	message: string;
+	created_at: string;
+	status: NotificationStatus;
+	link: string;
 }
 
 export interface EmailServiceState {

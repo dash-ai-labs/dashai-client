@@ -135,8 +135,8 @@
 	.command-bar {
 		display: flex;
 		background-color: var(--color-primary-container);
-		border-bottom: 1px solid var(--color-primary-dark-gray);
 		width: 100%;
+		padding-inline: 2px;
 	}
 	.compose-button {
 		background-color: var(--color-primary-blue);
