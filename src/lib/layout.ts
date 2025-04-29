@@ -6,7 +6,7 @@ let isUpdating = false;
 
 export function initializeLayout() {
 	return user.subscribe(($user) => {
-		if (!$user) {
+		if (!$user || !$user.id) {
 			goto('/auth');
 			return;
 		}

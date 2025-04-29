@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 	onMount(() => {
 		user.subscribe(($user) => {
-			if ($user) {
+			if ($user && $user.id) {
 				// Redirect to the login page
 				goto('/inbox');
 				return;

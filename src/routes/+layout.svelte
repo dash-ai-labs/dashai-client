@@ -27,7 +27,6 @@
 	let { children, data }: Props = $props();
 
 	let isMobile = $state(false);
-
 	onMount(() => {
 		isMobile = isMobileDevice();
 	});
