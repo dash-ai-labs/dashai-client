@@ -39,7 +39,8 @@
 		flex-direction: column;
 		gap: 1rem;
 		padding: 10px;
-		width: 320px;
+		width: 360px;
+		overflow-y: auto;
 	}
 	.collapsed {
 		width: 0;
