@@ -23,6 +23,9 @@
 		{#each _notifications as notification}
 			<NotificationItem {notification} />
 		{/each}
+		{#if _notifications.length === 0}
+			<div class="notification-list-empty">No notifications</div>
+		{/if}
 	</div>
 </div>
 
@@ -42,5 +45,14 @@
 		border-radius: 10px;
 		border: 1px solid var(--color-primary-gray);
 		max-width: 300px;
+	}
+	.notification-list-empty {
+		text-align: center;
+		color: var(--color-primary-light-gray);
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 10px;
+		width: 200px;
 	}
 </style>

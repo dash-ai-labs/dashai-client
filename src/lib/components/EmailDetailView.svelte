@@ -9,6 +9,9 @@
 	import { user, emailServiceState } from '$lib/store';
 	import EmailLabelChip from './EmailLabelChip.svelte';
 	import { setShowComposeEmail } from '$lib/actions/compose';
+	import AddEmailLabel from './AddEmailLabel.svelte';
+	import { IconPlus } from '@tabler/icons-svelte';
+	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 
 	let element = $state<HTMLIFrameElement | null>(null);
 	let email = $state<Email | null>(null);
@@ -173,6 +176,15 @@
 	const onLabelClick = (label: Label) => {
 		removeLabelFromEmail(email, label);
 	};
+	const addLabelPopup: PopupSettings = {
+		// Represents the type of event that opens/closed the popup
+		event: 'click',
+		// Matches the data-popup value on your popup element
+		target: 'addLabelPopup',
+		// Defines which side of your trigger the popup will appear
+		placement: 'bottom',
+		closeQuery: ''
+	};
 </script>
 
 <div class="email-detail-container">
@@ -283,6 +295,12 @@
 		overflow: auto;
 	}
 
+	.subject-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+	}
 	/* Converted Tailwind styles */
 	.email-detail-container {
 		height: 100%;
@@ -385,6 +403,21 @@
 		font-size: 0.875rem;
 		line-height: 1.25rem;
 		color: #9ca3af;
+	}
+	.add-labels-button {
+		border-radius: 4px;
+		padding: 4px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 4px;
+		border-radius: 4px;
+		color: var(--color-primary-gray);
+		border: 1px dashed var(--color-primary-dark-gray);
+	}
+
+	.add-labels-button:hover {
+		background-color: var(--color-primary-dark-gray);
 	}
 
 	.email-content-container {

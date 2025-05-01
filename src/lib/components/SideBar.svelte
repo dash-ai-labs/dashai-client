@@ -92,11 +92,11 @@
 		email_labels = state.emailLabels;
 	});
 
-	const addLabelPopup: PopupSettings = {
+	const newLabelPopup: PopupSettings = {
 		// Represents the type of event that opens/closed the popup
 		event: 'click',
 		// Matches the data-popup value on your popup element
-		target: 'addLabelPopup',
+		target: 'newLabelPopup',
 		// Defines which side of your trigger the popup will appear
 		placement: 'bottom',
 		closeQuery: ''
@@ -149,11 +149,11 @@
 			{#if !isCollapsed}
 				<div>Labels</div>
 			{/if}
-			<button class="labels-add-button" use:popup={addLabelPopup}>
+			<button class="new-labels-button" use:popup={newLabelPopup}>
 				<IconPlus size={16} />
 			</button>
-			<div data-popup="addLabelPopup">
-				<AddEmailLabel />
+			<div data-popup="newLabelPopup">
+				<NewEmailLabelComponent />
 			</div>
 		</div>
 		<div class="labels-list">
@@ -339,12 +339,12 @@
 		justify-content: center;
 	}
 
-	.labels-add-button {
+	.new-labels-button {
 		border-radius: 4px;
 		padding: 4px;
 	}
 
-	.labels-add-button:hover {
+	.new-labels-button:hover {
 		background-color: var(--color-primary-dark-gray);
 	}
 

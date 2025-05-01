@@ -11,7 +11,7 @@
 
 	// Props
 	/** Exposes parent props to this component. */
-	let parent = $props();
+	// let parent = $props();
 
 	const modalStore = getModalStore();
 	let nameInput = $state('');
@@ -66,37 +66,36 @@
 
 <!-- @component This example creates a simple form modal. -->
 
-{#if $modalStore[0]}
-	<div class="modal-example-form">
-		<header class="modal-header">{$modalStore[0].title ?? '(title missing)'}</header>
-		<article>{$modalStore[0].body ?? '(body missing)'}</article>
-		<!-- Enable for debugging: -->
+<div class="modal-example-form">
+	<!-- <header class="modal-header">{$modalStore[0].title ?? '(title missing)'}</header>
+	<article>{$modalStore[0].body ?? '(body missing)'}</article> -->
+	<!-- Enable for debugging: -->
 
-		<form class="modal-form">
-			<div class="form-container">
-				<label class="label">
-					<input
-						bind:value={nameInput}
-						type="text"
-						class="input-field"
-						placeholder="Enter label name"
-						on:keydown={handleEnterKey}
-					/>
-					{#if nameError}
-						<div class="error-message">
-							{nameErrorMessage}
-						</div>
-					{/if}
-				</label>
-			</div>
-		</form>
-		<div class="label-list">
-			{#each emailLabelList as emailLabel, index}
-				<div>
-					<div class="label-item">
-						<EmailLabel {emailLabel} {index} />
+	<form class="modal-form">
+		<div class="form-container">
+			<label class="label">
+				<input
+					bind:value={nameInput}
+					type="text"
+					class="input-field"
+					placeholder="Enter label name"
+					on:keydown={handleEnterKey}
+				/>
+				{#if nameError}
+					<div class="error-message">
+						{nameErrorMessage}
+					</div>
+				{/if}
+			</label>
+		</div>
+	</form>
+	<div class="label-list">
+		{#each emailLabelList as emailLabel, index}
+			<div>
+				<div class="label-item">
+					<EmailLabel {emailLabel} {index} />
 
-						<!-- {#if showEditEmailLabelModal && selectedEmailLabel && emailLabel.id === selectedEmailLabel.id}
+					<!-- {#if showEditEmailLabelModal && selectedEmailLabel && emailLabel.id === selectedEmailLabel.id}
 						<div class="fixed mr-0 mt-0">
 							<EditEmailLabel
 								closePopupMenu={() => {
@@ -106,8 +105,8 @@
 							/>
 						</div>
 					{/if} -->
-					</div>
-					<!-- <div data-popup="editEmailLabelPopup">
+				</div>
+				<!-- <div data-popup="editEmailLabelPopup">
 						<EditEmailLabel
 							closePopupMenu={() => {
 								refreshEmailLabels();
@@ -115,17 +114,16 @@
 							{emailLabel}
 						/>
 					</div> -->
-				</div>
-			{/each}
-		</div>
-		<!-- prettier-ignore -->
-		<footer class="modal-footer {parent.regionFooter}">
+			</div>
+		{/each}
+	</div>
+	<!-- prettier-ignore -->
+	<!-- <footer class="modal-footer {parent.regionFooter}">
             
 			<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
 			<button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>{parent.buttonTextSubmit}</button>
-		</footer>
-	</div>
-{/if}
+		</footer> -->
+</div>
 
 <style>
 	.modal-example-form {

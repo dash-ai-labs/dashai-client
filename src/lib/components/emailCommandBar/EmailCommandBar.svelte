@@ -9,18 +9,20 @@
 	import { createTaskAction, toggleTaskListAction } from '$lib/actions/task';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { showToast } from '$lib/helpers';
-	import { ToastType } from '$lib/types';
+	import { ToastType, EmailFolder } from '$lib/types';
 
 	const toastStore = getToastStore();
 
 	const {
 		removeEmail,
 		archiveEmail,
-		markEmailAsUnread
+		markEmailAsUnread,
+		folder
 	}: {
 		removeEmail: (email: Email) => void;
 		archiveEmail: (email: Email) => void;
 		markEmailAsUnread: (email: Email) => void;
+		folder: EmailFolder;
 	} = $props();
 	// const emailLabels = $derived(get(emailServiceState).emailLabels);
 	let email = $state<Email | undefined>(undefined);
@@ -74,26 +76,28 @@
 </script>
 
 <div class="command-bar">
-	<div class="radio-group-container">
-		<RadioGroup
-			active="bg-primary-container"
-			border={0}
-			rounded={'rounded-md'}
-			size={'sm'}
-			background={'bg-primary-dark-gray'}
-		>
-			{#each toggleOptions as option, index}
-				<RadioItem
-					bind:group={selectedToggleOption}
-					name={option}
-					value={index}
-					on:click={() => handleToggleChange(index)}>{option}</RadioItem
-				>
-			{/each}
-		</RadioGroup>
-	</div>
+	{#if folder === EmailFolder.INBOX}
+		<div class="radio-group-container">
+			<RadioGroup
+				active="bg-primary-container"
+				border={0}
+				rounded={'rounded-md'}
+				size={'sm'}
+				background={'bg-primary-dark-gray'}
+			>
+				{#each toggleOptions as option, index}
+					<RadioItem
+						bind:group={selectedToggleOption}
+						name={option}
+						value={index}
+						on:click={() => handleToggleChange(index)}>{option}</RadioItem
+					>
+				{/each}
+			</RadioGroup>
+		</div>
+	{/if}
 	<div class="button-group">
-		<EmailButton onclick={refreshEmailList} ariaLabel="Refresh" title="Refresh">
+		<EmailButton onclick={() => refreshEmailList([], folder)} ariaLabel="Refresh" title="Refresh">
 			<IconReload size="22" color="var(--color-primary-light-gray)" />
 		</EmailButton>
 	</div>
@@ -102,27 +106,31 @@
 		<EmailButton onclick={() => email && _archiveEmail(email)} ariaLabel="Archive" title="Archive">
 			<IconArchive size={22} color="var(--color-primary-light-gray)" />
 		</EmailButton>
-		<EmailButton onclick={() => email && _removeEmail(email)} ariaLabel="Delete" title="Delete">
-			<IconTrash size={22} color="var(--color-primary-light-gray)" />
-		</EmailButton>
+		{#if folder !== EmailFolder.TRASH}
+			<EmailButton onclick={() => email && _removeEmail(email)} ariaLabel="Delete" title="Delete">
+				<IconTrash size={22} color="var(--color-primary-light-gray)" />
+			</EmailButton>
+		{/if}
 	</div>
-	<div class="separator-border" />
-	<div class="button-group">
-		<EmailButton
-			onclick={() => email && markEmailAsUnread(email)}
-			ariaLabel="Mark as Unread"
-			title="Mark as unread"
-		>
-			<UnreadMail height={22} width={22} />
-		</EmailButton>
-		<EmailButton
-			onclick={() => email && _createTask(email.id)}
-			ariaLabel="Create Task"
-			title="Create Task"
-		>
-			<IconChecklist height={22} width={22} color="var(--color-primary-light-gray)" />
-		</EmailButton>
-	</div>
+	{#if folder === EmailFolder.INBOX}
+		<div class="separator-border" />
+		<div class="button-group">
+			<EmailButton
+				onclick={() => email && markEmailAsUnread(email)}
+				ariaLabel="Mark as Unread"
+				title="Mark as unread"
+			>
+				<UnreadMail height={22} width={22} />
+			</EmailButton>
+			<EmailButton
+				onclick={() => email && _createTask(email.id)}
+				ariaLabel="Create Task"
+				title="Create Task"
+			>
+				<IconChecklist height={22} width={22} color="var(--color-primary-light-gray)" />
+			</EmailButton>
+		</div>
+	{/if}
 </div>
 
 <style>

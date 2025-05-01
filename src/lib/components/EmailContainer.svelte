@@ -76,9 +76,7 @@
 
 <div class="email-container">
 	<div class="email-section">
-		{#if folder === EmailFolder.INBOX}
-			<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} />
-		{/if}
+		<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} {folder} />
 		<div class="content">
 			<EmailList {selectEmail} {folder} />
 
