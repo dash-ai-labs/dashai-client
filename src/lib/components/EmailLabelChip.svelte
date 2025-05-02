@@ -25,9 +25,8 @@
 		justify-content: center;
 		gap: 2px;
 		border-radius: 14px;
-		padding-block: 4px;
-		padding-left: 4px;
-		padding-right: 16px;
+		padding-block: 2px;
+		padding-inline: 4px;
 		width: 100px;
 	}
 

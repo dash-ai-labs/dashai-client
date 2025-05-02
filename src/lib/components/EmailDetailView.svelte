@@ -202,16 +202,23 @@
 				<div class="content-wrapper">
 					<div class="header-row">
 						<div>
-							<h1 class="subject">{email.subject}</h1>
+							<div class="subject-container">
+								<h1 class="subject">{email.subject}</h1>
+								<div class="labels-container">
+									{#each email.email_labels as label}
+										<EmailLabelChip {label} {onLabelClick} />
+									{/each}
+									<button class="add-labels-button" use:popup={addLabelPopup}>
+										Add label<IconPlus size={16} />
+									</button>
+									<div data-popup="addLabelPopup">
+										<AddEmailLabel {email} />
+									</div>
+								</div>
+							</div>
 							<p class="reply-to">Reply To: {email.sender[0]}</p>
 						</div>
 						<div class="header-actions">
-							<div class="labels-container">
-								{#each email.email_labels as label}
-									<EmailLabelChip {label} {onLabelClick} />
-								{/each}
-							</div>
-
 							<span class="date-display">{formatDate(email.date)}</span>
 						</div>
 					</div>
@@ -387,6 +394,7 @@
 		align-items: center;
 		justify-content: flex-end;
 		gap: 0.25rem;
+		margin-left: 10px;
 	}
 
 	.add-label-button {
