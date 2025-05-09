@@ -39,7 +39,10 @@
 		<div class="button-container">
 			<button
 				class="confirm-button {confirmButtonClass} {confirmButtonEnabled ? 'enabled' : 'disabled'}"
-				onclick={confirmButtonAction}
+				onclick={() => {
+					confirmButtonAction();
+					modalStore.close();
+				}}
 				disabled={!confirmButtonEnabled}
 			>
 				{confirmButtonText}
