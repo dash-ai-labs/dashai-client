@@ -8,7 +8,7 @@
 	import NewEmailLabelComponent from '$lib/components/NewEmailLabelComponent.svelte';
 	import EmailAISearchComponent from '$lib/components/emailSearch/EmailAISearchComponent.svelte';
 	import InboxNotReadyComponent from '$lib/components/InboxNotReadyComponent.svelte';
-
+	import ConfirmActionModal from '$lib/components/ConfirmActionModal.svelte';
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
@@ -38,7 +38,8 @@
 	const modalRegistry: Record<string, ModalComponent> = {
 		newEmailLabelComponent: { ref: NewEmailLabelComponent },
 		emailAISearchComponent: { ref: EmailAISearchComponent },
-		inboxNotReadyComponent: { ref: InboxNotReadyComponent }
+		inboxNotReadyComponent: { ref: InboxNotReadyComponent },
+		confirmActionModal: { ref: ConfirmActionModal }
 	};
 </script>
 

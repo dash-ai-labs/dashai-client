@@ -43,18 +43,6 @@
 				error={$errorMessage}
 				on:closeModal={() => ($showErrorModal = false)}
 			/>
-			<div class="inbox-header">
-				<InboxSearchBar />
-				<div class="header-buttons-container">
-					<button class="notification-button" use:popup={notificationPopup}>
-						<IconBell size="22" color="var(--color-primary-gray)" />
-					</button>
-					<ToggleTaskListButton />
-				</div>
-				<div data-popup="notificationPopup">
-					<NotificationList />
-				</div>
-			</div>
 
 			<!-- Dynamic content based on route -->
 			{@render children?.()}

@@ -64,7 +64,8 @@ export const emailServiceState: Writable<EmailServiceState> = persistentWritable
 		emailList: [],
 		emailListFilter: [],
 		taskList: [],
-		showTaskList: false
+		showTaskList: false,
+		showEmailHeader: true
 	}
 );
 
@@ -81,7 +82,8 @@ if (typeof window !== 'undefined') {
 		emailSearchQueryList: [],
 		emailLabels: [],
 		emailAccount: { email: 'All Emails' },
-		showTaskList: false
+		showTaskList: false,
+		showEmailHeader: true
 	}));
 	user.update((state) => ({
 		...state,

@@ -170,4 +170,5 @@ export interface EmailServiceState {
 	emailListFilter: string[];
 	taskList: Task[];
 	showTaskList: boolean;
+	showEmailHeader: boolean;
 }

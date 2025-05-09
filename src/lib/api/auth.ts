@@ -113,3 +113,11 @@ export const addOutlookAccount = async (user: string) => {
 		return [];
 	}
 };
+
+export const deleteUser = async (user_id: string) => {
+	const response = await apiRequest(`user/${user_id}`, {
+		method: 'DELETE',
+		credentials: 'include'
+	});
+	return response.json();
+};

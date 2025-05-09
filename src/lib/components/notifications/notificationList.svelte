@@ -12,7 +12,6 @@
 		}
 	});
 	onMount(async () => {
-		console.log(user);
 		await refreshNotifications();
 	});
 </script>

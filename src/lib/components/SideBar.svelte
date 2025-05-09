@@ -16,14 +16,14 @@
 		IconPlus,
 		IconDotsVertical,
 		IconLayoutSidebarRightCollapse,
-		IconSettings
+		IconSettings,
+		IconMessage2
 	} from '@tabler/icons-svelte';
 	import { emailServiceState, user } from '$lib/store';
 	import { EmailFolder, type EmailServiceState, type Label } from '$lib/types';
 	import EditEmailLabel from './labelEditor/EditEmailLabel.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import AddEmailLabel from './AddEmailLabel.svelte';
 	import ComposeEmailButton from './ComposeEmailButton.svelte';
 	import NewEmailLabelComponent from './NewEmailLabelComponent.svelte';
 	import { getEmailFolderCount } from '$lib/api/email';
@@ -35,6 +35,8 @@
 	let draftsCount = $state(0);
 	let sentCount = $state(0);
 	let trashCount = $state(0);
+	let isSettingsActive = $state(false);
+
 	const user_id = $derived(get(user)?.id?.toString());
 
 	const getFolderCount = async (folder: EmailFolder) => {
@@ -129,7 +131,14 @@
 	<div class="nav-drawer-items-container">
 		{#each navItems as item}
 			<SideBarButton
-				{handleNavigation}
+				handleNavigation={() => {
+					isSettingsActive = false;
+					emailServiceState.update((state) => ({
+						...state,
+						showEmailHeader: true
+					}));
+					handleNavigation(item.path);
+				}}
 				path={item.path}
 				active={isActive(item.path)}
 				icon={item.icon}
@@ -187,15 +196,29 @@
 			{/each}
 		</div>
 	</div>
-	<div class="settings-container">
-		<button class="settings-button {isCollapsed ? 'collapsed' : ''}">
+	<div class="bottom-container">
+		<button
+			class="feedback-button"
+			onclick={() => window.open('https://dashai.featurebase.app/', '_blank')}
+		>
+			<IconMessage2 size={24} />
+			{#if !isCollapsed}
+				<div>Feedback</div>
+			{/if}
+		</button>
+
+		<button
+			class="settings-button {isCollapsed ? 'collapsed' : ''} {isSettingsActive ? 'active' : ''}"
+			onclick={() => {
+				isSettingsActive = true;
+				handleNavigation('/inbox/settings');
+			}}
+		>
 			<IconSettings size={24} />
 			{#if !isCollapsed}
 				<div>Settings</div>
 			{/if}
 		</button>
-	</div>
-	<div class="logout-container">
 		<LogoutButton {isCollapsed} />
 	</div>
 </div>
@@ -282,6 +305,14 @@
 		width: 100%;
 	}
 
+	.bottom-container {
+		margin-top: auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+	}
 	.settings-container {
 		margin-left: auto;
 		margin-right: auto;
@@ -290,6 +321,19 @@
 		display: flex;
 		justify-content: center;
 		width: 100%;
+	}
+	.feedback-button {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		gap: 0.5rem;
+		border-radius: 0.25rem;
+		padding-inline: 20px;
+		padding-block: 10px;
+		text-align: left;
+		color: var(--color-font-gray);
+		width: 200px;
+		margin-block: 4px;
 	}
 
 	.settings-button {
@@ -312,7 +356,15 @@
 		width: 40px;
 	}
 
+	.settings-button.active {
+		background-color: var(--color-primary-dark-gray);
+	}
+
 	.settings-button:hover {
+		background-color: var(--color-primary-dark-gray);
+	}
+
+	.feedback-button:hover {
 		background-color: var(--color-primary-dark-gray);
 	}
 

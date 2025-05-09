@@ -6,7 +6,6 @@
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-
 	let isReady = true;
 
 	onMount(() => {

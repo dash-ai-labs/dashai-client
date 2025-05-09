@@ -1,7 +1,15 @@
-import { user } from '$lib/store';
-
-import { getUserProfile } from '$lib/api/auth';
+import { deleteUser, getUserProfile } from '$lib/api/auth';
 import { get } from 'svelte/store';
+import {
+	user,
+	emailAccount,
+	emailList,
+	emailServiceState,
+	emailLabels,
+	emailSearchList
+} from '$lib/store';
+import { goto } from '$app/navigation';
+import { type EmailServiceState } from '$lib/types';
 
 const refreshUser = async () => {
 	const _refreshUser = async () => {
@@ -11,4 +19,35 @@ const refreshUser = async () => {
 	_refreshUser();
 };
 
-export default refreshUser;
+const handleLogout = async () => {
+	emailList.set([]);
+	emailLabels.set([]);
+	emailSearchList.set([]);
+	emailAccount.set({ email: 'All Emails' });
+	emailServiceState.set({} as EmailServiceState);
+	// Wait a small amount to allow store updates to propagate
+	await new Promise((resolve) => setTimeout(resolve, 10));
+
+	// Clear localStorage to prevent stale data
+	if (typeof window !== 'undefined') {
+		localStorage.clear();
+	}
+
+	// Finally set user to null (this might trigger components to reset)
+	user.set(null);
+
+	// Small delay before navigation to ensure store changes have propagated
+	setTimeout(() => {
+		goto('/auth');
+	}, 10);
+};
+
+const deleteAccount = async () => {
+	const userId = get(user)?.id.toString();
+	const response = await deleteUser(userId);
+	if (response) {
+		handleLogout();
+	}
+};
+
+export { refreshUser, handleLogout, deleteAccount };
