@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { archive, markAsUnread, remove } from '$lib/api/email';
+	import { markAsUnread } from '$lib/api/email';
 	import { EmailFolder, type Email } from '$lib/types';
 	import { get } from 'svelte/store';
 	import EmailDetailView from './EmailDetailView.svelte';
@@ -31,35 +31,6 @@
 		}));
 	};
 
-	const removeEmail = (removedEmail: Email) => {
-		const _remove = async () => {
-			const res = await remove({ user: get(user)?.id.toString(), email_id: removedEmail.email_id });
-			if (res) {
-				emailServiceState.update((state) => ({
-					...state,
-					emailList: state.emailList.filter((e) => e.email_id !== removedEmail.email_id)
-				}));
-			}
-		};
-		_remove();
-	};
-
-	const archiveEmail = (achivedEmail: Email) => {
-		const _archive = async () => {
-			const res = await archive({
-				user: get(user)?.id.toString(),
-				email_id: achivedEmail.email_id
-			});
-			if (res) {
-				emailServiceState.update((state) => ({
-					...state,
-					emailList: state.emailList.filter((e) => e.email_id !== achivedEmail.email_id)
-				}));
-			}
-		};
-		_archive();
-	};
-
 	const markEmailAsUnread = (email: Email) => {
 		const _markAsUnread = async () => {
 			const res = await markAsUnread({ user: get(user)?.id.toString(), email_id: email.email_id });
@@ -76,7 +47,7 @@
 
 <div class="email-container">
 	<div class="email-section">
-		<EmailCommandBar {removeEmail} {archiveEmail} {markEmailAsUnread} {folder} />
+		<EmailCommandBar {markEmailAsUnread} {folder} />
 		<div class="content">
 			<EmailList {selectEmail} {folder} />
 

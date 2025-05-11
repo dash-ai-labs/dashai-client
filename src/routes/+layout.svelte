@@ -9,6 +9,7 @@
 	import EmailAISearchComponent from '$lib/components/emailSearch/EmailAISearchComponent.svelte';
 	import InboxNotReadyComponent from '$lib/components/InboxNotReadyComponent.svelte';
 	import ConfirmActionModal from '$lib/components/ConfirmActionModal.svelte';
+	import { refreshEmailSettings } from '$lib/actions/settings';
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
@@ -31,7 +32,7 @@
 		isMobile = isMobileDevice();
 	});
 	onMount(async () => {
-		await nonce.set(data.nonce);
+		nonce.set(data.nonce);
 		initializeLayout();
 	});
 

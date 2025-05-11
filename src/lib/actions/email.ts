@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { getEmail, getEmailList } from '$lib/api/email';
+import { archive, getEmail, getEmailList, inbox, remove, spam } from '$lib/api/email';
 import { emailServiceState, user } from '$lib/store';
 import type { Email } from '$lib/types';
 import { EmailFolder } from '$lib/types';
@@ -62,4 +62,65 @@ const setCurrentEmail = async ({
 	}
 };
 
-export { refreshEmailList, setCurrentEmail, clearEmails };
+const removeEmailAction = (removedEmail: Email) => {
+	const _remove = async () => {
+		const res = await remove({ user: get(user)?.id.toString(), email_id: removedEmail.email_id });
+		if (res) {
+			emailServiceState.update((state) => ({
+				...state,
+				emailList: state.emailList.filter((e) => e.email_id !== removedEmail.email_id)
+			}));
+		}
+	};
+	_remove();
+};
+const archiveEmailAction = (achivedEmail: Email) => {
+	const _archive = async () => {
+		const res = await archive({
+			user: get(user)?.id.toString(),
+			email_id: achivedEmail.email_id
+		});
+		if (res) {
+			emailServiceState.update((state) => ({
+				...state,
+				emailList: state.emailList.filter((e) => e.email_id !== achivedEmail.email_id)
+			}));
+		}
+	};
+	_archive();
+};
+
+const spamEmailAction = (spamEmail: Email) => {
+	const _spam = async () => {
+		const res = await spam({ user: get(user)?.id.toString(), email_id: spamEmail.email_id });
+		if (res) {
+			emailServiceState.update((state) => ({
+				...state,
+				emailList: state.emailList.filter((e) => e.email_id !== spamEmail.email_id)
+			}));
+		}
+	};
+	_spam();
+};
+
+const inboxEmailAction = (inboxEmail: Email) => {
+	const _inbox = async () => {
+		const res = await inbox({ user: get(user)?.id.toString(), email_id: inboxEmail.email_id });
+		if (res) {
+			emailServiceState.update((state) => ({
+				...state,
+				emailList: state.emailList.filter((e) => e.email_id !== inboxEmail.email_id)
+			}));
+		}
+	};
+	_inbox();
+};
+export {
+	refreshEmailList,
+	setCurrentEmail,
+	clearEmails,
+	removeEmailAction,
+	archiveEmailAction,
+	spamEmailAction,
+	inboxEmailAction
+};

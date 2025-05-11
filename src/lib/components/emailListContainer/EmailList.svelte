@@ -143,7 +143,7 @@
 				}));
 			}
 		};
-		if (!selectedEmail?.is_read) updateEmailAsRead();
+		if (!selectedEmail?.is_read && folder === EmailFolder.INBOX) updateEmailAsRead();
 
 		// After the update, reset the transition state
 		disableTransition = false;

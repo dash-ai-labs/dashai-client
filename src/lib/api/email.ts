@@ -142,6 +142,38 @@ export const remove = async ({ user, email_id }: { user: string; email_id: strin
 	}
 };
 
+export const spam = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await apiRequest(`user/${user}/email/${email_id}/spam`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};
+
+export const inbox = async ({ user, email_id }: { user: string; email_id: string }) => {
+	try {
+		const response = await apiRequest(`user/${user}/email/${email_id}/inbox`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		return response.json();
+	} catch (error) {
+		console.error('Error fetching email accounts:', error);
+		return [];
+	}
+};
+
 export const sendEmail = async ({ user, email }: { user: string; email: EmailData }) => {
 	try {
 		const response = await apiRequest(`user/${user}/email`, {

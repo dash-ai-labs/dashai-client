@@ -64,6 +64,7 @@ export const emailServiceState: Writable<EmailServiceState> = persistentWritable
 		emailList: [],
 		emailListFilter: [],
 		taskList: [],
+		emailSettings: [],
 		showTaskList: false,
 		showEmailHeader: true
 	}
@@ -83,7 +84,8 @@ if (typeof window !== 'undefined') {
 		emailLabels: [],
 		emailAccount: { email: 'All Emails' },
 		showTaskList: false,
-		showEmailHeader: true
+		showEmailHeader: true,
+		emailSettings: []
 	}));
 	user.update((state) => ({
 		...state,
@@ -95,7 +97,8 @@ if (typeof window !== 'undefined') {
 			email: null,
 			name: null,
 			profile_pic: null,
-			last_login: null
+			last_login: null,
+			email_settings: []
 		}
 	}));
 }

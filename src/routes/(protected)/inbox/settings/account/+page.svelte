@@ -27,26 +27,15 @@
 	}
 </script>
 
-<div class="container">
-	<h2 class="header">Delete Account</h2>
-	<p class="description">
+<div class="settings-detail-container">
+	<h2 class="settings-detail-header">Delete Account</h2>
+	<p class="settings-detail-description">
 		Once you delete your account, there is no going back. Please be certain.
 	</p>
 	<button class="delete-account-button" onclick={deleteAccountModal}>Delete Account</button>
 </div>
 
 <style>
-	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		color: var(--color-primary-light-gray);
-	}
-	.header {
-		font-weight: 600;
-	}
-	.description {
-	}
 	.delete-account-button {
 		border: 1px solid var(--color-secondary-red);
 		color: var(--color-secondary-red);

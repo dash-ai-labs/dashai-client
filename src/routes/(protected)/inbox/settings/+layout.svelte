@@ -2,6 +2,10 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { refreshEmailSettings } from '$lib/actions/settings';
+	onMount(() => {
+		refreshEmailSettings();
+	});
 </script>
 
 <div class="settings-container">

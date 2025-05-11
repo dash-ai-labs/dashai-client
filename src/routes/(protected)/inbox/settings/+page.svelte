@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { emailServiceState } from '$lib/store';
 	import AccountSettings from './account/+page.svelte';
+	import EmailPreferences from './email-preferences/+page.svelte';
 	const settingsNav = [
 		// {
 		// 	label: 'Primary Preferences'
@@ -11,6 +12,10 @@
 		// {
 		// 	label: 'Notifications'
 		// },
+		{
+			label: 'Email Preferences',
+			component: EmailPreferences
+		},
 		{
 			label: 'Account',
 			component: AccountSettings
