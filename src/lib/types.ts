@@ -66,6 +66,8 @@ export interface Email {
 	date: Date;
 	processed: boolean;
 	is_read: boolean;
+	folder: EmailFolder;
+	email_account_id: string;
 }
 
 export enum EmailAccountStatus {
@@ -80,6 +82,7 @@ export enum EmailProvider {
 
 export interface EmailAccount {
 	email: string;
+	id: string;
 	profile_pic: string;
 	created_at: Date;
 	status: EmailAccountStatus;
@@ -102,6 +105,30 @@ export interface EmailData {
 	subject: string;
 	body: string;
 	attachments: string[];
+}
+
+export interface UpdateEmailSettings {
+	email_list: {
+		[key in EmailFolder]: string[];
+	};
+	email_preferences: {
+		use_emojis: boolean;
+		always_include_greetings: boolean;
+	};
+}
+
+export interface EmailSettings {
+	id: string;
+	email_account_id: string;
+	email_list: {
+		[key in EmailFolder]: string[];
+	};
+	email_preferences: {
+		use_emojis: boolean;
+		always_include_greetings: boolean;
+	};
+	created_at: Date;
+	updated_at: Date;
 }
 
 export enum ComposeEmailMode {
@@ -170,6 +197,7 @@ export interface EmailServiceState {
 	emailList: Email[];
 	emailListFilter: string[];
 	taskList: Task[];
+	emailSettings: EmailSettings[];
 	showTaskList: boolean;
 	showEmailHeader: boolean;
 }

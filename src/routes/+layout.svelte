@@ -32,7 +32,7 @@
 		isMobile = isMobileDevice();
 	});
 	onMount(async () => {
-		await nonce.set(data.nonce);
+		nonce.set(data.nonce);
 		initializeLayout();
 	});
 

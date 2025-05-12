@@ -456,3 +456,15 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 	padding-block: 10px;
 	width: 100%;
 }
+
+.settings-detail-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	color: var(--color-primary-light-gray);
+}
+.settings-detail-header {
+	font-weight: 600;
+}
+.settings-detail-description {
+}

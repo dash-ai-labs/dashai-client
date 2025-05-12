@@ -10,17 +10,16 @@
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { showToast } from '$lib/helpers';
 	import { ToastType, EmailFolder } from '$lib/types';
-
+	import MoveEmail from '$lib/components/emailCommandBar/MoveEmail.svelte';
+	import { refreshEmailSettings } from '$lib/actions/settings';
+	import { onMount } from 'svelte';
+	import { removeEmailAction, archiveEmailAction } from '$lib/actions/email';
 	const toastStore = getToastStore();
 
 	const {
-		removeEmail,
-		archiveEmail,
 		markEmailAsUnread,
 		folder
 	}: {
-		removeEmail: (email: Email) => void;
-		archiveEmail: (email: Email) => void;
 		markEmailAsUnread: (email: Email) => void;
 		folder: EmailFolder;
 	} = $props();
@@ -35,6 +34,10 @@
 		if (currentEmail && currentEmail.id !== email?.id) {
 			email = currentEmail;
 		}
+	});
+
+	onMount(() => {
+		refreshEmailSettings();
 	});
 
 	const handleToggleChange = async (value: number) => {
@@ -64,13 +67,13 @@
 
 	const _archiveEmail = async (email: Email) => {
 		showToast(toastStore, 'Archiving email...', ToastType.Info);
-		await archiveEmail(email);
+		await archiveEmailAction(email);
 		showToast(toastStore, 'Email archived successfully', ToastType.Success);
 	};
 
 	const _removeEmail = async (email: Email) => {
 		showToast(toastStore, 'Deleting email...', ToastType.Info);
-		await removeEmail(email);
+		await removeEmailAction(email);
 		showToast(toastStore, 'Email deleted successfully', ToastType.Success);
 	};
 </script>
@@ -122,6 +125,7 @@
 			>
 				<UnreadMail height={22} width={22} />
 			</EmailButton>
+
 			<EmailButton
 				onclick={() => email && _createTask(email.id)}
 				ariaLabel="Create Task"
@@ -131,6 +135,7 @@
 			</EmailButton>
 		</div>
 	{/if}
+	<MoveEmail {email} />
 </div>
 
 <style>

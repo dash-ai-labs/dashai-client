@@ -1,10 +1,30 @@
 <script lang="ts">
-	let { children, onclick, title, ariaLabel, additionalClass = '' } = $props();
+	import { popup } from '@skeletonlabs/skeleton';
+	let {
+		children,
+		title,
+		ariaLabel,
+		onclick = null,
+		usePopup = null,
+		additionalClass = ''
+	} = $props();
 </script>
 
-<button class="email-button {additionalClass}" aria-label={ariaLabel} {title} {onclick}>
-	{@render children?.()}
-</button>
+{#if usePopup}
+	<button
+		class="email-button {additionalClass}"
+		aria-label={ariaLabel}
+		{title}
+		{onclick}
+		use:popup={usePopup}
+	>
+		{@render children?.()}
+	</button>
+{:else}
+	<button class="email-button {additionalClass}" aria-label={ariaLabel} {title} {onclick}>
+		{@render children?.()}
+	</button>
+{/if}
 
 <style>
 	.email-button {

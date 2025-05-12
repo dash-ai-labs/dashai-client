@@ -4,8 +4,8 @@
 	import ToggleTaskListButton from '$lib/components/taskList/ToggleTaskListButton.svelte';
 	import { IconBell } from '@tabler/icons-svelte';
 	import NotificationList from '$lib/components/notifications/notificationList.svelte';
-	import { get } from 'svelte/store';
 	import { emailServiceState } from '$lib/store';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
