@@ -1,5 +1,6 @@
 import { goto } from '$app/navigation';
 import { user } from '$lib/store';
+import { get } from 'svelte/store';
 import { apiRequest } from './base';
 import type { EmailAccount } from './types';
 
@@ -37,7 +38,11 @@ export const handleGoogleCallback = async (code: string, state: string) => {
 			body: JSON.stringify({ code, state })
 		});
 		user.set(await response.json());
-		goto('/inbox');
+		if (response.json().waitlisted) {
+			goto('/waitlist');
+		} else {
+			goto('/inbox');
+		}
 	} catch (error) {
 		console.error('Authentication error:', error);
 	}
@@ -57,7 +62,11 @@ export const handleOutlookCallback = async (
 			body: JSON.stringify({ code, state })
 		});
 		user.set(await response.json());
-		goto('/inbox');
+		if (response.json().waitlisted) {
+			goto('/waitlist');
+		} else {
+			goto('/inbox');
+		}
 	} catch (error) {
 		console.error('Authentication error:', error);
 	}

@@ -17,7 +17,8 @@
 		IconDotsVertical,
 		IconLayoutSidebarRightCollapse,
 		IconSettings,
-		IconMessage2
+		IconMessage2,
+		IconAlertTriangle
 	} from '@tabler/icons-svelte';
 	import { emailServiceState, user } from '$lib/store';
 	import { EmailFolder, type EmailServiceState, type Label } from '$lib/types';
@@ -35,6 +36,7 @@
 	let draftsCount = $state(0);
 	let sentCount = $state(0);
 	let trashCount = $state(0);
+	let spamCount = $state(0);
 	let isSettingsActive = $state(false);
 
 	const user_id = $derived(get(user)?.id?.toString());
@@ -50,6 +52,7 @@
 			getFolderCount(EmailFolder.INBOX).then((count) => (inboxCount = count));
 			getFolderCount(EmailFolder.DRAFTS).then((count) => (draftsCount = count));
 			getFolderCount(EmailFolder.SENT).then((count) => (sentCount = count));
+			getFolderCount(EmailFolder.SPAM).then((count) => (spamCount = count));
 			getFolderCount(EmailFolder.TRASH).then((count) => (trashCount = count));
 		}
 	});
@@ -75,6 +78,13 @@
 			badge: 20,
 			icon: IconSend2,
 			count: sentCount
+		},
+		{
+			label: 'Spam',
+			path: '/inbox/spam',
+			badge: 20,
+			icon: IconAlertTriangle,
+			count: spamCount
 		},
 		{
 			label: 'Trash',
