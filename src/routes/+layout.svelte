@@ -50,7 +50,7 @@
 		<p>This app is only available on desktop devices for now.</p>
 	</div>
 {:else}
-	<div class="dashboard">
+	<div class="page">
 		<Modal components={modalRegistry} />
 
 		{@render children?.()}
@@ -58,7 +58,7 @@
 {/if}
 
 <style nonce="{data.nonce}">
-	.dashboard {
+	.page {
 		height: 100vh;
 		background-color: #1a1a1a;
 		color: white;

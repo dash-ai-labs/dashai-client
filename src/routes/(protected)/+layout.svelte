@@ -45,6 +45,7 @@
 		background-color: #1a1a1a;
 		color: white;
 		width: 100%;
+		height: 100vh;
 	}
 
 	.main-content {
