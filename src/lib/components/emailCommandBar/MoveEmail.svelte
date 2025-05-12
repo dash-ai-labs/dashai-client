@@ -2,7 +2,7 @@
 	import { type PopupSettings } from '@skeletonlabs/skeleton';
 	import { IconSwitch3, IconInbox, IconTrashX, IconAlertTriangle } from '@tabler/icons-svelte';
 	import EmailButton from '$lib/components/EmailButton.svelte';
-	import { EmailFolder, ToastType, type Email } from '$lib/types';
+	import { EmailFolder, ToastType, type Email, type EmailSettings } from '$lib/types';
 	import { get } from 'svelte/store';
 	import { emailServiceState, user } from '$lib/store';
 	import { updateEmailSettingsAction } from '$lib/actions/settings';
@@ -19,13 +19,10 @@
 		placement: 'bottom-start',
 		closeQuery: ''
 	};
-	let emailSettings = $state(
-		get(emailServiceState).emailSettings.filter(
-			(setting) => setting.email_account_id === email.email_account_id
-		)
-	);
+	let emailSettings: EmailSettings[] = $state([]);
 	emailServiceState.subscribe((state) => {
-		emailSettings = state.emailSettings.filter(
+		if (!state || !state.emailSettings || !email) return;
+		emailSettings = state.emailSettings?.filter(
 			(setting) => setting.email_account_id === email.email_account_id
 		);
 	});
@@ -46,6 +43,7 @@
 	};
 	const moveEmailFromSenderToInbox = () => {
 		moveEmailToInbox();
+		if (!emailSettings) return;
 		const emailAccountSettings = emailSettings.find(
 			(setting) => setting.email_account_id === email.email_account_id
 		);
