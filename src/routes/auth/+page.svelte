@@ -10,8 +10,11 @@
 	onMount(() => {
 		user.subscribe(($user) => {
 			if ($user && $user.id) {
-				// Redirect to the login page
-				goto('/inbox');
+				if ($user.waitlisted) {
+					goto('/waitlist');
+				} else {
+					goto('/inbox');
+				}
 				return;
 			}
 		});

@@ -20,7 +20,11 @@ export function initializeLayout() {
 							...state,
 							profile: response
 						}));
-						goto('/inbox');
+						if (response.waitlisted) {
+							goto('/waitlist');
+						} else {
+							goto('/inbox');
+						}
 					}
 				} catch (error) {
 					console.error('Failed to refresh user profile:', error);

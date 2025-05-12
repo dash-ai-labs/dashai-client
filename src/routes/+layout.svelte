@@ -9,6 +9,7 @@
 	import EmailAISearchComponent from '$lib/components/emailSearch/EmailAISearchComponent.svelte';
 	import InboxNotReadyComponent from '$lib/components/InboxNotReadyComponent.svelte';
 	import ConfirmActionModal from '$lib/components/ConfirmActionModal.svelte';
+
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
@@ -58,10 +59,10 @@
 
 <style nonce="{data.nonce}">
 	.dashboard {
-		display: flex;
 		height: 100vh;
 		background-color: #1a1a1a;
 		color: white;
+		width: 100%;
 	}
 
 	.mobile-message {

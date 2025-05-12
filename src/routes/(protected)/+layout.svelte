@@ -4,13 +4,8 @@
 	import SideBar from '$lib/components/SideBar.svelte';
 	import '@material/web/button/filled-tonal-button';
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
-	import { popup, Toast, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { Toast, type PopupSettings } from '@skeletonlabs/skeleton';
 	import TaskList from '$lib/components/taskList/TaskList.svelte';
-	import InboxAccountDropdown from '$lib/components/InboxAccountDropdown.svelte';
-	import InboxSearchBar from '$lib/components/InboxSearchBar.svelte';
-	import ToggleTaskListButton from '$lib/components/taskList/ToggleTaskListButton.svelte';
-	import { IconBell, IconNotification } from '@tabler/icons-svelte';
-	import NotificationList from '$lib/components/notifications/notificationList.svelte';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}

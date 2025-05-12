@@ -3,6 +3,7 @@ export interface User {
 	email: string | null;
 	name: string | null;
 	profile: Profile | null;
+	waitlisted: boolean;
 }
 
 export interface Profile {
