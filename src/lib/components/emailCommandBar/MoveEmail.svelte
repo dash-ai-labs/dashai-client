@@ -17,7 +17,7 @@
 		event: 'click',
 		target: 'moveEmailPopup',
 		placement: 'bottom-start',
-		closeQuery: ''
+		closeQuery: 'button'
 	};
 	let emailSettings: EmailSettings[] = $state([]);
 	emailServiceState.subscribe((state) => {
