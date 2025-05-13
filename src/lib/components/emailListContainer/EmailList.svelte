@@ -21,7 +21,7 @@
 	let lastFilter = $state([]);
 	let disableTransition = $state(false); // New state variable to disable transition
 	let user_id = $derived(get(user)?.id?.toString());
-
+	let lastFolder = $state<EmailFolder>(folder);
 	let _emailList = $state<Email[]>(get(emailServiceState).emailList);
 
 	$effect(() => {
@@ -55,6 +55,14 @@
 			loadNextPage();
 		}
 	};
+
+	$effect(() => {
+		if (lastFolder !== folder) {
+			lastFolder = folder;
+			clearEmails();
+			loadNextPage();
+		}
+	});
 
 	// Function to load emails based on the selected toggle option and filter
 	const loadEmails = async (

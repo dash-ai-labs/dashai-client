@@ -12,7 +12,7 @@
 
 	const toastStore = getToastStore();
 	const { email }: { email: Email } = $props();
-	const userId = get(user)?.id.toString();
+	const userId = get(user)?.id?.toString();
 	const moveEmailPopup: PopupSettings = {
 		event: 'click',
 		target: 'moveEmailPopup',

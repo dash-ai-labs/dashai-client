@@ -10,7 +10,7 @@ export function initializeLayout() {
 			goto('/auth');
 			return;
 		}
-		if (!isUpdating) {
+		if ((!$user.profile || !$user.profile?.email) && !isUpdating) {
 			isUpdating = true;
 			(async () => {
 				try {
