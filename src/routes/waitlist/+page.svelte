@@ -48,7 +48,7 @@
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						Tweet now
+						Post on <img src="/images/x_logo.png" alt="X" class="twitter-logo" />
 					</a>
 				</div>
 			</div>
@@ -168,7 +168,7 @@
 
 	.twitter-btn {
 		display: inline-block;
-		background-color: #1da1f2;
+		background-color: var(--color-primary-hazy-black);
 		color: white;
 		padding: 12px 24px;
 		border-radius: 30px;
@@ -178,13 +178,24 @@
 		text-decoration: none;
 		border: none;
 		cursor: pointer;
+		display: flex;
+		width: fit-content;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.twitter-btn:hover {
-		background-color: #0c8ad6;
+		color: white;
+		background-color: var(--color-primary-container);
 		transform: translateY(-2px);
-		box-shadow: 0 4px 8px rgba(29, 161, 242, 0.3);
+		box-shadow: 0 4px 8px var(--color-primary-dark-gray);
 		text-decoration: none;
+	}
+
+	.twitter-logo {
+		width: 30px;
+		height: 30px;
+		margin-left: 6px;
 	}
 
 	@media (max-width: 768px) {
