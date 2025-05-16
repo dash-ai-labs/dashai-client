@@ -1,14 +1,17 @@
+import type { WritingStyle } from '$lib/types';
 import { apiRequest } from './base';
 export const writeEmailSuggestion = async ({
 	user,
 	email_id,
 	subject,
-	body
+	body,
+	writingStyle
 }: {
 	user: string;
 	email_id: string;
 	subject: string;
 	body: string;
+	writingStyle: WritingStyle;
 }) => {
 	try {
 		const response = await apiRequest(`user/${user}/suggestion`, {
@@ -20,7 +23,8 @@ export const writeEmailSuggestion = async ({
 			body: JSON.stringify({
 				email_id: email_id,
 				subject: subject,
-				body: body
+				body: body,
+				writing_style: writingStyle
 			})
 		});
 		return response.body?.getReader();

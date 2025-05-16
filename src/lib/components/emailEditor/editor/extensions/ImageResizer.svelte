@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { anyify } from '$lib/components/emailEditor/lib/utils';
+	import { anyify } from '$lib/components/emailEditor/emailEditorLibs/utils';
 	import Moveable from 'svelte-moveable';
 
 	export let editor: any;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import X from '$lib/assets/X.svelte';
-	import { user } from '$lib/store';
+	import { composeEmail, user } from '$lib/store';
 	import type { Email, EmailAccount } from '$lib/types';
 	import { Button, Dropdown, DropdownItem } from 'flowbite-svelte';
 	import {
@@ -19,19 +19,9 @@
 	};
 	const {
 		email,
-		setToEmails,
-		setBccEmails,
-		setCcEmails,
-		setSubject,
-		setFromEmail,
 		composeEmailMode
 	}: {
 		email: Email;
-		setToEmails: (emails: string[]) => void;
-		setBccEmails: (emails: string[]) => void;
-		setCcEmails: (emails: string[]) => void;
-		setSubject: (subject: string) => void;
-		setFromEmail: (email: string) => void;
 		composeEmailMode: ComposeEmailMode;
 	} = $props();
 
@@ -43,6 +33,55 @@
 		text: ComposeEmailMode.Reply
 	});
 
+	const setToEmails = (emails: string[]) => {
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				to: emails
+			}
+		}));
+	};
+
+	const setCcEmails = (emails: string[]) => {
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				cc: emails
+			}
+		}));
+	};
+
+	const setBccEmails = (emails: string[]) => {
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				bcc: emails
+			}
+		}));
+	};
+
+	const setFromEmail = (email: string) => {
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				from_addr: email
+			}
+		}));
+	};
+
+	const setSubject = (subject: string) => {
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				subject: subject
+			}
+		}));
+	};
 	$effect(() => {
 		if (composeEmailMode === ComposeEmailMode.Reply) {
 			toEmails = [email.sender[0]];
@@ -68,10 +107,6 @@
 	let toEmailsInput: string = $state('');
 	let toEmailsError: boolean = $state(false);
 	let subjectInput: string = $state('');
-	$effect(() => {
-		setToEmails(toEmails);
-		setFromEmail(selectedFromEmailAccount?.email ?? '');
-	});
 
 	const responseOptions: ResponseAction[] = [
 		{
@@ -120,9 +155,7 @@
 	};
 
 	const handleSubjectEnterKey = (e) => {
-		if (e.key === 'Enter' || e.key === 'Tab') {
-			setSubject(subjectInput);
-		}
+		setSubject(subjectInput);
 	};
 </script>
 

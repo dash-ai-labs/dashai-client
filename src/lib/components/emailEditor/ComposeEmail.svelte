@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Node } from '@tiptap/core';
 	import Editor from './editor/index.svelte';
 	import Bold from '@tiptap/extension-bold';
@@ -7,15 +7,16 @@
 	import ReplyButton from './ReplyButton.svelte';
 	import ForwardButton from './ForwardButton.svelte';
 	import AddressHeader from './AddressHeader.svelte';
-	import { user, errorMessage, showErrorModal, emailServiceState } from '$lib/store';
+	import { user, errorMessage, showErrorModal, emailServiceState, composeEmail } from '$lib/store';
 	import { sendEmail } from '$lib/api/email';
 	import { CloseOutline } from 'flowbite-svelte-icons';
 	import DOMPurify from 'dompurify';
-	import type { EditorType } from './lib';
+	import type { EditorType } from './emailEditorLibs';
 	import { showToast } from '$lib/helpers';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import Footer from './Footer.svelte';
 	import { setShowComposeEmail } from '$lib/actions/compose';
+	import { get } from 'svelte/store';
 
 	const toastStore = getToastStore();
 
@@ -28,51 +29,69 @@
 		height: number;
 		composeEmailMode: ComposeEmailMode;
 	} = $props();
-	let element: HTMLElement;
-	let bmenu: HTMLElement;
-	let dropDownSelectedOption = 0;
-	let emailData: EmailData = $state({
-		subject: '',
-		body: '',
-		from_addr: '',
-		to: [],
-		cc: [],
-		bcc: [],
-		attachments: []
-	});
-	let suggestionText = $state('');
-	let saveStatus = $state('Saved');
-	let editor: EditorType;
 
-	$effect(() => {
-		emailServiceState.update((state) => ({
-			...state,
-			currentEmail: email
-		}));
-	});
+	let dropDownSelectedOption = 0;
+	let emailData: EmailData = $state(get(composeEmail).email);
+	let editor: EditorType | undefined = $state();
 
 	const setToEmails = (emails: string[]) => {
-		emailData.to = emails;
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				to: emails
+			}
+		}));
 	};
 
 	const setCcEmails = (emails: string[]) => {
-		emailData.cc = emails;
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				cc: emails
+			}
+		}));
 	};
 
 	const setBccEmails = (emails: string[]) => {
-		emailData.bcc = emails;
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				bcc: emails
+			}
+		}));
 	};
 
 	const setFromEmail = (email: string) => {
-		emailData.from_addr = email;
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				from_addr: email
+			}
+		}));
 	};
 
 	const setSubject = (subject: string) => {
-		emailData.subject = subject;
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				subject: subject
+			}
+		}));
 	};
 
 	const setBody = (body: string) => {
-		emailData.body = body;
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				body: body
+			}
+		}));
 	};
 
 	const onDropdownSelectOption = (option: number) => {
@@ -99,13 +118,13 @@
 	];
 
 	const setLink = () => {
-		if (editor.isActive('link')) {
+		if (editor?.isActive('link')) {
 			editor.chain().focus().extendMarkRange('link').unsetLink().run();
 
 			return;
 		}
 
-		const previousUrl = editor.getAttributes('link').href;
+		const previousUrl = editor?.getAttributes('link').href;
 		const url = window.prompt('URL', previousUrl);
 
 		// cancelled
@@ -115,7 +134,7 @@
 
 		// empty
 		if (url === '') {
-			editor.chain().focus().extendMarkRange('link').unsetLink().run();
+			editor?.chain().focus().extendMarkRange('link').unsetLink().run();
 
 			return;
 		}
@@ -126,7 +145,7 @@
 		}
 
 		// update link
-		editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+		editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
 	};
 
 	const onSend = () => {
@@ -150,11 +169,11 @@
 
 		const _sendEmail = async () => {
 			showToast(toastStore, 'Sending email...', ToastType.Info);
-			await sendEmail({ user: $user.id, email: emailData });
+			await sendEmail({ user: $user?.id, email: emailData });
 			showToast(toastStore, 'Email sent successfully', ToastType.Success);
 			_clearEmailData();
 			setShowComposeEmail(false);
-			editor.destroy();
+			editor?.destroy();
 		};
 		_sendEmail();
 	};
@@ -167,6 +186,11 @@
 		emailData.cc = [];
 		emailData.bcc = [];
 		emailData.attachments = [];
+		composeEmail.update((state) => ({
+			...state,
+			email: emailData,
+			editor: editor
+		}));
 	};
 
 	const EmailQuote = Node.create({
@@ -320,9 +344,7 @@
 		}
 	}
 
-	$effect(() => {
-		if (!editor) return;
-
+	onMount(() => {
 		if (
 			composeEmailMode === ComposeEmailMode.Reply ||
 			composeEmailMode === ComposeEmailMode.Forward
@@ -333,67 +355,96 @@
 			if (composeEmailMode === ComposeEmailMode.Forward) {
 				setSubject(`Fwd: ${email.subject}`);
 			}
-
-			const setContent = async () => {
-				try {
-					// Clear existing content first
-					editor.commands.clearContent();
-					const formattedContent = formatEmailContent(email.raw_content);
-					// Add some spacing
-					// Try setting the raw content first
-
-					// Move cursor to top
-					await editor.commands.setTextSelection(0);
-
-					// Log the editor's content for debugging
-				} catch (error) {
-					console.error('Error setting content:', error);
-				}
-			};
-			// setContent();
 		} else {
-			// editor.commands.clearContent();
 			setSubject('');
 		}
 	});
 
 	onDestroy(() => {
-		// if (editor) {
-		// 	editor.destroy();
-		// }
+		if (editor) {
+			editor.destroy();
+		}
 	});
 </script>
 
-<div
-	class="fixed bottom-[-10px] right-2 z-50 w-[50%] overflow-hidden rounded-2xl rounded-b-none border border-primary-gray bg-primary-black"
->
-	<div class="flex flex-row bg-primary-hazy-black px-3 py-1 text-primary-button">
+<div class="compose-email-container">
+	<div class="compose-email-header">
 		{#if emailData.subject === '' && composeEmailMode === ComposeEmailMode.NewEmail}
-			<div class="self-center px-2 py-2">New Email</div>
+			<div class="compose-email-title">New Email</div>
 		{:else}
-			<div class="self-center px-2 py-2">{emailData.subject}</div>
+			<div class="compose-email-title">{emailData.subject}</div>
 		{/if}
-		<div class="ml-auto self-center">
-			<button class="self-start py-2 text-primary-gray" onclick={() => setShowComposeEmail(false)}>
+		<div class="compose-email-close-container">
+			<button class="compose-email-close-button" onclick={() => setShowComposeEmail(false)}>
 				<CloseOutline name="close" />
 			</button>
 		</div>
 	</div>
-	<div class="mx-2 flex justify-start border-b border-primary-gray text-font-light-gray">
-		<AddressHeader
-			{email}
-			{composeEmailMode}
-			{setToEmails}
-			{setCcEmails}
-			{setBccEmails}
-			{setFromEmail}
-			{setSubject}
-		/>
+	<div class="compose-email-address-header">
+		<AddressHeader {email} {composeEmailMode} />
 	</div>
-	<div class="mx-1 my-1">
-		<Editor email={emailData} />
+	<div class="compose-email-editor">
+		<Editor bind:editor />
 	</div>
-	<div class="m-2 flex justify-start text-primary-gray">
-		<Footer {onSend} />
+	<div class="compose-email-footer">
+		<Footer {onSend} bind:editor />
 	</div>
 </div>
+
+<style>
+	.compose-email-container {
+		position: fixed;
+		bottom: -10px;
+		right: 0.5rem;
+		z-index: 50;
+		width: 50%;
+		height: 700px;
+		overflow: hidden;
+		border-radius: 1rem 1rem 0 0;
+		border: 1px solid var(--color-primary-gray);
+		background-color: var(--color-primary-black);
+	}
+
+	.compose-email-header {
+		display: flex;
+		flex-direction: row;
+		background-color: var(--color-primary-hazy-black);
+		padding: 0.25rem 0.75rem;
+		color: var(--color-secondary-light-blue);
+	}
+
+	.compose-email-title {
+		align-self: center;
+		padding: 0.5rem;
+	}
+
+	.compose-email-close-container {
+		margin-left: auto;
+		align-self: center;
+	}
+
+	.compose-email-close-button {
+		align-self: center;
+		color: var(--color-primary-gray);
+	}
+
+	.compose-email-address-header {
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
+		display: flex;
+		justify-content: flex-start;
+		border-bottom: 1px solid var(--color-primary-gray);
+		color: var(--color-font-light-gray);
+	}
+
+	.compose-email-editor {
+		height: 490px;
+	}
+
+	.compose-email-footer {
+		justify-content: flex-start;
+		color: var(--color-primary-gray);
+		padding-inline: 10px;
+		padding-block: 5px;
+	}
+</style>

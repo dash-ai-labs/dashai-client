@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import type { SearchEntry, User, EmailServiceState } from './types';
+import type { SearchEntry, User, EmailServiceState, ComposeEmail } from './types';
 import { ComposeEmailMode } from './types';
 // Define the type for the user store with optional initial value
 function persistentWritable(key: string, initialValue: any): Writable<any> {
@@ -51,6 +51,18 @@ export const errorMessage: Writable<string> = writable('');
 export const emailSearchList: Writable<SearchEntry[]> = writable([]);
 export const emailList: Writable<any> = persistentWritable('emailList', []);
 export const aiSearchQuery: Writable<string> = writable('');
+export const composeEmail: Writable<ComposeEmail> = persistentWritable('composeEmail', {
+	email: {
+		from_addr: '',
+		to: [],
+		cc: [],
+		bcc: [],
+		subject: '',
+		body: '',
+		attachments: []
+	},
+	isLoadingTextGeneration: false
+});
 export const emailServiceState: Writable<EmailServiceState> = persistentWritable(
 	'emailServiceState',
 	{
@@ -100,5 +112,18 @@ if (typeof window !== 'undefined') {
 			last_login: null,
 			email_settings: []
 		}
+	}));
+	composeEmail.update((state) => ({
+		...state,
+		email: {
+			from_addr: '',
+			to: [],
+			cc: [],
+			bcc: [],
+			subject: '',
+			body: '',
+			attachments: []
+		},
+		isLoadingTextGeneration: false
 	}));
 }

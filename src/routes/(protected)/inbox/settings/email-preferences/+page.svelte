@@ -189,11 +189,6 @@
 </div>
 
 <style>
-	.separator {
-		width: 100%;
-		height: 1px;
-		background-color: var(--color-primary-dark-gray);
-	}
 	.folder-routing-container {
 		display: flex;
 		flex-direction: column;
