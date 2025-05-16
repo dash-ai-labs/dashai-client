@@ -1,38 +1,38 @@
 <script lang="ts">
 	// import 'cal-sans';
 
-	import { getPrevText } from '../lib/editor';
+	import { getPrevText } from '../emailEditorLibs/editor';
 	import { Editor } from '@tiptap/core';
 	import ImageResizer from './extensions/ImageResizer.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { defaultExtensions } from './extensions/index.svelte';
 	import { defaultEditorProps } from './props';
 	import EditorBubbleMenu from './bubble-menu/index.svelte';
 	import { emailServiceState, user } from '$lib/store';
 	import { get } from 'svelte/store';
-	import type { EditorType } from '../lib';
+	import type { EditorType } from '../emailEditorLibs';
 	import { ComposeEmailMode, type EmailData } from '$lib/types';
 	import { writeEmailSuggestion } from '$lib/api/compose';
 	import { generateJSON } from '@tiptap/html';
+	import Highlight from '@tiptap/extension-highlight';
+	import { composeEmail } from '$lib/store';
 	/**
 	 * The default value to use for the editor.
 	 * Defaults to empty string.
 	 */
-	let {
-		email = $bindable()
-	}: {
-		email: EmailData;
-	} = $props();
+	let { editor = $bindable() }: { editor: EditorType | undefined } = $props();
+	let email: EmailData = $state(get(composeEmail).email);
 	/**
 	 * Disable local storage read/save.
 	 * @default false
 	 */
-	let editor: EditorType | undefined = $state();
 	let element: Element;
 
-	let isLoading = $state(false);
-
-	let prev = '';
+	composeEmail.subscribe((state) => {
+		if (state.email !== email) {
+			email = state.email;
+		}
+	});
 
 	const readStream = async (
 		resultReader: ReadableStreamDefaultReader<Uint8Array<ArrayBufferLike>>
@@ -68,30 +68,41 @@
 		} catch (error) {
 			console.error('Error reading search stream:', error);
 		} finally {
-			isLoading = false;
+			composeEmail.update((state) => ({
+				...state,
+				isLoadingTextGeneration: false
+			}));
 
 			// email.body =editor?.getHTML();
 		}
 	};
 
 	onMount(() => {
-		editor = new Editor({
+		// Create the editor instance but store it locally first
+		const editorInstance = new Editor({
 			element: element,
 			onTransaction: (props) => {
-				// force re-render so `editor.isActive` works as expected
-				editor = editor;
-
-				email.body = editor?.getHTML();
+				// Update our local instance
+				editor = props.editor;
+				email.body = editorInstance?.getHTML();
 			},
-			extensions: [...defaultExtensions],
+			extensions: [
+				...defaultExtensions,
+				// Add highlight extension for text generation animation
+				Highlight.configure({
+					HTMLAttributes: {
+						class: 'highlight'
+					}
+				})
+			],
 			editorProps: {
 				...defaultEditorProps
 			},
 			onUpdate: (e) => {
 				const selection = e.editor.state.selection;
 				const lastTwo = getPrevText(e.editor, { chars: 2 });
-				if (lastTwo === '++' && !isLoading) {
-					isLoading = true;
+				if (lastTwo === '++' && !$composeEmail.isLoadingTextGeneration) {
+					$composeEmail.isLoadingTextGeneration = true;
 					e.editor.commands.deleteRange({
 						from: selection.from - 2,
 						to: selection.from
@@ -111,6 +122,9 @@
 			},
 			autofocus: 'end'
 		});
+
+		// After initialization, assign to the bound prop
+		editor = editorInstance;
 
 		const composeMode = get(emailServiceState)?.composeEmailMode;
 		const currentEmail = get(emailServiceState)?.currentEmail;
@@ -158,6 +172,13 @@
 			}
 		}
 	});
+
+	onDestroy(() => {
+		if (editor) {
+			editor.destroy();
+		}
+	});
+
 	export function getEmailContentForSend(): string {
 		const editorContent = editor?.getHTML() ?? '';
 		let originalEmailContent = '';
@@ -191,7 +212,7 @@
 		<ImageResizer {editor} />
 	{/if}
 
-	{#if isLoading}
+	{#if $composeEmail.isLoadingTextGeneration}
 		<div class="loading-spinner">
 			<div class="spinner"></div>
 		</div>
@@ -244,6 +265,7 @@
 	.editor-container {
 		padding: 10px;
 		border-radius: 10px;
+		height: 100%;
 	}
 
 	/* Standard selection styling */

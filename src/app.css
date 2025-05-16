@@ -468,3 +468,9 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 }
 .settings-detail-description {
 }
+
+.separator {
+	width: 100%;
+	height: 1px;
+	background-color: var(--color-primary-dark-gray);
+}

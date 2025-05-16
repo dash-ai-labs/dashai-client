@@ -1,3 +1,5 @@
+import type { EditorType } from './components/emailEditor/emailEditorLibs';
+
 export interface User {
 	id: number | null;
 	email: string | null;
@@ -114,6 +116,7 @@ export interface UpdateEmailSettings {
 	email_preferences: {
 		use_emojis: boolean;
 		always_include_greetings: boolean;
+		writing_style: WritingStyle;
 	};
 }
 
@@ -126,6 +129,7 @@ export interface EmailSettings {
 	email_preferences: {
 		use_emojis: boolean;
 		always_include_greetings: boolean;
+		writing_style: WritingStyle;
 	};
 	created_at: Date;
 	updated_at: Date;
@@ -201,3 +205,55 @@ export interface EmailServiceState {
 	showTaskList: boolean;
 	showEmailHeader: boolean;
 }
+
+export interface ComposeEmail {
+	email: EmailData;
+	isLoadingTextGeneration: boolean;
+}
+
+export enum WritingStyle {
+	CASUAL = 'casual',
+	LAWYER = 'lawyer',
+	SCIENTIST = 'scientist',
+	MARKETER = 'marketer',
+	WRITER = 'writer',
+	ACCOUNTANT = 'accountant',
+	GENZ = 'genz',
+	MANAGER = 'manager'
+}
+
+export const writingStyles = {
+	[WritingStyle.CASUAL]: {
+		label: 'Casual',
+		description: 'Casual and friendly tone.'
+	},
+	[WritingStyle.LAWYER]: {
+		label: 'Lawyer',
+		description: 'Formal and professional. Focuses on clarity and precision.'
+	},
+	[WritingStyle.SCIENTIST]: {
+		label: 'Scientist',
+		description: 'Technical and precise. Focuses on facts and data.'
+	},
+	[WritingStyle.MANAGER]: {
+		label: 'Manager',
+		description:
+			'Professional and engaging. Motivational and concise. Focuses on goals and results.'
+	},
+	[WritingStyle.MARKETER]: {
+		label: 'Marketer',
+		description: 'Persuasive and engaging. Focuses on the benefits and upsides.'
+	},
+	[WritingStyle.WRITER]: {
+		label: 'Writer',
+		description: 'Creative and engaging. Focuses on storytelling and engagement.'
+	},
+	[WritingStyle.ACCOUNTANT]: {
+		label: 'Accountant',
+		description: 'Professional and accurate. Focuses on numbers and details.'
+	},
+	[WritingStyle.GENZ]: {
+		label: 'Gen Z',
+		description: 'Peak brainrot. Fun, casual and uses latest slangs.'
+	}
+};

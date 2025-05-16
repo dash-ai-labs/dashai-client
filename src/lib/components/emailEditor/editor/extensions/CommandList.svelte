@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getPrevText } from '$lib/components/emailEditor/lib/editor';
+	import { getPrevText } from '$lib/components/emailEditor/emailEditorLibs/editor';
 	import { LoadingCircle } from '$lib/components/emailEditor/icons/index';
 	import type { CommandItemProps } from './slash-command.svelte';
 	import { useCompletion } from '@ai-sdk/svelte';

@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
 	import { emailServiceState } from '$lib/store';
 	import AccountSettings from './account/+page.svelte';
 	import EmailPreferences from './email-preferences/+page.svelte';
+	import ComposePreferences from './compose-preferences/+page.svelte';
 	const settingsNav = [
 		// {
 		// 	label: 'Primary Preferences'
@@ -12,6 +11,10 @@
 		// {
 		// 	label: 'Notifications'
 		// },
+		{
+			label: 'Compose Preferences',
+			component: ComposePreferences
+		},
 		{
 			label: 'Email Preferences',
 			component: EmailPreferences
