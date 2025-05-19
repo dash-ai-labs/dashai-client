@@ -16,6 +16,7 @@ export interface Profile {
 	last_login: Date;
 	email_accounts: EmailAccount[];
 	notifications: Notification[];
+	show_tutorial: boolean;
 }
 export enum LabelType {
 	Email = 'EMAIL'

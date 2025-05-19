@@ -1,6 +1,5 @@
 import { goto } from '$app/navigation';
 import { user } from '$lib/store';
-import { get } from 'svelte/store';
 import { apiRequest } from './base';
 import type { EmailAccount } from './types';
 
@@ -127,6 +126,15 @@ export const deleteUser = async (user_id: string) => {
 	const response = await apiRequest(`user/${user_id}`, {
 		method: 'DELETE',
 		credentials: 'include'
+	});
+	return response.json();
+};
+
+export const updateUser = async (user_id: string, show_tutorial: boolean) => {
+	const response = await apiRequest(`user/${user_id}`, {
+		method: 'PUT',
+		credentials: 'include',
+		body: JSON.stringify({ show_tutorial: show_tutorial })
 	});
 	return response.json();
 };

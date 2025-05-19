@@ -1,57 +1,121 @@
 <script lang="ts">
 	import { refreshEmailList } from '$lib/actions/email';
-	import type { EmailAccount } from '$lib/types';
-	import { getModalStore } from '@skeletonlabs/skeleton';
-	import { IconLoader2 } from '@tabler/icons-svelte';
-	import { onMount, onDestroy } from 'svelte';
+	import { updateUserAction } from '$lib/actions/user';
+	import { showToast } from '$lib/helpers';
+	import { ToastType } from '$lib/types';
+	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
+	const toastStore = getToastStore();
 
-	let { emailAccount }: { emailAccount: EmailAccount } = $props();
 	const modalStore = getModalStore();
 
-	// Progress tracking
-	let progress = $state(0);
-	let intervalId: ReturnType<typeof setInterval>;
+	// Tutorial steps
+	const tutorialSteps = [
+		{
+			title: 'Welcome to Your Inbox',
+			subtitle: 'Get started with your new email experience',
+			image: '/images/tutorial_1.png'
+		},
+		{
+			title: 'Compose emails in your unique style',
+			subtitle: 'Choose from a variety of writing styles to express yourself',
+			image: '/images/tutorial_2.gif'
+		},
+		{
+			title: 'Organize your emails with simple rules',
+			subtitle: 'Choose who shows up in your inbox and what lands in your spam folder',
+			image: '/images/tutorial_3.gif' // Replace with appropriate images
+		},
+		{
+			title: 'Create tasks from emails',
+			subtitle: 'Turn emails into actionable tasks with a click',
+			image: '/images/tutorial_4.gif'
+		},
+		{
+			title: "You're all set!",
+			subtitle: 'Enjoy your new email experience',
+			image: '/images/tutorial_5.png'
+		}
+	];
 
-	// Function to refresh email list (to be called when progress completes)
-	function finishLoading() {
-		refreshEmailList();
-		modalStore.close();
-		// Add your implementation here
+	// Track current step
+	let currentStep = $state(0);
+	let doNotShowAgain = $state(false);
+
+	// Calculate progress based on steps
+	let progress = $derived(((currentStep + 1) / tutorialSteps.length) * 100);
+
+	function nextStep() {
+		if (currentStep < tutorialSteps.length - 1) {
+			currentStep++;
+		}
 	}
 
-	onMount(() => {
-		// Update progress every 300ms to complete in 30 seconds
-		// 30000ms / 300ms = 100 steps
-		intervalId = setInterval(() => {
-			progress += 1;
-			if (progress >= 100) {
-				clearInterval(intervalId);
-				finishLoading();
-			}
-		}, 300);
+	function prevStep() {
+		if (currentStep > 0) {
+			currentStep--;
+		}
+	}
+	$effect(() => {
+		if (currentStep === tutorialSteps.length - 2) {
+			refreshEmailList();
+		}
 	});
 
-	onDestroy(() => {
-		if (intervalId) clearInterval(intervalId);
-	});
+	// Function to finish tutorial
+	function finishTutorial() {
+		// Here you could save user preference if they checked "Do not show again"
+		if (doNotShowAgain) {
+			// Add logic to save this preference
+			const _doNotShowAgain = async () => {
+				await updateUserAction(false);
+			};
+			showToast(toastStore, 'Saving preferences...', ToastType.Info);
+			_doNotShowAgain();
+			showToast(toastStore, 'Preferences saved', ToastType.Success);
+		}
+
+		modalStore.close();
+	}
 </script>
 
 {#if $modalStore[0]}
 	<div class="modal-container">
 		<div class="header-container">
-			<header class="modal-header">{$modalStore[0].title ?? '(title missing)'}</header>
-			<IconLoader2 class="loader-icon" />
+			<header class="modal-header">{tutorialSteps[currentStep].title}</header>
 		</div>
-		<article class="modal-body">{$modalStore[0].body ?? '(body missing)'}</article>
-
+		<article class="modal-body">{tutorialSteps[currentStep].subtitle}</article>
 		<div class="image-container">
-			<img src="/images/robot.gif" alt="robot" width="480" height="360" />
+			<img class="image" src={tutorialSteps[currentStep].image} alt="tutorial step" />
 		</div>
+
 		<!-- Progress bar -->
 		<div class="progress-container">
 			<div class="progress-bar" style="width: {progress}%"></div>
-			<div class="progress-text">{progress}%</div>
+			<div class="progress-text">Step {currentStep + 1} of {tutorialSteps.length}</div>
 		</div>
+
+		<!-- Navigation buttons -->
+		<div class="navigation-buttons">
+			<button class="nav-button {currentStep === 0 ? 'hide' : ''}" onclick={prevStep}>
+				Previous
+			</button>
+
+			{#if currentStep < tutorialSteps.length - 1}
+				<button class="nav-button primary" onclick={nextStep}>Next</button>
+			{:else}
+				<!-- Do not show again option on last step -->
+
+				<button class="nav-button finish" onclick={finishTutorial}>Finish</button>
+			{/if}
+		</div>
+		{#if currentStep === 4}
+			<div class="do-not-show-container">
+				<label class="do-not-show-label">
+					<input type="checkbox" bind:checked={doNotShowAgain} />
+					Do not show this again
+				</label>
+			</div>
+		{/if}
 	</div>
 {/if}
 
@@ -64,6 +128,7 @@
 		background-color: var(--color-primary-black);
 		padding: 24px;
 		color: var(--color-font-light-gray);
+		width: 640px;
 	}
 
 	.header-container {
@@ -81,6 +146,7 @@
 		font-size: 1rem;
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
+		color: var(--color-primary-light-gray);
 	}
 
 	:global(.loader-icon) {
@@ -96,6 +162,10 @@
 		justify-items: center;
 		align-self: center;
 		justify-content: center;
+	}
+	.image {
+		border-radius: 5px;
+		width: 640px;
 	}
 
 	/* Progress bar styles */
@@ -135,5 +205,57 @@
 		to {
 			transform: rotate(360deg);
 		}
+	}
+
+	.navigation-buttons {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 20px;
+		width: 100%;
+	}
+
+	.nav-button {
+		padding: 8px 16px;
+		border-radius: 4px;
+		border: none;
+		background-color: var(--color-primary-dark-gray);
+		color: var(--color-font-light-gray);
+		cursor: pointer;
+		font-weight: bold;
+		transition: background-color 0.2s;
+	}
+
+	.nav-button.hide {
+		display: none;
+	}
+
+	.nav-button:hover {
+		background-color: var(--color-secondary-active-button-background-hover);
+	}
+
+	.nav-button.primary {
+		background-color: var(--color-primary-button);
+	}
+
+	.nav-button.finish {
+		background-color: var(--color-primary-button);
+	}
+
+	.do-not-show-container {
+		display: flex;
+		align-items: center;
+		padding-top: 16px;
+		color: var(--color-primary-light-gray);
+	}
+
+	.do-not-show-label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		cursor: pointer;
+	}
+
+	.do-not-show-label input {
+		cursor: pointer;
 	}
 </style>
