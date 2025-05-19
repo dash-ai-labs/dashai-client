@@ -1,4 +1,4 @@
-import { deleteUser, getUserProfile } from '$lib/api/auth';
+import { deleteUser, getUserProfile, updateUser } from '$lib/api/auth';
 import { get } from 'svelte/store';
 import {
 	user,
@@ -50,4 +50,12 @@ const deleteAccount = async () => {
 	}
 };
 
-export { refreshUser, handleLogout, deleteAccount };
+const updateUserAction = async (show_tutorial: boolean = true) => {
+	const userId = get(user)?.id.toString();
+	const response = await updateUser(userId, show_tutorial);
+	if (response) {
+		refreshUser();
+	}
+};
+
+export { refreshUser, handleLogout, deleteAccount, updateUserAction };
