@@ -84,7 +84,13 @@
 			onTransaction: (props) => {
 				// Update our local instance
 				editor = props.editor;
-				email.body = editorInstance?.getHTML();
+				composeEmail.update((state) => ({
+					...state,
+					email: {
+						...state.email,
+						body: editorInstance?.getHTML()
+					}
+				}));
 			},
 			extensions: [
 				...defaultExtensions,
@@ -254,7 +260,8 @@
 
 	#editor {
 		min-height: 300px;
-		max-height: 500px;
+		max-height: 520px;
+		height: 520px;
 		overflow-y: auto;
 	}
 	.email-iframe {
