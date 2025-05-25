@@ -31,8 +31,20 @@
 	} = $props();
 
 	let dropDownSelectedOption = 0;
-	let emailData: EmailData = $state(get(composeEmail).email);
+	let emailData: EmailData = $state({
+		...get(composeEmail).email,
+		from_addr:
+			get(emailServiceState).emailAccount.email === 'All Emails'
+				? get(user)?.profile?.email_accounts[0].email
+				: get(emailServiceState).emailAccount.email
+	});
 	let editor: EditorType | undefined = $state();
+
+	composeEmail.subscribe((state) => {
+		emailData = {
+			...state.email
+		};
+	});
 
 	const setToEmails = (emails: string[]) => {
 		composeEmail.update((state) => ({
@@ -179,17 +191,17 @@
 	};
 
 	const _clearEmailData = () => {
-		emailData.subject = '';
-		emailData.body = '';
-		emailData.from_addr = '';
-		emailData.to = [];
-		emailData.cc = [];
-		emailData.bcc = [];
-		emailData.attachments = [];
 		composeEmail.update((state) => ({
 			...state,
-			email: emailData,
-			editor: editor
+			email: {
+				from_addr: '',
+				to: [],
+				cc: [],
+				bcc: [],
+				subject: '',
+				body: '',
+				attachments: []
+			}
 		}));
 	};
 
@@ -394,11 +406,11 @@
 <style>
 	.compose-email-container {
 		position: fixed;
-		bottom: -10px;
+		bottom: -1px;
 		right: 0.5rem;
 		z-index: 50;
 		width: 50%;
-		height: 700px;
+		height: 800px;
 		overflow: hidden;
 		border-radius: 1rem 1rem 0 0;
 		border: 1px solid var(--color-primary-gray);
@@ -438,7 +450,7 @@
 	}
 
 	.compose-email-editor {
-		height: 490px;
+		height: 560px;
 	}
 
 	.compose-email-footer {
@@ -446,5 +458,6 @@
 		color: var(--color-primary-gray);
 		padding-inline: 10px;
 		padding-block: 5px;
+		bottom: 5px;
 	}
 </style>

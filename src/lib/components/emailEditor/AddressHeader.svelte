@@ -9,7 +9,7 @@
 		ReplyOutline,
 		ExclamationCircleOutline
 	} from 'flowbite-svelte-icons';
-	import type { Component } from 'svelte';
+	import { onMount, type Component } from 'svelte';
 	import { ComposeEmailMode } from '$lib/types';
 	import { setComposeEmailMode } from '$lib/actions/compose';
 
@@ -25,8 +25,10 @@
 		composeEmailMode: ComposeEmailMode;
 	} = $props();
 
-	let fromEmailAccounts: EmailAccount[] | undefined = $user?.email_accounts;
-	let selectedFromEmailAccount: EmailAccount | undefined = $state($user?.email_accounts?.[0]);
+	let fromEmailAccounts: EmailAccount[] | undefined = $user?.profile?.email_accounts;
+	let selectedFromEmailAccount: EmailAccount | undefined = $state(
+		$user?.profile?.email_accounts?.[0]
+	);
 	let toEmails: string[] = $state([]);
 	let selectedAction: ResponseAction = $state({
 		icon: ReplyOutline,
@@ -102,6 +104,16 @@
 				text: ComposeEmailMode.NewEmail
 			};
 		}
+	});
+
+	onMount(() => {
+		composeEmail.update((state) => ({
+			...state,
+			email: {
+				...state.email,
+				from_addr: selectedFromEmailAccount?.email
+			}
+		}));
 	});
 
 	let toEmailsInput: string = $state('');

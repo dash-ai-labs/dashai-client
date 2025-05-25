@@ -174,7 +174,7 @@
 		display: flex;
 		flex-direction: row;
 		gap: 10px;
-		padding-block: 10px;
+		padding-top: 10px;
 	}
 	.secondary-button-container {
 		display: flex;
