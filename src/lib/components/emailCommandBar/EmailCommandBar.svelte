@@ -52,7 +52,6 @@
 			...state,
 			emailListFilter: lastFilter
 		}));
-		toggleTaskListAction();
 	};
 
 	const _createTask = async (email_id: string) => {
@@ -60,6 +59,7 @@
 		const task = await createTaskAction(email_id);
 		if (task) {
 			showToast(toastStore, 'Task created successfully', ToastType.Success);
+			toggleTaskListAction();
 		} else {
 			showToast(toastStore, 'Something went wrong. Please try again.', ToastType.Error);
 		}
