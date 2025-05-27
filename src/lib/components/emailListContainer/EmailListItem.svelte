@@ -93,10 +93,10 @@
 
 <style>
 	.email-list-item {
-		padding: 12px 16px;
+		padding: 8px 12px;
 		color: var(--color-primary-active-button-highlight);
 		cursor: pointer;
-		height: 120px;
+		height: 100px;
 		align-content: center;
 		border-radius: 8px;
 		margin: 4px 0;
@@ -164,11 +164,11 @@
 
 	.summary-container {
 		display: flex;
-		padding: 4px;
+		padding: 2px;
 	}
 
 	.icon-padding {
-		padding: 0 6px 0 4px;
+		padding: 0 4px 0 2px;
 	}
 
 	/* .separator:hover {
@@ -195,7 +195,7 @@
 	}
 
 	.subject-padding {
-		padding: 4px;
+		padding: 2px;
 	}
 
 	.subject-text {
@@ -212,7 +212,7 @@
 		display: flex;
 		flex-direction: row;
 		gap: 6px;
-		padding: 4px;
+		padding: 2px;
 		height: 22px;
 	}
 </style>
