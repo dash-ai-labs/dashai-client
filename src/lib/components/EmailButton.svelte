@@ -28,11 +28,19 @@
 
 <style>
 	.email-button {
-		border-radius: 0.5rem;
-		padding: 0.4rem 0.55rem;
+		border-radius: 8px;
+		padding: 12px 16px;
+		border: 1px solid transparent;
+		transition: all 0.2s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 40px;
 	}
 
 	.email-button:hover {
 		background-color: var(--color-primary-dark-gray);
+		border-color: rgba(255, 255, 255, 0.1);
+		transform: scale(1.05);
 	}
 </style>

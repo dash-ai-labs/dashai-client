@@ -93,25 +93,32 @@
 
 <style>
 	.email-list-item {
-		padding-top: 0.5rem;
-		padding-bottom: 0.5rem;
+		padding: 12px 16px;
 		color: var(--color-primary-active-button-highlight);
 		cursor: pointer;
-		height: 130px;
+		height: 120px;
 		align-content: center;
+		border-radius: 8px;
+		margin: 4px 0;
+		border: 1px solid transparent;
+		transition: all 0.2s ease;
 	}
 
 	.email-list-item-selected {
 		background-color: var(--color-secondary-active-button-background);
-		border-radius: 6px;
+		border-color: var(--color-secondary-active-button);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	}
 
 	.email-list-item-selected:hover {
 		background-color: var(--color-secondary-active-button-background-hover);
+		transform: translateX(2px);
 	}
 
 	.email-list-item-unselected:hover {
 		background-color: var(--color-secondary-active-button-background-hover);
+		border-color: rgba(255, 255, 255, 0.1);
+		transform: translateX(2px);
 	}
 
 	.item-header {
@@ -132,8 +139,8 @@
 	}
 
 	.sender-padding {
-		padding-left: 0.25rem;
-		padding-right: 0.25rem;
+		padding-left: 4px;
+		padding-right: 4px;
 	}
 
 	.unread-indicator-container {
@@ -157,13 +164,11 @@
 
 	.summary-container {
 		display: flex;
-		padding-left: 0.25rem;
-		padding-right: 0.25rem;
+		padding: 4px;
 	}
 
 	.icon-padding {
-		padding-left: 0.25rem;
-		padding-right: 0.25rem;
+		padding: 0 6px 0 4px;
 	}
 
 	/* .separator:hover {
@@ -175,10 +180,10 @@
 	} */
 
 	.separator {
-		border-bottom: 1px solid var(--color-primary-gray);
-		margin-left: 0.25rem;
-		margin-right: 0.25rem;
-		align-self: center;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, var(--color-primary-gray), transparent);
+		margin: 8px 16px;
+		opacity: 0.3;
 	}
 	.summary-text {
 		max-width: 230px;
@@ -190,8 +195,7 @@
 	}
 
 	.subject-padding {
-		padding-left: 0.25rem;
-		padding-right: 0.25rem;
+		padding: 4px;
 	}
 
 	.subject-text {
@@ -207,8 +211,8 @@
 	.labels-container {
 		display: flex;
 		flex-direction: row;
-		gap: 0.25rem;
-		padding-inline: 0.25rem;
+		gap: 6px;
+		padding: 4px;
 		height: 22px;
 	}
 </style>

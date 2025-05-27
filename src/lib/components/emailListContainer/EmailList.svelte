@@ -203,7 +203,6 @@
 		width: 320px;
 		display: flex;
 		height: 100%;
-		margin: 2px;
 		flex-direction: column;
 		background-color: var(--color-primary-container);
 	}
@@ -211,7 +210,8 @@
 	.email-list-container {
 		flex: 1;
 		overflow-y: auto;
-		width: 320px;
+		width: 100%;
+		padding: 0 8px;
 	}
 
 	.loading-indicator {

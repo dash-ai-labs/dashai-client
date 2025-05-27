@@ -147,9 +147,12 @@
 	}
 	.command-bar {
 		display: flex;
+		align-items: center;
 		background-color: var(--color-primary-container);
 		width: 100%;
-		padding-inline: 2px;
+		padding: 12px 16px;
+		border-bottom: 1px solid var(--color-primary-dark-gray);
+		gap: 4px;
 	}
 	.compose-button {
 		background-color: var(--color-primary-blue);
@@ -165,16 +168,19 @@
 		border-right: 1px solid var(--color-secondary-inactive-button-highlight);
 	}
 	.button-group {
-		margin: 0 10px;
+		margin: 0 8px;
 		display: flex;
-		gap: 10px;
+		gap: 8px;
+		align-items: center;
 	}
 	.separator-border {
 		display: flex;
 		border-left: 1px solid var(--color-secondary-inactive-button-highlight);
-		height: 20px;
+		height: 24px;
 		width: 1px;
 		align-self: center;
+		margin: 0 4px;
+		opacity: 0.5;
 	}
 	.right-container {
 		display: flex;
