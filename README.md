@@ -22,17 +22,14 @@
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/dash-ai-labs/dash-client.git
-cd dash-client
+git clone https://github.com/dash-ai-labs/dashai-client.git
+cd dashai-client
 ```
 
-2. Install dependencies:
+2. Install the CLI:
 ```bash
-npm install
-# or
-pnpm install
-# or
-yarn
+./install_dashai_cli.sh
+source ~/.zshrc
 ```
 
 3. Create a `.env` file in the root directory:
@@ -49,18 +46,23 @@ PUBLIC_GOOGLE_CLIENT_ID=<google_client_id>
 Start the development server:
 
 ```bash
-npm run dev
+dashai-client dev
 ```
+
+This command will automatically:
+- Install dependencies using yarn (if not already installed)
+- Check for required environment variables
+- Start the development server
 
 ## Building
 
 To create a production version of your app:
 
 ```bash
-npm run build
+yarn build
 ```
 
-You can preview the production build with `npm run preview`.
+You can preview the production build with `yarn preview`.
 
 ## Features
 
