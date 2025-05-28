@@ -93,7 +93,7 @@
 
 <style>
 	.email-list-item {
-		padding: 12px 16px;
+		padding: 8px 12px;
 		color: var(--color-primary-active-button-highlight);
 		cursor: pointer;
 		height: 120px;
@@ -129,7 +129,7 @@
 
 	.sender-container {
 		display: flex;
-		width: 210px;
+		width: 180px;
 		flex-direction: row;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -154,21 +154,26 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		width: 80px;
 	}
 
 	.date-text {
-		padding-left: 0.5rem;
-		padding-right: 0.5rem;
+		padding-left: 4px;
+		padding-right: 4px;
 		font-size: var(--text-subheader);
 	}
 
 	.summary-container {
 		display: flex;
-		padding: 4px;
+		padding: 2px;
+		height: 80px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.icon-padding {
-		padding: 0 6px 0 4px;
+		padding: 0 4px 0 2px;
 	}
 
 	/* .separator:hover {
@@ -189,13 +194,16 @@
 		max-width: 230px;
 		text-overflow: ellipsis;
 		overflow: hidden;
-		white-space: nowrap;
-		text-wrap: wrap;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		white-space: normal;
 		font-size: var(--text-subheader);
+		line-height: 1.6;
 	}
 
 	.subject-padding {
-		padding: 4px;
+		padding: 2px;
 	}
 
 	.subject-text {
@@ -212,7 +220,7 @@
 		display: flex;
 		flex-direction: row;
 		gap: 6px;
-		padding: 4px;
+		padding: 2px;
 		height: 22px;
 	}
 </style>
