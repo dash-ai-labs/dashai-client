@@ -96,7 +96,7 @@
 		padding: 8px 12px;
 		color: var(--color-primary-active-button-highlight);
 		cursor: pointer;
-		height: 100px;
+		height: 120px;
 		align-content: center;
 		border-radius: 8px;
 		margin: 4px 0;
@@ -129,7 +129,7 @@
 
 	.sender-container {
 		display: flex;
-		width: 210px;
+		width: 180px;
 		flex-direction: row;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -154,17 +154,22 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		width: 80px;
 	}
 
 	.date-text {
-		padding-left: 0.5rem;
-		padding-right: 0.5rem;
+		padding-left: 4px;
+		padding-right: 4px;
 		font-size: var(--text-subheader);
 	}
 
 	.summary-container {
 		display: flex;
 		padding: 2px;
+		height: 80px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.icon-padding {
@@ -189,9 +194,12 @@
 		max-width: 230px;
 		text-overflow: ellipsis;
 		overflow: hidden;
-		white-space: nowrap;
-		text-wrap: wrap;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		white-space: normal;
 		font-size: var(--text-subheader);
+		line-height: 1.6;
 	}
 
 	.subject-padding {
