@@ -162,7 +162,6 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		padding: 0.15rem;
 	}
 	.right-separator {
 		border-right: 1px solid var(--color-secondary-inactive-button-highlight);

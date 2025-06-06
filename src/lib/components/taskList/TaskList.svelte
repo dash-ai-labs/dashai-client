@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Task } from '$lib/types';
+	import { TaskStatus, type Task } from '$lib/types';
 	import { get } from 'svelte/store';
 	import { emailServiceState } from '$lib/store';
 	import { onMount } from 'svelte';
@@ -8,11 +8,25 @@
 	import { slide } from 'svelte/transition';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
-	const toggleOptions = ['To Do', 'Archived'];
+	const toggleOptions = [
+		{
+			label: 'To Do',
+			status: TaskStatus.PENDING
+		},
+		{
+			label: 'Completed',
+			status: TaskStatus.COMPLETED
+		},
+		{
+			label: 'Archived',
+			status: TaskStatus.ARCHIVED
+		}
+	];
 	let selectedToggleOption = $state(0);
 
 	function handleToggleChange(index: number) {
 		selectedToggleOption = index;
+		refreshTaskListAction(toggleOptions[index].status);
 	}
 
 	let taskList = $state<Task[]>(get(emailServiceState).taskList);
@@ -86,7 +100,8 @@
 	<div class="task-list-header">
 		<RadioGroup
 			active="bg-primary-container"
-			border="0"
+			border="1px solid"
+			borderColor="border-primary-gray"
 			rounded={'rounded-md'}
 			size={'sm'}
 			background={'bg-primary-dark-gray'}
@@ -94,9 +109,9 @@
 			{#each toggleOptions as option, index}
 				<RadioItem
 					bind:group={selectedToggleOption}
-					name={option}
+					name={option.label}
 					value={index}
-					on:click={() => handleToggleChange(index)}>{option}</RadioItem
+					on:click={() => handleToggleChange(index)}>{option.label}</RadioItem
 				>
 			{/each}
 		</RadioGroup>
@@ -137,12 +152,8 @@
 
 	.task-list-header {
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
-	}
-
-	.task-list-header-radio-group {
-		width: 100%;
 	}
 
 	.task-list-empty {
