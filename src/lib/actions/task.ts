@@ -16,13 +16,13 @@ const createTaskAction = async (email_id: string) => {
 	return task;
 };
 
-const refreshTaskListAction = async () => {
+const refreshTaskListAction = async (status?: TaskStatus) => {
 	const { emailAccount } = get(emailServiceState);
 	const userId = get(user)?.id.toString();
 	const taskList = await getTaskList({
 		user: userId,
 		email_account_id: emailAccount.id,
-		status: TaskStatus.PENDING,
+		status: status || TaskStatus.PENDING,
 		page: 1,
 		limit: 10
 	});

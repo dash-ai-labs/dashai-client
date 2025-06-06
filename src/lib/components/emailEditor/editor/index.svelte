@@ -117,7 +117,8 @@
 						const reader = await writeEmailSuggestion({
 							user: get(user)?.id.toString(),
 							subject: email?.subject,
-							body: e.editor.storage.markdown.getMarkdown()
+							body: e.editor.storage.markdown.getMarkdown(),
+							writingStyle: get(emailServiceState)?.emailSettings[0].email_preferences.writing_style
 						});
 						if (reader) {
 							readStream(reader);
