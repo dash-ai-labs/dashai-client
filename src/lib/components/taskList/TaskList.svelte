@@ -117,7 +117,7 @@
 		</RadioGroup>
 	</div>
 	<div class="task-list-body">
-		{#if taskList.length > 0}
+		{#if taskList && taskList.length > 0}
 			{#each taskList as task}
 				<TaskItem {task} />
 			{/each}

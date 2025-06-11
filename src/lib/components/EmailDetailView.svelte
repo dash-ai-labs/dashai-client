@@ -306,7 +306,6 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		justify-content: flex-end;
 	}
 	/* Converted Tailwind styles */
 	.email-detail-container {
