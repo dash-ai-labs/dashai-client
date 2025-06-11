@@ -32,8 +32,8 @@
 					<h2>Want to skip the line?</h2>
 					<div class="waitlist-skip-info">
 						<p>
-							Post about what feature got you excited to join Dash AI on X (formerly Twitter) and
-							we'll approve you instantly.
+							Post about what feature got you excited to join Dash AI on X (formerly Twitter) or
+							LinkedIn and we'll approve you instantly.
 						</p>
 						<p>
 							Tag <a href="https://twitter.com/getDashAI" target="_blank" rel="noopener noreferrer"
@@ -49,6 +49,15 @@
 						rel="noopener noreferrer"
 					>
 						Post on <img src="/images/x_logo.png" alt="X" class="twitter-logo" />
+					</a>
+
+					<a
+						href="https://www.linkedin.com/shareArticle?mini=true&url=https://getdash.ai"
+						class="linkedin-btn"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Post on <img src="/images/linkedin_logo.png" alt="LinkedIn" class="linkedin-logo" />
 					</a>
 				</div>
 			</div>
@@ -193,6 +202,39 @@
 	}
 
 	.twitter-logo {
+		width: 30px;
+		height: 30px;
+		margin-left: 6px;
+	}
+
+	.linkedin-btn {
+		display: inline-block;
+		background-color: var(--color-primary-hazy-black);
+		color: white;
+		padding: 12px 24px;
+		border-radius: 30px;
+		font-weight: 600;
+		text-align: center;
+		transition: all 0.2s;
+		text-decoration: none;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		width: fit-content;
+		justify-content: center;
+		align-items: center;
+		margin-top: 10px;
+	}
+
+	.linkedin-btn:hover {
+		color: white;
+		background-color: var(--color-primary-container);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px var(--color-primary-dark-gray);
+		text-decoration: none;
+	}
+
+	.linkedin-logo {
 		width: 30px;
 		height: 30px;
 		margin-left: 6px;
