@@ -213,28 +213,38 @@ export interface ComposeEmail {
 }
 
 export enum WritingStyle {
-	CASUAL = 'casual',
-	LAWYER = 'lawyer',
-	SCIENTIST = 'scientist',
-	MARKETER = 'marketer',
-	WRITER = 'writer',
 	ACCOUNTANT = 'accountant',
+	CASUAL = 'casual',
+	FOUNDER = 'founder',
 	GENZ = 'genz',
-	MANAGER = 'manager'
+	LAWYER = 'lawyer',
+	MANAGER = 'manager',
+	MARKETER = 'marketer',
+	PRODUCT_MANAGER = 'product_manager',
+	SCIENTIST = 'scientist',
+	WRITER = 'writer'
 }
 
 export const writingStyles = {
+	[WritingStyle.ACCOUNTANT]: {
+		label: 'Accountant',
+		description: 'Professional and accurate. Focuses on numbers and details.'
+	},
 	[WritingStyle.CASUAL]: {
 		label: 'Casual',
 		description: 'Casual and friendly tone.'
 	},
+	[WritingStyle.FOUNDER]: {
+		label: 'Founder',
+		description: 'Visionary and strategic. Focuses on growth and innovation.'
+	},
+	[WritingStyle.GENZ]: {
+		label: 'Gen Z',
+		description: 'Peak brainrot. Fun, casual and uses latest slangs.'
+	},
 	[WritingStyle.LAWYER]: {
 		label: 'Lawyer',
 		description: 'Formal and professional. Focuses on clarity and precision.'
-	},
-	[WritingStyle.SCIENTIST]: {
-		label: 'Scientist',
-		description: 'Technical and precise. Focuses on facts and data.'
 	},
 	[WritingStyle.MANAGER]: {
 		label: 'Manager',
@@ -245,16 +255,16 @@ export const writingStyles = {
 		label: 'Marketer',
 		description: 'Persuasive and engaging. Focuses on the benefits and upsides.'
 	},
+	[WritingStyle.PRODUCT_MANAGER]: {
+		label: 'Product Manager',
+		description: 'User-focused and analytical. Balances technical and business needs.'
+	},
+	[WritingStyle.SCIENTIST]: {
+		label: 'Scientist',
+		description: 'Technical and precise. Focuses on facts and data.'
+	},
 	[WritingStyle.WRITER]: {
 		label: 'Writer',
 		description: 'Creative and engaging. Focuses on storytelling and engagement.'
-	},
-	[WritingStyle.ACCOUNTANT]: {
-		label: 'Accountant',
-		description: 'Professional and accurate. Focuses on numbers and details.'
-	},
-	[WritingStyle.GENZ]: {
-		label: 'Gen Z',
-		description: 'Peak brainrot. Fun, casual and uses latest slangs.'
 	}
 };

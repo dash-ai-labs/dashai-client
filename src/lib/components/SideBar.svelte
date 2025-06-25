@@ -289,7 +289,7 @@
 
 	.badge {
 		border-radius: 12px;
-		background-color: var(--color-secondary-active-button);
+		background-color: var(--color-primary-button);
 		color: white;
 		padding: 2px 8px;
 		font-size: 12px;
