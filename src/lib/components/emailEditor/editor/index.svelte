@@ -242,7 +242,7 @@
 		height: 24px;
 		border: 3px solid rgba(0, 0, 0, 0.1);
 		border-radius: 50%;
-		border-top-color: #e8e8e8;
+		border-top-color: var(--color-font-gray);
 		animation: spin 0.8s linear infinite;
 	}
 
@@ -255,8 +255,8 @@
 	:global(.quoted-email) {
 		padding-left: 16px;
 		margin-left: 8px;
-		border-left: 2px solid #cccccc;
-		color: #505050;
+		border-left: 2px solid var(--color-secondary-separator);
+		color: var(--color-font-gray);
 	}
 
 	#editor {

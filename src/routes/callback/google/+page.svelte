@@ -23,9 +23,10 @@
 			-apple-system,
 			BlinkMacSystemFont,
 			sans-serif;
-		color: #333;
+		color: var(--color-font-black);
 		text-align: center;
 		padding: 0 1rem;
+		background-color: var(--color-primary-black);
 	}
 
 	h2 {

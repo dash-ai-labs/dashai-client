@@ -1,6 +1,8 @@
 import { writable, type Writable } from 'svelte/store';
 import type { SearchEntry, User, EmailServiceState, ComposeEmail } from './types';
 import { ComposeEmailMode } from './types';
+
+export type Theme = 'light' | 'dark';
 // Define the type for the user store with optional initial value
 function persistentWritable(key: string, initialValue: any): Writable<any> {
 	// Create a writable store with the initial value
@@ -81,6 +83,9 @@ export const emailServiceState: Writable<EmailServiceState> = persistentWritable
 		showEmailHeader: true
 	}
 );
+
+// Theme store - defaults to light mode
+export const theme: Writable<Theme> = persistentWritable('theme', 'light');
 
 // Reset currentEmail on app load
 if (typeof window !== 'undefined') {

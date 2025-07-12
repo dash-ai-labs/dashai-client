@@ -136,8 +136,8 @@
 		width: 18rem;
 		overflow-y: auto;
 		border-radius: 0.375rem;
-		border: 1px solid #e5e7eb;
-		background-color: white;
+		border: 1px solid var(--color-primary-dark-gray);
+		background-color: var(--color-primary-container);
 		padding: 0.5rem 0.25rem;
 		box-shadow:
 			0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -155,16 +155,16 @@
 		padding: 0.25rem 0.5rem;
 		text-align: left;
 		font-size: 0.875rem;
-		color: #1c1917;
+		color: var(--color-font-black);
 	}
 
 	.command-item:hover {
-		background-color: #f5f5f4;
+		background-color: var(--color-secondary-active-button-background);
 	}
 
 	.command-item.selected {
-		background-color: #f5f5f4;
-		color: #1c1917;
+		background-color: var(--color-secondary-active-button-background);
+		color: var(--color-font-black);
 	}
 
 	.icon-container {
@@ -174,8 +174,8 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 0.375rem;
-		border: 1px solid #e5e7eb;
-		background-color: white;
+		border: 1px solid var(--color-primary-dark-gray);
+		background-color: var(--color-primary-container);
 	}
 
 	.item-title {
@@ -184,6 +184,6 @@
 
 	.item-description {
 		font-size: 0.75rem;
-		color: #78716c;
+		color: var(--color-font-gray);
 	}
 </style>

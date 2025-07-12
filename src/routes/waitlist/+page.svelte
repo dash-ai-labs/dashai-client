@@ -73,7 +73,11 @@
 		min-height: 100vh;
 		width: 100%;
 		padding: 20px;
-		background: linear-gradient(135deg, var(--color-primary-hazy-black), #1a1a1a);
+		background: linear-gradient(
+			135deg,
+			var(--color-primary-hazy-black),
+			var(--color-primary-black)
+		);
 	}
 	.waitlist-image-container {
 		display: flex;
@@ -128,7 +132,7 @@
 		font-size: 28px;
 		font-weight: 700;
 		margin-bottom: 8px;
-		background: linear-gradient(90deg, #fff, #bbb);
+		background: linear-gradient(90deg, var(--color-font-black), var(--color-font-gray));
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
@@ -138,12 +142,12 @@
 		font-size: 20px;
 		font-weight: 600;
 		margin-bottom: 16px;
-		color: #f0f0f0;
+		color: var(--color-font-black);
 	}
 
 	p {
 		margin-bottom: 16px;
-		color: #e0e0e0;
+		color: var(--color-font-gray);
 	}
 
 	.divider {
@@ -165,13 +169,13 @@
 	}
 
 	a {
-		color: #3a9bf4;
+		color: var(--color-primary-blue);
 		text-decoration: none;
 		transition: color 0.2s;
 	}
 
 	a:hover {
-		color: #5daefd;
+		color: var(--color-primary-light-blue);
 		text-decoration: underline;
 	}
 

@@ -6,6 +6,7 @@
 	import ErrorModal from '$lib/components/ErrorModal.svelte';
 	import { Toast } from '@skeletonlabs/skeleton';
 	import TaskList from '$lib/components/taskList/TaskList.svelte';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -24,6 +25,9 @@
 	<SideBar {handleNavigation} />
 	<!-- Main Content -->
 	<main class="main-content">
+		<div class="content-header">
+			<ThemeToggle />
+		</div>
 		<div class="content">
 			<ErrorModal
 				bind:showModal={$showErrorModal}
@@ -42,8 +46,8 @@
 <style>
 	.dashboard {
 		display: flex;
-		background-color: #1a1a1a;
-		color: white;
+		background-color: var(--color-primary-black);
+		color: var(--color-font-black);
 		width: 100%;
 		height: 100vh;
 	}
@@ -52,6 +56,15 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.content-header {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		padding: 0.75rem 1.5rem;
+		border-bottom: 1px solid var(--color-secondary-separator);
+		background-color: var(--color-primary-container);
 	}
 
 	.content {
@@ -82,8 +95,9 @@
 		padding-inline: 10px;
 		padding-block: 5px;
 		border: 1px solid var(--color-primary-dark-gray);
+		color: var(--color-font-black);
 	}
 	.notification-button:hover {
-		background-color: var(--color-primary-dark-gray);
+		background-color: var(--color-secondary-active-button-background);
 	}
 </style>

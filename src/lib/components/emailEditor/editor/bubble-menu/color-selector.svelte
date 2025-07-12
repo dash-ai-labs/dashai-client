@@ -260,7 +260,7 @@
 
 	.color-sample {
 		border-radius: 0.125rem;
-		border: 1px solid #e5e7eb;
+		border: 1px solid var(--color-primary-dark-gray);
 		padding: 0 0.25rem;
 		font-weight: 500;
 	}

@@ -65,7 +65,7 @@
           margin: 0;
           padding: 0;
           min-height: 100%;
-          background-color: #f0f0f0 !important;
+          background-color: var(--color-primary-container) !important;
         }
         body {
           padding: 20px;
@@ -82,7 +82,7 @@
             <meta name="viewport" content="width=device-width, initial-scale=1">
             ${baseStyles}
         </head>
-        <body>
+        <body style="background-color: var(--color-primary-container);">
             ${DOMPurify.sanitize(content, {
 							ADD_TAGS: ['style'],
 							ADD_ATTR: ['style', 'nonce'],
@@ -109,13 +109,13 @@
                 body {
                     font-family: Arial, sans-serif;
                     line-height: 1.6;
-                    color: #333;
+                    color: var(--color-font-black);
                     max-width: 800px;
                     white-space: pre-wrap;
                     word-wrap: break-word;
                 }
                 a {
-                    color: #0066cc;
+                    color: var(--color-primary-blue);
                     text-decoration: none;
                 }
                 a:hover {
@@ -242,7 +242,7 @@
 						title={email.subject}
 						sandbox="allow-same-origin allow-popups"
 						class="email-iframe"
-						style="background-color: #f0f0f0;"
+						style="background-color: var(--color-primary-container);"
 					></iframe>
 
 					<!-- Fixed position buttons that will always be visible -->
@@ -355,7 +355,7 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 9999px;
-		background-color: #16a34a;
+		background-color: var(--color-primary-green);
 		font-weight: 500;
 		color: white;
 	}
@@ -378,7 +378,7 @@
 	.reply-to {
 		font-size: 0.875rem;
 		line-height: 1.25rem;
-		color: #9ca3af;
+		color: var(--color-font-gray);
 	}
 
 	.header-actions {
@@ -409,7 +409,7 @@
 		text-align: right;
 		font-size: 0.875rem;
 		line-height: 1.25rem;
-		color: #9ca3af;
+		color: var(--color-font-gray);
 	}
 	.add-labels-button {
 		border-radius: 4px;

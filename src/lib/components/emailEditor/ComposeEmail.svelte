@@ -309,7 +309,7 @@
 					<meta charset="utf-8">
 					<meta name="viewport" content="width=device-width, initial-scale=1">
 				</head>
-				<body style="background-color: #f0f0f0;">
+				<body style="background-color: var(--color-primary-container);">
 					${DOMPurify.sanitize(content, {
 						ADD_TAGS: ['style'],
 						ADD_ATTR: ['style']
@@ -334,13 +334,13 @@
 							font-family: Arial, sans-serif;
 							line-height: 1.6;
 							margin: 20px;
-							color: #333;
+							color: var(--color-font-black);
 							max-width: 800px;
 							white-space: pre-wrap;
 							word-wrap: break-word;
 						}
 						a {
-							color: #0066cc;
+							color: var(--color-primary-blue);
 							text-decoration: none;
 						}
 						a:hover {
@@ -348,7 +348,7 @@
 						}
 					</style>
 				</head>
-				<body style="background-color: #f0f0f0;">
+				<body style="background-color: var(--color-primary-container);">
 					${DOMPurify.sanitize(formattedContent)}
 				</body>
 				</html>

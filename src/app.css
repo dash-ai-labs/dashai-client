@@ -4,7 +4,7 @@
 
 /* CSS Variables */
 :root {
-	/* Novel Editor Variables */
+	/* Novel Editor Variables - Light Theme (Default) */
 	--novel-black: rgb(0 0 0);
 	--novel-white: rgb(255 255 255);
 	--novel-stone-50: rgb(250 250 249);
@@ -30,7 +30,90 @@
 
 	--font-title: 'Cal Sans', sans-serif;
 
-	/* Primary Colors */
+	/* Light Theme Colors (Default) */
+	--color-primary-red: #ff453a;
+	--color-primary-orange: #ff9f0a;
+	--color-primary-yellow: #ffd60a;
+	--color-primary-green: #32d74b;
+	--color-primary-light-blue: #64d2ff;
+	--color-primary-blue: #0a84ff;
+	--color-primary-purple: #5e5ce6;
+	--color-primary-violet: #bf5af2;
+	--color-primary-pink: #ff375f;
+	--color-primary-hazy-black: #f8f9fa;
+	--color-primary-black: #ffffff;
+	--color-primary-container: #ffffff;
+	--color-primary-dark-container: #f8f9fa;
+	--color-primary-light-container: #f1f3f4;
+	--color-primary-button: #2658c9;
+	--color-primary-task-button: #28328c;
+	--color-primary-button-hover: #5a7cfa;
+	--color-primary-active-button-highlight: #1a1a1a;
+	--color-primary-inactive-button-highlight: #3a3a3a;
+	--color-primary-brighter: hsl(204, 70%, 63%);
+	--color-primary-light-gray: #3d4249;
+	--color-primary-gray: #6b7280;
+	--color-primary-dark-gray: #e5e7eb;
+	--color-primary-white: #1f2937;
+
+	/* Light Theme Font Colors */
+	--color-font-black: #1f2937;
+	--color-font-dark-gray: #6b7280;
+	--color-font-gray: #374151;
+	--color-font-light-gray: #111827;
+
+	/* Light Theme Secondary Colors */
+	--color-secondary-red: #dc2626;
+	--color-secondary-orange: #ea580c;
+	--color-secondary-green: #16a34a;
+	--color-secondary-light-blue: #0284c7;
+	--color-secondary-blue: #2563eb;
+	--color-secondary-violet: #7c3aed;
+	--color-secondary-container: #f9fafb;
+	--color-secondary-active-button: #5a7cfa;
+	--color-secondary-active-button-highlight: #1e40af;
+	--color-secondary-active-button-background: #f3f4f6;
+	--color-secondary-active-button-background-hover: #e5e7eb;
+	--color-secondary-inactive-button-highlight: #374151;
+	--color-secondary-separator: #d1d5db;
+
+	/* Font Sizes */
+	--text-h1: 36px;
+	--text-h2: 30px;
+	--text-h3: 24px;
+	--text-h4: 20px;
+	--text-section-header: 16px;
+	--text-body: 14px;
+	--text-subheader: 12px;
+}
+
+/* Dark Theme */
+.dark-theme {
+	/* Novel Editor Variables - Dark Theme */
+	--novel-black: rgb(255 255 255);
+	--novel-white: rgb(25 25 25);
+	--novel-stone-50: rgb(35 35 34);
+	--novel-stone-100: rgb(41 37 36);
+	--novel-stone-200: rgb(66 69 71);
+	--novel-stone-300: rgb(112 118 123);
+	--novel-stone-400: rgb(160 167 173);
+	--novel-stone-500: rgb(193 199 204);
+	--novel-stone-600: rgb(212 217 221);
+	--novel-stone-700: rgb(229 232 235);
+	--novel-stone-800: rgb(232 234 235);
+	--novel-stone-900: rgb(240, 240, 241);
+
+	--novel-highlight-default: #000000;
+	--novel-highlight-purple: #3f2c4b;
+	--novel-highlight-red: #5c1a1a;
+	--novel-highlight-yellow: #5c4b1a;
+	--novel-highlight-blue: #1a3d5c;
+	--novel-highlight-green: #1a5c20;
+	--novel-highlight-orange: #5c3a1a;
+	--novel-highlight-pink: #5c1a3a;
+	--novel-highlight-gray: #3a3a3a;
+
+	/* Dark Theme Colors */
 	--color-primary-red: #ff453a;
 	--color-primary-orange: #ff9f0a;
 	--color-primary-yellow: #ffd60a;
@@ -56,13 +139,13 @@
 	--color-primary-dark-gray: #3d4249;
 	--color-primary-white: #f0f0f0;
 
-	/* Font Colors */
-	--color-font-black: #141414;
+	/* Dark Theme Font Colors */
+	--color-font-black: #f0f0f0;
 	--color-font-dark-gray: #89929b;
 	--color-font-gray: #c6cdd5;
 	--color-font-light-gray: #ecf2f8;
 
-	/* Secondary Colors */
+	/* Dark Theme Secondary Colors */
 	--color-secondary-red: #fa7970;
 	--color-secondary-orange: #faa356;
 	--color-secondary-green: #7ce38b;
@@ -76,41 +159,6 @@
 	--color-secondary-active-button-background-hover: #5a6a87;
 	--color-secondary-inactive-button-highlight: #c4c6d0;
 	--color-secondary-separator: #4d4d4d;
-
-	/* Font Sizes */
-	--text-h1: 36px;
-	--text-h2: 30px;
-	--text-h3: 24px;
-	--text-h4: 20px;
-	--text-section-header: 16px;
-	--text-body: 14px;
-	--text-subheader: 12px;
-}
-
-/* Dark Theme */
-.dark-theme {
-	--novel-black: rgb(255 255 255);
-	--novel-white: rgb(25 25 25);
-	--novel-stone-50: rgb(35 35 34);
-	--novel-stone-100: rgb(41 37 36);
-	--novel-stone-200: rgb(66 69 71);
-	--novel-stone-300: rgb(112 118 123);
-	--novel-stone-400: rgb(160 167 173);
-	--novel-stone-500: rgb(193 199 204);
-	--novel-stone-600: rgb(212 217 221);
-	--novel-stone-700: rgb(229 232 235);
-	--novel-stone-800: rgb(232 234 235);
-	--novel-stone-900: rgb(240, 240, 241);
-
-	--novel-highlight-default: #000000;
-	--novel-highlight-purple: #3f2c4b;
-	--novel-highlight-red: #5c1a1a;
-	--novel-highlight-yellow: #5c4b1a;
-	--novel-highlight-blue: #1a3d5c;
-	--novel-highlight-green: #1a5c20;
-	--novel-highlight-orange: #5c3a1a;
-	--novel-highlight-pink: #5c1a3a;
-	--novel-highlight-gray: #3a3a3a;
 }
 
 /* Remove focus outlines globally */
@@ -160,6 +208,11 @@ textarea:focus,
 /* Typography */
 body {
 	font-family: 'Inter', sans-serif;
+	background-color: var(--color-primary-black);
+	color: var(--color-font-black);
+	transition:
+		background-color 0.3s ease,
+		color 0.3s ease;
 }
 
 .font-inter {
@@ -294,11 +347,13 @@ body {
 	margin-left: 0.5rem;
 	height: 1.5rem;
 	width: 1.5rem;
+	color: var(--color-font-gray);
 }
 
 .dropdown-menu {
 	border-radius: 0.5rem;
 	background-color: var(--color-primary-container);
+	border: 1px solid var(--color-primary-dark-gray);
 }
 
 .dropdown-item {
@@ -306,6 +361,7 @@ body {
 	flex-direction: row;
 	justify-content: center;
 	background-color: var(--color-primary-container);
+	color: var(--color-font-black);
 }
 
 .dropdown-item:hover {
@@ -319,6 +375,8 @@ body {
 /* ProseMirror Styles */
 .ProseMirror {
 	height: 100%;
+	background-color: var(--color-primary-container);
+	color: var(--color-font-black);
 }
 
 .ProseMirror .is-editor-empty:first-child::before {
@@ -438,6 +496,9 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 
 .toast-message {
 	border-radius: 4px;
+	background-color: var(--color-primary-container);
+	color: var(--color-font-black);
+	border: 1px solid var(--color-primary-dark-gray);
 }
 
 .inbox-container {
@@ -446,6 +507,7 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 	width: 100%;
 	flex-direction: column;
 	overflow: hidden;
+	background-color: var(--color-primary-black);
 }
 
 .inbox-content {
@@ -461,16 +523,17 @@ ul[data-type='taskList'] li[data-checked='true'] > div > p {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	color: var(--color-primary-light-gray);
+	color: var(--color-font-black);
 }
 .settings-detail-header {
 	font-weight: 600;
 }
 .settings-detail-description {
+	color: var(--color-font-gray);
 }
 
 .separator {
 	width: 100%;
 	height: 1px;
-	background-color: var(--color-primary-dark-gray);
+	background-color: var(--color-secondary-separator);
 }

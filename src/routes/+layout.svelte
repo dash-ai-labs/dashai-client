@@ -2,7 +2,7 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { initializeLayout } from '$lib/layout';
-	import { nonce } from '$lib/store';
+	import { nonce, theme, type Theme } from '$lib/store';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { storePopup, type ModalComponent, initializeStores, Modal } from '@skeletonlabs/skeleton';
 	import NewEmailLabelComponent from '$lib/components/NewEmailLabelComponent.svelte';
@@ -36,6 +36,17 @@
 		initializeLayout();
 	});
 
+	// Initialize theme separately
+	onMount(() => {
+		const unsubscribe = theme.subscribe((currentTheme: Theme) => {
+			if (typeof document !== 'undefined') {
+				document.documentElement.className = currentTheme === 'dark' ? 'dark-theme' : '';
+			}
+		});
+
+		return unsubscribe;
+	});
+
 	const modalRegistry: Record<string, ModalComponent> = {
 		newEmailLabelComponent: { ref: NewEmailLabelComponent },
 		emailAISearchComponent: { ref: EmailAISearchComponent },
@@ -60,8 +71,8 @@
 <style nonce="{data.nonce}">
 	.page {
 		height: 100vh;
-		background-color: #1a1a1a;
-		color: white;
+		background-color: var(--color-primary-black);
+		color: var(--color-font-black);
 		width: 100%;
 	}
 
@@ -71,8 +82,8 @@
 		align-items: center;
 		justify-content: center;
 		height: 100vh;
-		background-color: #1a1a1a;
-		color: white;
+		background-color: var(--color-primary-black);
+		color: var(--color-font-black);
 		padding: 1rem;
 		text-align: center;
 	}
