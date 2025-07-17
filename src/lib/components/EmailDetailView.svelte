@@ -216,8 +216,48 @@
 									</div>
 								</div>
 							</div>
+							<div>
+								<div role="listbox" aria-label="file attachments" class="attachment-list">
+									{#each email.attachments as attachment}
+										<a
+											href={attachment.url}
+											download
+											title="Download"
+											class="attachment-item"
+											role="option"
+											aria-label={attachment.name}
+										>
+											<!-- Icon -->
+											<img class="attachment-icon" src={attachment.url} />
+
+											<!-- Name + size -->
+											<span class="attachment-name" title={attachment.name}>{attachment.name}</span>
+											{#if attachment.size}
+												<span class="attachment-size">{attachment.size} KB</span>
+											{/if}
+
+											<!-- Download icon -->
+											<span class="download-btn">
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													viewBox="0 0 384 512"
+													width="16"
+													height="16"
+													fill="currentColor"
+													aria-hidden="true"
+												>
+													<path
+														d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM216 232l0 102.1 31-31c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-72 72c-9.4 9.4-24.6 9.4-33.9 0l-72-72c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l31 31L168 232c0-13.3 10.7-24 24-24s24 10.7 24 24z"
+													/>
+												</svg>
+											</span>
+										</a>
+									{/each}
+								</div>
+							</div>
 							<p class="reply-to">Reply To: {email.sender[0]}</p>
 						</div>
+
 						<div class="header-actions">
 							<span class="date-display">{formatDate(email.date)}</span>
 						</div>
@@ -537,5 +577,53 @@
 
 	.empty-text {
 		color: var(--color-primary-gray);
+	}
+
+	.attachment-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.attachment-item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 8px 10px;
+		background: var(--color-primary-container); /* subtle dark background */
+		border: 2px solid var(--color-secondary-active-button-background); /* dark blue outline */
+		border-radius: 8px;
+		transition:
+			box-shadow 0.2s ease,
+			border-color 0.2s ease;
+		width: 220px;      /* fixed width */
+  		height: 50px;      /* fixed height */
+  		box-sizing: border-box;
+	}
+
+	.attachment-item:hover {
+		border-color: var(--color-primary-button); /* brighter blue on hover */
+		box-shadow: 0 0 6px var(--color-primary-button);
+	}
+
+	.attachment-icon {
+		width: 24px;
+		height: 24px;
+		object-fit: cover;
+		border-radius: 4px;
+	}
+
+	.attachment-name {
+		flex: 1;
+		font-size: 14px;
+		color: var(--color-font-light-gray);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.attachment-size {
+		font-size: 12px;
+		color: var(--color-font-gray);
 	}
 </style>
