@@ -21,7 +21,7 @@
 ## Installation
 
 0. Prerequisite
-    nvm >= 17.0.0
+    Node >= 17.0.0
 
 1. Clone the repository:
 ```bash
