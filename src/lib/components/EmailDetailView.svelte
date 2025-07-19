@@ -185,6 +185,63 @@
 		placement: 'bottom',
 		closeQuery: ''
 	};
+
+	const icons = {
+		pdf: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path fill="currentColor" d="M2.5 6.5V6H2v.5zm4 0V6H6v.5zm0 4H6v.5h.5zm7-7h.5v-.207l-.146-.147zm-3-3l.354-.354L10.707 0H10.5zM2.5 7h1V6h-1zm.5 4V8.5H2V11zm0-2.5v-2H2v2zm.5-.5h-1v1h1zm.5-.5a.5.5 0 0 1-.5.5v1A1.5 1.5 0 0 0 5 7.5zM3.5 7a.5.5 0 0 1 .5.5h1A1.5 1.5 0 0 0 3.5 6zM6 6.5v4h1v-4zm.5 4.5h1v-1h-1zM9 9.5v-2H8v2zM7.5 6h-1v1h1zM9 7.5A1.5 1.5 0 0 0 7.5 6v1a.5.5 0 0 1 .5.5zM7.5 11A1.5 1.5 0 0 0 9 9.5H8a.5.5 0 0 1-.5.5zM10 6v5h1V6zm.5 1H13V6h-2.5zm0 2H12V8h-1.5zM2 5V1.5H1V5zm11-1.5V5h1V3.5zM2.5 1h8V0h-8zm7.646-.146l3 3l.708-.708l-3-3zM2 1.5a.5.5 0 0 1 .5-.5V0A1.5 1.5 0 0 0 1 1.5zM1 12v1.5h1V12zm1.5 3h10v-1h-10zM14 13.5V12h-1v1.5zM12.5 15a1.5 1.5 0 0 0 1.5-1.5h-1a.5.5 0 0 1-.5.5zM1 13.5A1.5 1.5 0 0 0 2.5 15v-1a.5.5 0 0 1-.5-.5z"/></svg>',
+		excel:
+			'<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="#20744a" fill-rule="evenodd" d="M28.781 4.405h-10.13V2.018L2 4.588v22.527l16.651 2.868v-3.538h10.13A1.16 1.16 0 0 0 30 25.349V5.5a1.16 1.16 0 0 0-1.219-1.095m.16 21.126H18.617l-.017-1.889h2.487v-2.2h-2.506l-.012-1.3h2.518v-2.2H18.55l-.012-1.3h2.549v-2.2H18.53v-1.3h2.557v-2.2H18.53v-1.3h2.557v-2.2H18.53v-2h10.411Z"/><path fill="#20744a" d="M22.487 7.439h4.323v2.2h-4.323zm0 3.501h4.323v2.2h-4.323zm0 3.501h4.323v2.2h-4.323zm0 3.501h4.323v2.2h-4.323zm0 3.501h4.323v2.2h-4.323z"/><path fill="#fff" fill-rule="evenodd" d="m6.347 10.673l2.146-.123l1.349 3.709l1.594-3.862l2.146-.123l-2.606 5.266l2.606 5.279l-2.269-.153l-1.532-4.024l-1.533 3.871l-2.085-.184l2.422-4.663z"/></svg>',
+		word: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><defs><linearGradient id="vscodeIconsFileTypeWord0" x1="4.494" x2="13.832" y1="-1712.086" y2="-1695.914" gradientTransform="translate(0 1720)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2368c4"/><stop offset=".5" stop-color="#1a5dbe"/><stop offset="1" stop-color="#1146ac"/></linearGradient></defs><path fill="#41a5ee" d="M28.806 3H9.705a1.19 1.19 0 0 0-1.193 1.191V9.5l11.069 3.25L30 9.5V4.191A1.19 1.19 0 0 0 28.806 3"/><path fill="#2b7cd3" d="M30 9.5H8.512V16l11.069 1.95L30 16Z"/><path fill="#185abd" d="M8.512 16v6.5l10.418 1.3L30 22.5V16Z"/><path fill="#103f91" d="M9.705 29h19.1A1.19 1.19 0 0 0 30 27.809V22.5H8.512v5.309A1.19 1.19 0 0 0 9.705 29"/><path d="M16.434 8.2H8.512v16.25h7.922a1.2 1.2 0 0 0 1.194-1.191V9.391A1.2 1.2 0 0 0 16.434 8.2" opacity="0.1"/><path d="M15.783 8.85H8.512V25.1h7.271a1.2 1.2 0 0 0 1.194-1.191V10.041a1.2 1.2 0 0 0-1.194-1.191" opacity="0.2"/><path d="M15.783 8.85H8.512V23.8h7.271a1.2 1.2 0 0 0 1.194-1.191V10.041a1.2 1.2 0 0 0-1.194-1.191" opacity="0.2"/><path d="M15.132 8.85h-6.62V23.8h6.62a1.2 1.2 0 0 0 1.194-1.191V10.041a1.2 1.2 0 0 0-1.194-1.191" opacity="0.2"/><path fill="url(#vscodeIconsFileTypeWord0)" d="M3.194 8.85h11.938a1.193 1.193 0 0 1 1.194 1.191v11.918a1.193 1.193 0 0 1-1.194 1.191H3.194A1.19 1.19 0 0 1 2 21.959V10.041A1.19 1.19 0 0 1 3.194 8.85"/><path fill="#fff" d="M6.9 17.988q.035.276.046.481h.028q.015-.195.065-.47c.05-.275.062-.338.089-.465l1.255-5.407h1.624l1.3 5.326a8 8 0 0 1 .162 1h.022a8 8 0 0 1 .135-.975l1.039-5.358h1.477l-1.824 7.748h-1.727l-1.237-5.126q-.054-.222-.122-.578t-.084-.52h-.021q-.021.189-.084.561t-.1.552L7.78 19.871H6.024L4.19 12.127h1.5l1.131 5.418a5 5 0 0 1 .079.443"/></svg>',
+		ppt: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="#d33922" d="M18.536 2.321v2.863c3.4.019 7.357-.035 10.754.016c.642 0 .67.568.678 1.064c.054 5.942-.013 12.055.032 18c-.012.234-.006 1.1-.013 1.346c-.022.823-.434.859-1.257.884c-.132 0-.52.006-.648.012c-3.181-.016-6.362-.009-9.546-.009v3.182L2 27.134V4.873z"/><path fill="#fff" d="M18.536 6.138h10.5v19.4h-10.5V23h7.634v-1.275h-7.634v-1.59h7.634v-1.272h-7.631q.002-.936-.006-1.87a4.47 4.47 0 0 0 3.82-.375a4.35 4.35 0 0 0 1.959-3.474c-1.4-.01-2.793-.006-4.186-.006c0-1.384.016-2.767-.029-4.148c-.522.1-1.043.21-1.562.321V6.139"/><path fill="#d33922" d="M20.766 8.324a4.476 4.476 0 0 1 4.186 4.167c-1.4.016-2.793.01-4.189.01V8.324"/><path fill="#fff" d="M7.1 10.726c1.727.083 3.82-.684 5.252.611c1.371 1.664 1.008 4.724-1.024 5.719A4.7 4.7 0 0 1 9 17.348c0 1.244-.006 2.488 0 3.731q-.947-.082-1.893-.159c-.029-3.4-.035-6.8 0-10.2"/><path fill="#d33922" d="M8.993 12.446c.627-.029 1.4-.143 1.826.445a2.3 2.3 0 0 1 .041 2.087c-.363.655-1.183.592-1.816.668c-.067-1.066-.06-2.131-.051-3.2"/></svg>',
+		image:
+			'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M5 3h13a3 3 0 0 1 3 3v13a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m0 1a2 2 0 0 0-2 2v11.59l4.29-4.3l2.5 2.5l5-5L20 16V6a2 2 0 0 0-2-2zm4.79 13.21l-2.5-2.5L3 19a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-1.59l-5.21-5.2zM7.5 6A2.5 2.5 0 0 1 10 8.5A2.5 2.5 0 0 1 7.5 11A2.5 2.5 0 0 1 5 8.5A2.5 2.5 0 0 1 7.5 6m0 1A1.5 1.5 0 0 0 6 8.5A1.5 1.5 0 0 0 7.5 10A1.5 1.5 0 0 0 9 8.5A1.5 1.5 0 0 0 7.5 7"/></svg>',
+		default:
+			'<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="currentColor" d="M15 4v16.563L9.719 15.28L8.28 16.72l7 7l.719.687l.719-.687l7-7l-1.438-1.438l-5.28 5.28V4zM7 26v2h18v-2z"/></svg>'
+	};
+
+	function getFileTypeFromName(filename: string) {
+		if (!filename) return 'default';
+
+		// Get the last part after the last dot
+		const ext = filename.split('.').pop().toLowerCase();
+
+		if (ext === 'pdf') return 'pdf';
+		if (['xls', 'xlsx'].includes(ext)) return 'excel';
+		if (['doc', 'docx'].includes(ext)) return 'word';
+		if (['ppt', 'pptx'].includes(ext)) return 'ppt';
+		if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) return 'image';
+
+		return 'default';
+	}
+
+	function formatFileSize(kb: number) {
+		if (kb < 1024) {
+			return `${kb.toFixed(1)} KB`; // Less than 1MB → show in KB
+		}
+
+		const mb = kb / 1024;
+		if (mb < 1024) {
+			return `${mb.toFixed(1)} MB`; // Less than 1GB → show in MB
+		}
+
+		const gb = mb / 1024;
+		if (gb < 1024) {
+			return `${gb.toFixed(2)} GB`; // Less than 1TB → show in GB
+		}
+
+		const tb = gb / 1024;
+		return `${tb.toFixed(2)} TB`; // Huge files → show TB
+	}
+
+	function downloadAll(attachments) {
+		attachments.forEach((att) => {
+			const a = document.createElement('a');
+			a.href = att.url;
+			a.download = att.name || ''; // let browser keep original filename
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+		});
+	}
 </script>
 
 <div class="email-detail-container">
@@ -216,6 +273,7 @@
 									</div>
 								</div>
 							</div>
+							<p class="reply-to">Reply To: {email.sender[0]}</p>
 							<div>
 								<div role="listbox" aria-label="file attachments" class="attachment-list">
 									{#each email.attachments as attachment}
@@ -227,35 +285,23 @@
 											role="option"
 											aria-label={attachment.name}
 										>
-											<!-- Icon -->
-											<img class="attachment-icon" src={attachment.url} />
-
 											<!-- Name + size -->
 											<span class="attachment-name" title={attachment.name}>{attachment.name}</span>
 											{#if attachment.size}
-												<span class="attachment-size">{attachment.size} KB</span>
+												<span class="attachment-size">{formatFileSize(attachment.size)} KB</span>
 											{/if}
 
 											<!-- Download icon -->
 											<span class="download-btn">
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 384 512"
-													width="16"
-													height="16"
-													fill="currentColor"
-													aria-hidden="true"
-												>
-													<path
-														d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM216 232l0 102.1 31-31c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-72 72c-9.4 9.4-24.6 9.4-33.9 0l-72-72c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l31 31L168 232c0-13.3 10.7-24 24-24s24 10.7 24 24z"
-													/>
-												</svg>
+												{@html icons[getFileTypeFromName(attachment.name)]}
 											</span>
 										</a>
 									{/each}
+									<button class="download-all" onClick={() => downloadAll(email.attachments)}>
+										⬇ Download All
+									</button>
 								</div>
 							</div>
-							<p class="reply-to">Reply To: {email.sender[0]}</p>
 						</div>
 
 						<div class="header-actions">
@@ -583,6 +629,13 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
+
+		/* Prevent overflow */
+		max-width: 100%; /* never exceed parent */
+		max-height: 200px; /* limit height */
+		overflow-y: auto; /* scroll if needed */
+		padding: 4px;
+		box-sizing: border-box;
 	}
 
 	.attachment-item {
@@ -596,9 +649,9 @@
 		transition:
 			box-shadow 0.2s ease,
 			border-color 0.2s ease;
-		width: 220px;      /* fixed width */
-  		height: 50px;      /* fixed height */
-  		box-sizing: border-box;
+		width: 220px; /* fixed width */
+		height: 50px; /* fixed height */
+		box-sizing: border-box;
 	}
 
 	.attachment-item:hover {
@@ -614,13 +667,16 @@
 	}
 
 	.attachment-name {
-		flex: 1;
-		font-size: 14px;
-		color: var(--color-font-light-gray);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
+  	flex: 1;                    /* take up available space */
+  	font-size: 14px;
+  	color: var(--color-font-light-gray);
+		
+  	/* Truncate with ellipsis */
+  	white-space: nowrap;        /* keep on one line */
+  	overflow: hidden;           /* hide overflow */
+  	text-overflow: ellipsis;    /* add "..." */
+  	max-width: 140px;           /* limit width so it doesn’t push icons */
+}
 
 	.attachment-size {
 		font-size: 12px;
