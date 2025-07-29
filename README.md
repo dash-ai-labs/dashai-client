@@ -20,6 +20,9 @@
 
 ## Installation
 
+0. Prerequisite
+    Node >= 17.0.0
+
 1. Clone the repository:
 ```bash
 git clone https://github.com/dash-ai-labs/dashai-client.git

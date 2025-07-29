@@ -10,7 +10,16 @@
 	import EmailLabelChip from './EmailLabelChip.svelte';
 	import { setShowComposeEmail } from '$lib/actions/compose';
 	import AddEmailLabel from './AddEmailLabel.svelte';
-	import { IconPlus } from '@tabler/icons-svelte';
+	import {
+		IconDownload,
+		IconFile,
+		IconFileTypePdf,
+		IconFileTypePpt,
+		IconFileTypeXls,
+		IconFileWord,
+		IconPhoto,
+		IconPlus
+	} from '@tabler/icons-svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 
 	let element = $state<HTMLIFrameElement | null>(null);
@@ -185,6 +194,60 @@
 		placement: 'bottom',
 		closeQuery: ''
 	};
+
+	const icons = {
+		pdf: IconFileTypePdf,
+		excel: IconFileTypeXls,
+		word: IconFileWord,
+		ppt: IconFileTypePpt,
+		image: IconPhoto,
+		default: IconFile
+	};
+
+	function getFileTypeFromName(filename: string) {
+		if (!filename) return 'default';
+
+		// Get the last part after the last dot
+		const ext = filename.split('.').pop().toLowerCase();
+
+		if (ext === 'pdf') return 'pdf';
+		if (['xls', 'xlsx'].includes(ext)) return 'excel';
+		if (['doc', 'docx'].includes(ext)) return 'word';
+		if (['ppt', 'pptx'].includes(ext)) return 'ppt';
+		if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) return 'image';
+
+		return 'default';
+	}
+
+	function formatFileSize(bytes: number) {
+		const KB = 1024;
+		const MB = KB * 1024;
+		const GB = MB * 1024;
+		const TB = GB * 1024;
+
+		if (bytes < KB) {
+			return `${bytes} B`;
+		} else if (bytes < MB) {
+			return `${(bytes / KB).toFixed(1)} KB`;
+		} else if (bytes < GB) {
+			return `${(bytes / MB).toFixed(1)} MB`;
+		} else if (bytes < TB) {
+			return `${(bytes / GB).toFixed(1)} GB`;
+		} else {
+			return `${(bytes / TB).toFixed(1)} TB`;
+		}
+	}
+
+	function downloadAll(attachments) {
+		attachments.forEach((att) => {
+			const a = document.createElement('a');
+			a.href = att.url;
+			a.download = att.name || ''; // let browser keep original filename
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+		});
+	}
 </script>
 
 <div class="email-detail-container">
@@ -217,7 +280,43 @@
 								</div>
 							</div>
 							<p class="reply-to">Reply To: {email.sender[0]}</p>
+							{#if email.attachments && email.attachments.length > 1}
+								<div>
+									<div role="listbox" aria-label="file attachments" class="attachment-list">
+										{#each email.attachments as attachment}
+											<a
+												href={attachment.url}
+												download
+												title="Download"
+												class="attachment-item"
+												role="option"
+												aria-label={attachment.name}
+												><!-- Download icon -->
+												<span class="attachment-icon">
+													<svelte:component
+														this={icons[getFileTypeFromName(attachment.name)]}
+														size={20}
+														color="var(--color-primary-light-gray)"
+													/>
+												</span>
+												<!-- Name + size -->
+												<span class="attachment-name" title={attachment.name}
+													>{attachment.name}</span
+												>
+												{#if attachment.size}
+													<span class="attachment-size">{formatFileSize(attachment.size)}</span>
+												{/if}
+											</a>
+										{/each}
+										<button class="attachment-item" onclick={() => downloadAll(email.attachments)}
+											><IconDownload size={20} color="var(--color-primary-light-gray)" />
+											Download All
+										</button>
+									</div>
+								</div>
+							{/if}
 						</div>
+
 						<div class="header-actions">
 							<span class="date-display">{formatDate(email.date)}</span>
 						</div>
@@ -537,5 +636,66 @@
 
 	.empty-text {
 		color: var(--color-primary-gray);
+	}
+
+	.attachment-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+
+		/* Prevent overflow */
+		max-width: 100%; /* never exceed parent */
+		max-height: 200px; /* limit height */
+		overflow-y: auto; /* scroll if needed */
+		padding: 4px;
+		box-sizing: border-box;
+	}
+
+	.attachment-item {
+		display: flex;
+		align-items: center;
+		justify-content: left;
+		gap: 10px;
+		padding: 8px 10px;
+		background: var(--color-primary-container); /* subtle dark background */
+		border: 2px solid var(--color-secondary-active-button-background); /* dark blue outline */
+		border-radius: 8px;
+		transition:
+			box-shadow 0.2s ease,
+			border-color 0.2s ease;
+		width: 200px; /* fixed width */
+		height: 50px; /* fixed height */
+		text-wrap: wrap;
+		box-sizing: border-box;
+	}
+
+	.attachment-item:hover {
+		border: 1px solid var(--color-primary-button-hover);
+		box-shadow: 0 0 2px var(--color-primary-button-hover);
+		cursor: pointer;
+	}
+
+	.attachment-icon {
+		width: 24px;
+		height: 24px;
+		border-radius: 4px;
+		display: flex;
+		align-items: center;
+		justify-content: right;
+	}
+
+	.attachment-name {
+		flex: 1; /* take up available space */
+		font-size: 14px;
+		color: var(--color-font-light-gray);
+		/* Truncate with ellipsis */
+		white-space: nowrap; /* keep on one line */
+		overflow: hidden; /* hide overflow */
+		text-overflow: ellipsis; /* add "..." */
+	}
+
+	.attachment-size {
+		font-size: 12px;
+		color: var(--color-font-gray);
 	}
 </style>
