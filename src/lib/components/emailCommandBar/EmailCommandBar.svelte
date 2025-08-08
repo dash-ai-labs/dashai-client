@@ -78,8 +78,8 @@
 	};
 </script>
 
-<div class="command-bar">
-	{#if folder === EmailFolder.INBOX}
+<div class={folder === EmailFolder.HOME ? 'mini-command-bar' : 'command-bar'}>
+	{#if folder === EmailFolder.INBOX || folder === EmailFolder.HOME}
 		<div class="radio-group-container">
 			<RadioGroup
 				active="bg-primary-container"
@@ -115,7 +115,7 @@
 			</EmailButton>
 		{/if}
 	</div>
-	{#if folder === EmailFolder.INBOX}
+	{#if folder === EmailFolder.INBOX || folder === EmailFolder.HOME}
 		<div class="separator-border" />
 		<div class="button-group">
 			<EmailButton
@@ -153,6 +153,16 @@
 		padding: 12px 16px;
 		border-bottom: 1px solid var(--color-primary-dark-gray);
 		gap: 4px;
+	}
+	.mini-command-bar {
+		display: flex;
+		align-items: center;
+		background-color: var(--color-primary-container);
+		width: 100%;
+		padding: 12px 16px;
+		border: 1px solid var(--color-primary-dark-gray);
+		gap: 4px;
+		border-radius: 10px;
 	}
 	.compose-button {
 		background-color: var(--color-primary-blue);

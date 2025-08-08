@@ -1,4 +1,4 @@
-import type { EmailLabelAction, Email, EmailData, EmailFolder } from '$lib/types';
+import type { EmailLabelAction, Email, EmailData, EmailFolder, EmailCategory } from '$lib/types';
 import { apiRequest } from './base';
 
 interface EmailListResponse {
@@ -12,7 +12,8 @@ export const getEmailList = async ({
 	limit,
 	page,
 	filter,
-	folder
+	folder,
+	category
 }: {
 	user: string;
 	account: string | undefined;
@@ -20,6 +21,7 @@ export const getEmailList = async ({
 	page: number;
 	filter?: { key: string; value: string }[];
 	folder: EmailFolder;
+	category?: EmailCategory[];
 }): Promise<EmailListResponse> => {
 	const limitString = limit.toString();
 	const pageString = page.toString();
@@ -31,6 +33,11 @@ export const getEmailList = async ({
 			});
 		}
 		if (!!account) params.append('account', account);
+		if (category && category.length > 0) {
+			category.forEach((item) => {
+				params.append('category', item);
+			});
+		}
 
 		const url = `user/${user}/emails?${params.toString()}`;
 		const response = await apiRequest(url, {

@@ -8,13 +8,13 @@
 	const dispatch = createEventDispatcher();
 
 	interface Props {
-		email?: Email;
+		email: Email;
 		selected?: boolean;
 	}
 
-	let { email = {}, selected = false }: Props = $props();
+	let { email, selected = false }: Props = $props();
 	let unread: boolean = $state(false);
-	let showLabel: boolean = $state(false);
+	let showLabel: boolean = $state(true);
 	const onClick = () => {
 		dispatch('handleEmailSelect', email);
 	};
@@ -35,34 +35,18 @@
 		? 'unread-indicator-container'
 		: 'read-indicator-container'}"
 	onclick={onClick}
-	onmouseover={() => {
-		showLabel = true;
-	}}
-	onmouseleave={() => {
-		showLabel = false;
-	}}
 	aria-label={email.subject}
 >
-	<div class="item-header">
-		<div class="sender-container">
-			<div class="sender-padding">
-				{#if email.sender_name && email.sender_name.length > 0}
-					{email.sender_name.join(', ')}
-				{:else if email.sender && email.sender.length > 0}
-					{email.sender.join(', ')}
-				{/if}
-			</div>
-		</div>
-		<div class="date-container">
-			<div class="date-text">
-				{formatDate(email.date)}
-			</div>
-			<IconChevronRight
-				size={18}
-				color={selected ? 'var(--color-primary-light-gray)' : 'var(--color-primary-gray)'}
-			/>
+	<div class="sender-container">
+		<div class="sender-padding">
+			{#if email.sender_name && email.sender_name.length > 0}
+				{email.sender_name.join(', ')}
+			{:else if email.sender && email.sender.length > 0}
+				{email.sender.join(', ')}
+			{/if}
 		</div>
 	</div>
+
 	{#if email.summary}
 		<div class="summary-container">
 			<div class="icon-padding">
@@ -72,20 +56,34 @@
 					color={unread ? 'var(--color-primary-light-gray)' : 'var(--color-primary-gray)'}
 				/>
 			</div>
-			<div class="summary-text">{email.summary}</div>
+			<div
+				class="summary-text {unread ? 'unread-indicator-container' : 'read-indicator-container'}
+"
+			>
+				{email.summary}
+			</div>
 		</div>
 	{:else}
 		<div class="subject-padding">
 			<div class="subject-text">{email.subject}</div>
 		</div>
 	{/if}
-	{#if email.email_labels.length > 0}
-		<div class="labels-container">
+	<div class="labels-container">
+		{#if email.email_labels.length > 0}
 			{#each email.email_labels as emailLabel}
 				<EmailLabelDot {emailLabel} {showLabel} />
 			{/each}
+		{/if}
+	</div>
+	<div class="date-container">
+		<div class="date-text">
+			{formatDate(email.date)}
 		</div>
-	{/if}
+		<IconChevronRight
+			size={18}
+			color={selected ? 'var(--color-primary-light-gray)' : 'var(--color-primary-gray)'}
+		/>
+	</div>
 </div>
 {#if !selected}
 	<div class="separator"></div>
@@ -93,15 +91,19 @@
 
 <style>
 	.email-list-item {
-		padding: 8px 12px;
+		padding: 1px 10px;
 		color: var(--color-primary-active-button-highlight);
 		cursor: pointer;
-		height: 120px;
+		height: 40px;
 		align-content: center;
 		border-radius: 8px;
-		margin: 4px 0;
+		margin: 2px 0;
 		border: 1px solid transparent;
 		transition: all 0.2s ease;
+		display: flex;
+		justify-content: left;
+		align-items: center;
+		width: 100%;
 	}
 
 	.email-list-item-selected {
@@ -112,13 +114,13 @@
 
 	.email-list-item-selected:hover {
 		background-color: var(--color-secondary-active-button-background-hover);
-		transform: translateX(2px);
+		transform: translateX(1px);
 	}
 
 	.email-list-item-unselected:hover {
 		background-color: var(--color-secondary-active-button-background-hover);
 		border-color: rgba(255, 255, 255, 0.1);
-		transform: translateX(2px);
+		transform: translateX(1px);
 	}
 
 	.item-header {
@@ -128,23 +130,24 @@
 	}
 
 	.sender-container {
-		display: flex;
-		width: 180px;
-		flex-direction: row;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		white-space: nowrap;
+		padding-left: 4px;
+		padding-right: 4px;
 		font-size: var(--text-body);
 		font-weight: 600;
+		width: 240px;
+		min-width: 220px;
 	}
 
 	.sender-padding {
-		padding-left: 4px;
-		padding-right: 4px;
+		width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.unread-indicator-container {
 		color: var(--color-primary-light-gray);
+		font-weight: bold;
 	}
 	.read-indicator-container {
 		color: var(--color-primary-gray);
@@ -153,8 +156,10 @@
 	.date-container {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		width: 80px;
+		justify-content: flex-end;
+		margin-left: auto;
+		width: 100%;
+		max-width: 120px;
 	}
 
 	.date-text {
@@ -165,11 +170,12 @@
 
 	.summary-container {
 		display: flex;
-		padding: 2px;
-		height: 80px;
+		padding: 4px 2px;
 		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		justify-content: left;
+		align-items: center;
+		max-width: 720px;
+		width: 600px;
 	}
 
 	.icon-padding {
@@ -187,40 +193,47 @@
 	.separator {
 		height: 1px;
 		background: linear-gradient(90deg, transparent, var(--color-primary-gray), transparent);
-		margin: 8px 16px;
+		margin: 4px 16px;
 		opacity: 0.3;
 	}
 	.summary-text {
-		max-width: 230px;
 		text-overflow: ellipsis;
+		white-space: nowrap;
 		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
-		white-space: normal;
 		font-size: var(--text-subheader);
-		line-height: 1.6;
+		text-align: left;
+		padding: 4px 2px;
 	}
 
 	.subject-padding {
+		display: flex;
 		padding: 2px;
+		overflow: hidden;
+		justify-content: left;
+		align-items: center;
+		max-width: 720px;
+		width: 600px;
 	}
 
 	.subject-text {
-		max-width: 250px;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
-		text-wrap: wrap;
-		padding-left: 2px;
 		font-size: var(--text-subheader);
+		text-align: left;
 	}
 
 	.labels-container {
 		display: flex;
 		flex-direction: row;
 		gap: 6px;
-		padding: 2px;
 		height: 22px;
+		padding: 6px 2px;
+		align-items: center;
+		justify-content: flex-start;
+		margin-left: auto;
+		position: relative;
+		overflow: visible;
+		width: 240px;
 	}
 </style>

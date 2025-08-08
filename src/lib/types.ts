@@ -71,6 +71,14 @@ export interface Email {
 	is_read: boolean;
 	folder: EmailFolder;
 	email_account_id: string;
+	categories: EmailCategory[];
+	attachments: Attachment[];
+}
+export interface Attachment {
+	name: string;
+	content_type: string;
+	url: string;
+	size: number;
 }
 
 export enum EmailAccountStatus {
@@ -93,11 +101,21 @@ export interface EmailAccount {
 }
 
 export enum EmailFolder {
+	HOME = 'home',
 	INBOX = 'inbox',
 	TRASH = 'trash',
 	SPAM = 'spam',
 	DRAFTS = 'drafts',
 	SENT = 'sent'
+}
+
+export enum EmailCategory {
+	URGENT = 'urgent',
+	ACTIONABLE = 'actionable',
+	INFORMATION = 'information',
+	NEWSLETTER = 'newsletter',
+	PROMO = 'promo',
+	OTHER = 'other'
 }
 
 export interface EmailData {

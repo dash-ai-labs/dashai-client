@@ -7,7 +7,6 @@
 	import LogoutButton from './LogoutButton.svelte';
 	import Logo from '$lib/assets/Logo.svelte';
 	import {
-		IconInbox,
 		IconLayoutSidebarLeftCollapse,
 		IconFile,
 		IconSend2,
@@ -18,7 +17,8 @@
 		IconLayoutSidebarRightCollapse,
 		IconSettings,
 		IconMessage2,
-		IconAlertTriangle
+		IconAlertTriangle,
+		IconHome
 	} from '@tabler/icons-svelte';
 	import { emailServiceState, user } from '$lib/store';
 	import { EmailFolder, type EmailServiceState, type Label } from '$lib/types';
@@ -29,6 +29,7 @@
 	import NewEmailLabelComponent from './NewEmailLabelComponent.svelte';
 	import { getEmailFolderCount } from '$lib/api/email';
 	import { get } from 'svelte/store';
+	import AllEmail from '$lib/assets/AllEmail.svelte';
 
 	let { handleNavigation = (path: string) => {} } = $props();
 
@@ -59,10 +60,16 @@
 
 	let navItems = $derived([
 		{
-			label: 'Inbox',
+			label: 'Home',
 			path: '/inbox',
 			badge: 20,
-			icon: IconInbox,
+			icon: IconHome
+		},
+		{
+			label: 'All Mail',
+			path: '/inbox/all',
+			badge: 20,
+			icon: AllEmail,
 			count: inboxCount
 		},
 		{
