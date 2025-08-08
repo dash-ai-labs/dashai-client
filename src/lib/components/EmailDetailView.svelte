@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import Inbox from '$lib/assets/Inbox.svelte';
 	import DOMPurify from 'dompurify';
 	import type { Email, Label } from '$lib/types';
@@ -7,6 +8,7 @@
 	import { emailLabelAction, getEmailContent } from '$lib/api/email';
 	import { get } from 'svelte/store';
 	import { user, emailServiceState } from '$lib/store';
+	import type { EmailServiceState } from '$lib/types';
 	import EmailLabelChip from './EmailLabelChip.svelte';
 	import { setShowComposeEmail } from '$lib/actions/compose';
 	import AddEmailLabel from './AddEmailLabel.svelte';
@@ -18,20 +20,78 @@
 		IconFileTypeXls,
 		IconFileWord,
 		IconPhoto,
-		IconPlus
+		IconPlus,
+		IconX
 	} from '@tabler/icons-svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 
 	let element = $state<HTMLIFrameElement | null>(null);
 	let email = $state<Email | null>(null);
 	let isLoading = $state(false);
+	let isDrawerOpen = $state(false);
+	let justOpened = $state(false); // Track if drawer was just opened
 
 	emailServiceState.subscribe((state) => {
 		const currentEmail = state.currentEmail;
+
 		if (currentEmail && currentEmail.id !== email?.id) {
 			email = currentEmail;
-
+			isDrawerOpen = true; // Open drawer when email is selected
+			justOpened = true; // Mark as just opened
 			loadEmailContent(currentEmail);
+
+			// Reset the justOpened flag after a short delay
+			setTimeout(() => {
+				justOpened = false;
+			}, 300);
+		} else if (!currentEmail) {
+			// Close drawer if no email is selected
+			email = null;
+			isDrawerOpen = false;
+			justOpened = false;
+		}
+	});
+
+	// Function to close the drawer
+	const closeDrawer = () => {
+		isDrawerOpen = false;
+		justOpened = false; // Reset the flag
+		// Optionally clear the current email
+		emailServiceState.update((state) => ({
+			...state,
+			currentEmail: null
+		}));
+	};
+
+	// Add global keyboard listener for Escape key
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape' && isDrawerOpen) {
+			closeDrawer();
+		}
+	}
+
+	// Add click outside listener to close drawer
+	function handleClickOutside(event: MouseEvent) {
+		if (!isDrawerOpen || justOpened) return; // Don't close if just opened
+
+		const drawer = document.querySelector('.email-drawer');
+		if (drawer && !drawer.contains(event.target as Node)) {
+			closeDrawer();
+		}
+	}
+
+	// Add and remove event listeners
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			window.addEventListener('keydown', handleKeydown);
+			window.addEventListener('click', handleClickOutside);
+		}
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('keydown', handleKeydown);
+			window.removeEventListener('click', handleClickOutside);
 		}
 	});
 
@@ -42,18 +102,20 @@
 				const userData = get(user);
 				try {
 					const content = await getEmailContent({
-						user: userData?.id.toString(),
+						user: userData?.id?.toString() || '',
 						email_id: email.email_id
 					});
-					if (element && content) {
-						element.srcdoc = content;
+					if (element && content && typeof content === 'string') {
+						element.srcdoc = formatEmailContent(content);
 
 						emailServiceState.update((state: EmailServiceState) => ({
 							...state,
-							currentEmail: {
-								...state.currentEmail,
-								raw_content: content
-							}
+							currentEmail: state.currentEmail
+								? {
+										...state.currentEmail,
+										raw_content: content
+									}
+								: null
 						}));
 					}
 				} catch (error) {
@@ -158,7 +220,7 @@
 
 		return `${day} ${month}/${dayOfMonth}/${year} ${hours}:${minutes}${amPm}`;
 	};
-	const removeLabelFromEmail = (_email: Email, emailLabel: Label) => {
+	const removeLabelFromEmail = (_email: Email | null, emailLabel: Label) => {
 		const _removeLabelFromEmail = async () => {
 			const currentUser = get(user);
 			if (!currentUser?.id || !_email) return;
@@ -208,7 +270,9 @@
 		if (!filename) return 'default';
 
 		// Get the last part after the last dot
-		const ext = filename.split('.').pop().toLowerCase();
+		const ext = filename.split('.').pop()?.toLowerCase();
+
+		if (!ext) return 'default';
 
 		if (ext === 'pdf') return 'pdf';
 		if (['xls', 'xlsx'].includes(ext)) return 'excel';
@@ -238,8 +302,8 @@
 		}
 	}
 
-	function downloadAll(attachments) {
-		attachments.forEach((att) => {
+	function downloadAll(attachments: any[]) {
+		attachments.forEach((att: any) => {
 			const a = document.createElement('a');
 			a.href = att.url;
 			a.download = att.name || ''; // let browser keep original filename
@@ -250,133 +314,199 @@
 	}
 </script>
 
-<div class="email-detail-container">
-	{#if email}
-		<!-- Message Content -->
-		<div class="message-header">
-			<div class="sender-info">
-				<div class="avatar">
-					{email.sender_name && email.sender_name[0]
-						? email.sender_name[0][0]
-						: email.sender && email.sender[0]
-							? email.sender[0][0]
-							: ''}
-				</div>
-				<div class="content-wrapper">
-					<div class="header-row">
-						<div>
-							<div class="subject-container">
-								<h1 class="subject">{email.subject}</h1>
-								<div class="labels-container">
-									{#each email.email_labels as label}
-										<EmailLabelChip {label} {onLabelClick} />
-									{/each}
-									<button class="add-labels-button" use:popup={addLabelPopup}>
-										Add label<IconPlus size={16} />
-									</button>
-									<div data-popup="addLabelPopup">
-										<AddEmailLabel {email} />
-									</div>
-								</div>
-							</div>
-							<p class="reply-to">Reply To: {email.sender[0]}</p>
-							{#if email.attachments && email.attachments.length > 1}
-								<div>
-									<div role="listbox" aria-label="file attachments" class="attachment-list">
-										{#each email.attachments as attachment}
-											<a
-												href={attachment.url}
-												download
-												title="Download"
-												class="attachment-item"
-												role="option"
-												aria-label={attachment.name}
-												><!-- Download icon -->
-												<span class="attachment-icon">
-													<svelte:component
-														this={icons[getFileTypeFromName(attachment.name)]}
-														size={20}
-														color="var(--color-primary-light-gray)"
-													/>
-												</span>
-												<!-- Name + size -->
-												<span class="attachment-name" title={attachment.name}
-													>{attachment.name}</span
-												>
-												{#if attachment.size}
-													<span class="attachment-size">{formatFileSize(attachment.size)}</span>
-												{/if}
-											</a>
+<!-- No overlay - users can interact with background components -->
+
+<!-- Drawer container -->
+<div class="email-drawer" class:drawer-open={isDrawerOpen}>
+	<!-- Drawer header with close button -->
+	<div class="drawer-header">
+		<button class="close-button" onclick={closeDrawer}>
+			<IconX size={24} />
+		</button>
+	</div>
+
+	<div class="email-detail-container">
+		{#if email}
+			<!-- Message Content -->
+			<div class="message-header">
+				<div class="sender-info">
+					<div class="avatar">
+						{email.sender_name && email.sender_name[0]
+							? email.sender_name[0][0]
+							: email.sender && email.sender[0]
+								? email.sender[0][0]
+								: ''}
+					</div>
+					<div class="content-wrapper">
+						<div class="header-row">
+							<div>
+								<div class="subject-container">
+									<h1 class="subject">{email.subject}</h1>
+									<div class="labels-container">
+										{#each email.email_labels as label}
+											<EmailLabelChip {label} {onLabelClick} />
 										{/each}
-										<button class="attachment-item" onclick={() => downloadAll(email.attachments)}
-											><IconDownload size={20} color="var(--color-primary-light-gray)" />
-											Download All
+										<button class="add-labels-button" use:popup={addLabelPopup}>
+											Add label<IconPlus size={16} />
 										</button>
+										<div data-popup="addLabelPopup">
+											<AddEmailLabel {email} />
+										</div>
 									</div>
 								</div>
-							{/if}
-						</div>
+								<p class="reply-to">Reply To: {email.sender[0]}</p>
+								{#if email.attachments && email.attachments.length > 1}
+									<div>
+										<div role="listbox" aria-label="file attachments" class="attachment-list">
+											{#each email.attachments as attachment}
+												<a
+													href={attachment.url}
+													download
+													title="Download"
+													class="attachment-item"
+													role="option"
+													aria-selected="false"
+													aria-label={attachment.name}
+												>
+													<span class="attachment-icon">
+														<svelte:component
+															this={icons[getFileTypeFromName(attachment.name)]}
+															size={20}
+															color="var(--color-primary-light-gray)"
+														/>
+													</span>
+													<span class="attachment-name" title={attachment.name}
+														>{attachment.name}</span
+													>
+													{#if attachment.size}
+														<span class="attachment-size">{formatFileSize(attachment.size)}</span>
+													{/if}
+												</a>
+											{/each}
+											<button class="attachment-item" onclick={() => downloadAll(email.attachments)}
+												><IconDownload size={20} color="var(--color-primary-light-gray)" />
+												Download All
+											</button>
+										</div>
+									</div>
+								{/if}
+							</div>
 
-						<div class="header-actions">
-							<span class="date-display">{formatDate(email.date)}</span>
+							<div class="header-actions">
+								<span class="date-display">{formatDate(email.date)}</span>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="email-content-container">
-			<div class="email-content-wrapper">
-				<!-- Email content container with proper height constraints -->
-				<div class="iframe-container">
-					<!-- Add loading indicator -->
-					{#if isLoading}
-						<div class="loading-overlay">
-							<div class="loading-spinner"></div>
-						</div>
-					{/if}
+			<div class="email-content-container">
+				<div class="email-content-wrapper">
+					<!-- Email content container with proper height constraints -->
+					<div class="iframe-container">
+						<!-- Add loading indicator -->
+						{#if isLoading}
+							<div class="loading-overlay">
+								<div class="loading-spinner"></div>
+							</div>
+						{/if}
 
-					<!-- If you're using an iframe for email content -->
-					<iframe
-						bind:this={element}
-						title={email.subject}
-						sandbox="allow-same-origin allow-popups"
-						class="email-iframe"
-						style="background-color: #f0f0f0;"
-					></iframe>
+						<!-- If you're using an iframe for email content -->
+						<iframe
+							bind:this={element}
+							title={email?.subject || 'Email'}
+							sandbox="allow-same-origin allow-popups"
+							class="email-iframe"
+							style="background-color: #f0f0f0;"
+						></iframe>
 
-					<!-- Fixed position buttons that will always be visible -->
-					<div class="action-buttons">
-						<div class="action-button-container">
-							<button
-								class="action-button"
-								onclick={() => {
-									setShowComposeEmail(true, ComposeEmailMode.Reply);
-								}}><ReplyOutline height="20" width="20" class="button-icon" />Reply</button
-							>
-						</div>
-						<div class="action-button-container">
-							<button
-								class="action-button"
-								onclick={() => {
-									setShowComposeEmail(true, ComposeEmailMode.Forward);
-								}}><ForwardOutline height="20" width="20" class="button-icon" />Forward</button
-							>
+						<!-- Fixed position buttons that will always be visible -->
+						<div class="action-buttons">
+							<div class="action-button-container">
+								<button
+									class="action-button"
+									onclick={() => {
+										setShowComposeEmail(true, ComposeEmailMode.Reply);
+									}}><ReplyOutline height="20" width="20" class="button-icon" />Reply</button
+								>
+							</div>
+							<div class="action-button-container">
+								<button
+									class="action-button"
+									onclick={() => {
+										setShowComposeEmail(true, ComposeEmailMode.Forward);
+									}}><ForwardOutline height="20" width="20" class="button-icon" />Forward</button
+								>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	{:else}
-		<div class="empty-state">
-			<Inbox size="80" class="empty-icon" />
-			<div class="empty-text">Select an email to open</div>
-		</div>
-	{/if}
+		{:else}
+			<div class="empty-state">
+				<Inbox size={80} />
+				<div class="empty-text">Select an email to open</div>
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style>
 	div {
 		transition: background-color 0.3s ease;
+	}
+
+	/* Drawer styles */
+	.email-drawer {
+		position: fixed;
+		top: 0;
+		right: 0;
+		height: 100vh;
+		width: 55%;
+		max-width: 750px;
+		min-width: 550px;
+		background-color: var(--color-primary-container);
+		border-left: 1px solid var(--color-primary-gray);
+		z-index: 30;
+		transform: translateX(100%);
+		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		pointer-events: auto;
+	}
+
+	.email-drawer.drawer-open {
+		transform: translateX(0);
+	}
+
+	.drawer-header {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		padding: 1rem;
+		border-bottom: 1px solid var(--color-primary-gray);
+		background-color: var(--color-primary-container);
+		min-height: 60px;
+	}
+
+	.close-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background-color: transparent;
+		border: 1px solid var(--color-primary-gray);
+		color: var(--color-primary-gray);
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.close-button:hover {
+		background-color: var(--color-primary-dark-gray);
+		color: var(--color-primary-white);
 	}
 
 	[data-popup] {
@@ -395,12 +525,6 @@
 		box-sizing: border-box;
 	}
 
-	/* If you're using direct HTML rendering */
-	.email-content {
-		max-height: 100%;
-		overflow: auto;
-	}
-
 	.subject-container {
 		display: flex;
 		flex-direction: row;
@@ -409,31 +533,12 @@
 	/* Converted Tailwind styles */
 	.email-detail-container {
 		height: 100%;
-		min-width: 740px;
 		width: 100%;
-		border-radius: 0.5rem;
 		background-color: var(--color-primary-container);
-	}
-
-	.email-header {
+		flex: 1;
+		overflow: hidden;
 		display: flex;
-		height: 60px;
-		align-items: center;
-		gap: 0.5rem;
-		border-bottom: 1px solid var(--color-primary-gray);
-		padding: 0 0.75rem;
-	}
-
-	.button-group {
-		margin: 0 24px;
-		display: flex;
-		gap: 24px;
-	}
-
-	.separator-border {
-		display: flex;
-		border-left: 1px solid var(--color-secondary-inactive-button-highlight);
-		padding: 0 24px;
+		flex-direction: column;
 	}
 
 	.message-header {
@@ -495,14 +600,6 @@
 		margin-left: 10px;
 	}
 
-	.add-label-button {
-		white-space: nowrap;
-		border-radius: 0.5rem;
-		border: 1px dashed var(--color-primary-gray);
-		padding: 0 1rem;
-		color: var(--color-primary-gray);
-	}
-
 	.date-display {
 		align-items: center;
 		text-align: right;
@@ -528,19 +625,9 @@
 
 	.email-content-container {
 		position: relative;
-		display: grid;
-		height: calc(100vh - 200px);
-		max-height: calc(100vh - 200px);
+		flex: 1;
 		padding: 1rem;
-	}
-
-	.no-scrollbar {
-		-ms-overflow-style: none;
-		scrollbar-width: none;
-	}
-
-	.no-scrollbar::-webkit-scrollbar {
-		display: none;
+		overflow: hidden;
 	}
 
 	.email-content-wrapper {
@@ -617,10 +704,6 @@
 		gap: 10px;
 	}
 
-	.button-icon {
-		color: var(--color-primary-white);
-	}
-
 	.empty-state {
 		display: flex;
 		height: 100%;
@@ -628,10 +711,6 @@
 		align-items: center;
 		justify-content: center;
 		gap: 20px;
-	}
-
-	.empty-icon {
-		fill: var(--color-primary-gray);
 	}
 
 	.empty-text {
@@ -642,11 +721,9 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
-
-		/* Prevent overflow */
-		max-width: 100%; /* never exceed parent */
-		max-height: 200px; /* limit height */
-		overflow-y: auto; /* scroll if needed */
+		max-width: 100%;
+		max-height: 200px;
+		overflow-y: auto;
 		padding: 4px;
 		box-sizing: border-box;
 	}
@@ -657,14 +734,14 @@
 		justify-content: left;
 		gap: 10px;
 		padding: 8px 10px;
-		background: var(--color-primary-container); /* subtle dark background */
-		border: 2px solid var(--color-secondary-active-button-background); /* dark blue outline */
+		background: var(--color-primary-container);
+		border: 2px solid var(--color-secondary-active-button-background);
 		border-radius: 8px;
 		transition:
 			box-shadow 0.2s ease,
 			border-color 0.2s ease;
-		width: 200px; /* fixed width */
-		height: 50px; /* fixed height */
+		width: 200px;
+		height: 50px;
 		text-wrap: wrap;
 		box-sizing: border-box;
 	}
@@ -685,13 +762,12 @@
 	}
 
 	.attachment-name {
-		flex: 1; /* take up available space */
+		flex: 1;
 		font-size: 14px;
 		color: var(--color-font-light-gray);
-		/* Truncate with ellipsis */
-		white-space: nowrap; /* keep on one line */
-		overflow: hidden; /* hide overflow */
-		text-overflow: ellipsis; /* add "..." */
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.attachment-size {

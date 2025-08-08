@@ -46,6 +46,6 @@
 			</div>
 		</div> -->
 		<!-- <Widgets /> -->
-		<EmailContainer folder={EmailFolder.HOME} />
+		<EmailContainer folder={EmailFolder.INBOX} />
 	</div>
 </div>

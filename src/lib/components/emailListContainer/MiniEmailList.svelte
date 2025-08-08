@@ -210,8 +210,11 @@
 	};
 </script>
 
-<div class="email-container">
+<div class="mini-email-container">
 	<div class="email-list-container" bind:this={container} onscroll={handleScroll}>
+		<div class="email-list-container-header">
+			<h3>{category?.join(' / ').toLocaleUpperCase()}</h3>
+		</div>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
 			<div class="loading-indicator" transition:fade={{ duration: 500 }}>Loading...</div>
@@ -239,7 +242,7 @@
 	</div>
 
 	<!-- Pagination Controls -->
-	<div class="pagination-controls">
+	<div class="mini-list-pagination-controls">
 		<button
 			class="pagination-btn"
 			disabled={!hasPrevPage || isLoading}
@@ -263,12 +266,22 @@
 </div>
 
 <style>
-	.email-container {
+	.mini-email-container {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
 		max-height: 100%;
 		overflow: hidden;
+		border: 1px solid var(--color-primary-dark-gray);
+		background-color: var(--color-primary-container);
+		border-radius: 10px;
+	}
+
+	.email-list-container-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 5px;
 	}
 
 	.email-list-container {
@@ -287,13 +300,12 @@
 		text-align: center;
 	}
 
-	.pagination-controls {
+	.mini-list-pagination-controls {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		gap: 1rem;
-		padding: 1rem;
-		border-top: 1px solid var(--color-primary-dark-gray);
+		padding: 5px;
 		background-color: var(--color-primary-container);
 		flex-shrink: 0; /* Don't allow pagination controls to shrink */
 		min-height: 60px; /* Fixed height for pagination */

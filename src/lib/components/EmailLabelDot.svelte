@@ -17,13 +17,13 @@
 		<div
 			class="full-label"
 			style:background-color={emailLabel.color}
-			in:slide={{ duration: 500, delay: 500 }}
+			in:slide={{ duration: 500, delay: 500, axis: 'x' }}
 			out:fade={{ duration: 500 }}
 		>
 			<div class="label-name">{emailLabel.name}</div>
 		</div>
 	{:else}
-		<div in:slide={{ duration: 500, delay: 500 }} out:fade={{ duration: 500 }}>
+		<div in:slide={{ duration: 500, delay: 500, axis: 'x' }} out:fade={{ duration: 500 }}>
 			<IconCircleFilled color={emailLabel.color} size={12} />
 		</div>
 	{/if}
@@ -38,8 +38,11 @@
 		padding-inline: 0.25rem;
 		font-size: 12px;
 		align-content: center;
-		align-items: baseline;
+		align-items: center;
 		align-self: center;
+		white-space: nowrap;
+		position: relative;
+		transform-origin: left center;
 	}
 	.label-container {
 		display: flex;
