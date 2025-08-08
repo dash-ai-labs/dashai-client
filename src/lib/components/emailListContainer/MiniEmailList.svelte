@@ -30,10 +30,39 @@
 	let disableTransition = $state(false); // New state variable to disable transition
 	let user_id = $derived(get(user)?.id?.toString());
 	let lastFolder = $state<EmailFolder>(folder);
-	let _emailList = $state<Email[]>(get(emailServiceState).emailList);
 	// Removed scroll-based pagination variables
 	let hasNextPage = $state(true); // Track if there are more pages
 	let hasPrevPage = $state(false); // Track if there are previous pages
+
+	const getEmailStateList = () => {
+		if (category?.includes(EmailCategory.URGENT)) {
+			return get(emailServiceState).urgentEmailList;
+		} else if (category?.includes(EmailCategory.INFORMATION)) {
+			return get(emailServiceState).informationalEmailList;
+		} else {
+			return get(emailServiceState).emailList;
+		}
+	};
+	let _emailList = $state<Email[]>(getEmailStateList());
+
+	const updateEmailList = async (emails: Email[]) => {
+		if (category?.includes(EmailCategory.URGENT)) {
+			emailServiceState.update((state) => ({
+				...state,
+				urgentEmailList: emails
+			}));
+		} else if (category?.includes(EmailCategory.INFORMATION)) {
+			emailServiceState.update((state) => ({
+				...state,
+				informationalEmailList: emails
+			}));
+		} else {
+			emailServiceState.update((state) => ({
+				...state,
+				emailList: emails
+			}));
+		}
+	};
 
 	$effect(() => {
 		const state = get(emailServiceState);
@@ -43,10 +72,7 @@
 					user: user_id || '',
 					search: state.emailSearchQueryList[0].query
 				});
-				emailServiceState.update((state) => ({
-					...state,
-					emailList: emailResults
-				}));
+				await updateEmailList(emailResults);
 			};
 			_searchEmails();
 		}
@@ -111,10 +137,7 @@
 		}
 		// Replace the email list with new emails for pagination
 		if (newEmails) {
-			emailServiceState.update((state) => ({
-				...state,
-				emailList: newEmails
-			}));
+			await updateEmailList(newEmails);
 
 			// Update pagination state
 			hasNextPage = !listEnd && newEmails.length === limit;
@@ -123,9 +146,9 @@
 		isLoading = false;
 	};
 
-	emailServiceState.subscribe((state) => {
-		if (state.emailList) {
-			_emailList = state.emailList;
+	emailServiceState.subscribe(async (state) => {
+		if (state.emailList || state.urgentEmailList || state.informationalEmailList) {
+			_emailList = getEmailStateList();
 		}
 	});
 
@@ -187,10 +210,7 @@
 					email.email_id === selectedEmail?.email_id ? newEmail : email
 				);
 
-				emailServiceState.update((state) => ({
-					...state,
-					emailList: _emailList
-				}));
+				await updateEmailList(_emailList);
 			}
 		};
 		if (!selectedEmail?.is_read && folder === EmailFolder.INBOX) updateEmailAsRead();
