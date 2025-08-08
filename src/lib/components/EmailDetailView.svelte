@@ -369,8 +369,11 @@
 													aria-label={attachment.name}
 												>
 													<span class="attachment-icon">
-														{@const IconComponent = icons[getFileTypeFromName(attachment.name)]}
-														<IconComponent size={20} color="var(--color-primary-light-gray)" />
+														<svelte:component
+															this={icons[getFileTypeFromName(attachment.name)]}
+															size={20}
+															color="var(--color-primary-light-gray)"
+														/>
 													</span>
 													<span class="attachment-name" title={attachment.name}
 														>{attachment.name}</span
