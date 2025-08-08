@@ -218,6 +218,8 @@ export interface EmailServiceState {
 	composeEmailMode: ComposeEmailMode;
 	emailAccount: any;
 	emailList: Email[];
+	urgentEmailList: Email[];
+	informationalEmailList: Email[];
 	emailListFilter: string[];
 	taskList: Task[];
 	emailSettings: EmailSettings[];
