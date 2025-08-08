@@ -129,41 +129,53 @@
 	}
 
 	function formatEmailContent(content: string): string {
-		const isHTML = /<(!DOCTYPE|html|body)[^>]*>/i.test(content);
-		const baseStyles = `
+		const isHTML = /<(!DOCTYPE|html|head|body)[^>]*>/i.test(content);
+
+		// Minimal, non-intrusive defaults to avoid breaking email styles
+		const minimalStyles = `
       <style>
-        html, body {
-          margin: 0;
-          padding: 0;
-          min-height: 100%;
-          background-color: #f0f0f0 !important;
-        }
-        body {
-          padding: 20px;
-        }
+        html, body { margin: 0; padding: 0; min-height: 100%; }
+        img { max-width: 100%; height: auto; }
       </style>
     `;
 
 		if (isHTML) {
-			return `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            ${baseStyles}
-        </head>
-        <body>
-            ${DOMPurify.sanitize(content, {
-							ADD_TAGS: ['style'],
-							ADD_ATTR: ['style', 'nonce'],
-							ALLOW_DATA_ATTR: true
-						})}
-        </body>
-        </html>
-    `;
+			// Preserve full documents including <head> styles. Sanitize as a whole document
+			let sanitized = DOMPurify.sanitize(content, {
+				WHOLE_DOCUMENT: true,
+				ADD_TAGS: ['style', 'base', 'link', 'meta'],
+				ADD_ATTR: [
+					'style',
+					'nonce',
+					'target',
+					'href',
+					'rel',
+					'type',
+					'media',
+					'sizes',
+					'integrity',
+					'crossorigin',
+					'as',
+					'srcset'
+				],
+				ALLOW_DATA_ATTR: true
+			});
+
+			// Inject <base target="_blank"> and minimal styles without overwriting email styles
+			if (/<head[^>]*>/i.test(sanitized)) {
+				sanitized = sanitized.replace(
+					/<head[^>]*>/i,
+					(match) =>
+						`${match}\n<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">${minimalStyles}<base target="_blank">`
+				);
+			} else {
+				// If no <head>, wrap into a minimal document to ensure consistent rendering
+				sanitized = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">${minimalStyles}<base target="_blank"></head><body>${sanitized}</body></html>`;
+			}
+
+			return sanitized;
 		} else {
-			// Rest of the plain text formatting remains the same
+			// Plain text: linkify URLs and keep formatting
 			const urlRegex = /(https?:\/\/[^\s<]+)/g;
 			const formattedContent = content
 				.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
@@ -175,7 +187,7 @@
         <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            ${baseStyles}
+            ${minimalStyles}
             <style>
                 body {
                     font-family: Arial, sans-serif;
@@ -185,13 +197,8 @@
                     white-space: pre-wrap;
                     word-wrap: break-word;
                 }
-                a {
-                    color: #0066cc;
-                    text-decoration: none;
-                }
-                a:hover {
-                    text-decoration: underline;
-                }
+                a { color: #0066cc; text-decoration: none; }
+                a:hover { text-decoration: underline; }
             </style>
         </head>
         <body>
@@ -201,7 +208,7 @@
 						})}
         </body>
         </html>
-    `;
+      `;
 		}
 	}
 
@@ -383,7 +390,9 @@
 													{/if}
 												</a>
 											{/each}
-											<button class="attachment-item" onclick={() => downloadAll(email.attachments)}
+											<button
+												class="attachment-item"
+												onclick={() => email && email.attachments && downloadAll(email.attachments)}
 												><IconDownload size={20} color="var(--color-primary-light-gray)" />
 												Download All
 											</button>
