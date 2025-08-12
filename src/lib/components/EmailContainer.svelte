@@ -71,9 +71,9 @@
 			{:else}
 				<EmailList {selectEmail} {folder} />
 			{/if}
-			{#if showComposeEmail && email}
+			{#if showComposeEmail}
 				{#key showComposeEmail}
-					<ComposeEmail {email} {composeEmailMode} height={600} />
+					<ComposeEmail email={email ?? undefined} {composeEmailMode} height={600} />
 				{/key}
 			{/if}
 		</div>

@@ -13,7 +13,7 @@
 	import type { EditorType } from '../emailEditorLibs';
 	import { ComposeEmailMode, type EmailData } from '$lib/types';
 	import { writeEmailSuggestion } from '$lib/api/compose';
-	import { generateJSON } from '@tiptap/html';
+	import { generateHTML, generateJSON } from '@tiptap/html';
 	import Highlight from '@tiptap/extension-highlight';
 	import { composeEmail } from '$lib/store';
 	/**
@@ -115,10 +115,12 @@
 					});
 					const _writeEmailSuggestion = async () => {
 						const reader = await writeEmailSuggestion({
-							user: get(user)?.id.toString(),
-							subject: email?.subject,
-							body: e.editor.storage.markdown.getMarkdown(),
-							writingStyle: get(emailServiceState)?.emailSettings[0].email_preferences.writing_style
+							user: get(user)?.id?.toString() || '',
+							email_id: get(emailServiceState)?.currentEmail?.email_id || '',
+							subject: email?.subject || '',
+							body: e.editor?.storage?.markdown?.getMarkdown?.() || '',
+							writingStyle:
+								get(emailServiceState)?.emailSettings?.[0]?.email_preferences?.writing_style
 						});
 						if (reader) {
 							readStream(reader);
@@ -138,43 +140,60 @@
 
 		if (composeMode === ComposeEmailMode.Forward || composeMode === ComposeEmailMode.Reply) {
 			if (currentEmail?.raw_content) {
-				const doc = generateJSON(currentEmail.raw_content.toString(), [...defaultExtensions]);
-
-				if (doc) {
-					const indentedContent = [
-						{
-							type: 'paragraph'
-						},
-						{
-							type: 'paragraph',
-							content: [
-								{
-									type: 'text',
-									text:
-										composeMode === ComposeEmailMode.Forward
-											? 'Forwarded message:'
-											: `On ${new Date(currentEmail?.date).toLocaleString()}, wrote:`
+				const headerText =
+					composeMode === ComposeEmailMode.Forward
+						? 'Forwarded message:'
+						: (() => {
+								const d = currentEmail?.date;
+								if (!d) return 'Quoted message:';
+								try {
+									const s = new Date(d as any).toLocaleString();
+									return `On ${s}, wrote:`;
+								} catch {
+									return 'Quoted message:';
 								}
-							]
-						},
+							})();
+
+				const raw = currentEmail.raw_content.toString();
+				const isHTML = /<(!DOCTYPE|html|head|body)[^>]*>/i.test(raw);
+
+				if (isHTML) {
+					const content = [
+						{ type: 'paragraph' },
+						{ type: 'paragraph', content: [{ type: 'text', text: headerText }] },
 						{
-							type: 'blockquote',
-							content: doc.content
-						}
+							type: 'iframe',
+							attrs: {
+								srcdoc: raw,
+								sandbox: 'allow-same-origin allow-popups',
+								referrerpolicy: 'no-referrer',
+								style:
+									'width:100%;height:320px;border:1px solid var(--color-primary-dark-gray);border-radius:8px;background:#fff;'
+							}
+						},
+						{ type: 'paragraph' }
 					];
-					// Insert the wrapper and header first
-					editor?.commands.insertContent(indentedContent);
-
-					// Then insert the actual content with proper indentation
-
-					// Add a final paragraph after the quoted content
-					editor?.commands.insertContent({
-						type: 'paragraph'
-					});
+					editor?.chain().focus().insertContent(content).setTextSelection(1).run();
 				} else {
-					// Fallback to plain text if parsing fails
-					const formattedContent = `\n\n${composeMode === ComposeEmailMode.Forward ? 'Forwarded message:\n' : `On ${new Date(currentEmail?.date).toLocaleString()}, wrote:\n`}${currentEmail?.raw_content}\n\n`;
-					editor?.commands.insertContent(formattedContent);
+					const doc = generateJSON(raw, [...defaultExtensions]);
+					if (doc) {
+						const content = [
+							{ type: 'paragraph' },
+							{ type: 'paragraph', content: [{ type: 'text', text: headerText }] },
+							{ type: 'blockquote', content: doc.content },
+							{ type: 'paragraph' }
+						];
+						editor?.chain().focus().insertContent(content).setTextSelection(1).run();
+					} else {
+						let dateStr = '';
+						try {
+							dateStr = currentEmail?.date
+								? new Date(currentEmail.date as any).toLocaleString()
+								: '';
+						} catch {}
+						const formatted = `\n\n${composeMode === ComposeEmailMode.Forward ? 'Forwarded message:\n' : dateStr ? `On ${dateStr}, wrote:\n` : ''}${raw}\n\n`;
+						editor?.chain().focus().insertContent(formatted).setTextSelection(1).run();
+					}
 				}
 			}
 		}
@@ -187,24 +206,8 @@
 	});
 
 	export function getEmailContentForSend(): string {
-		const editorContent = editor?.getHTML() ?? '';
-		let originalEmailContent = '';
-
-		const composeMode = get(emailServiceState)?.composeEmailMode;
-		const currentEmail = get(emailServiceState)?.currentEmail;
-
-		if (composeMode === ComposeEmailMode.Forward || composeMode === ComposeEmailMode.Reply) {
-			originalEmailContent = `
-				<br>
-				<div class="quoted-email">
-					${composeMode === ComposeEmailMode.Forward ? 'Forwarded message:' : `On ${new Date(currentEmail?.date).toLocaleString()}, wrote:`}<br>
-					${currentEmail?.raw_content}
-				</div>
-				<br>
-			`;
-		}
-
-		return editorContent + originalEmailContent;
+		// The editor content already includes the quoted message we inserted.
+		return editor?.getHTML() ?? '';
 	}
 </script>
 
@@ -213,8 +216,6 @@
 {/if}
 
 <div id="editor" bind:this={element} class="editor-container">
-	<slot />
-
 	{#if editor?.isActive('image')}
 		<ImageResizer {editor} />
 	{/if}
@@ -260,20 +261,17 @@
 	}
 
 	#editor {
-		min-height: 300px;
-		max-height: 520px;
-		height: 520px;
-		overflow-y: auto;
-	}
-	.email-iframe {
+		min-height: 200px;
 		height: 100%;
-		width: 100%;
-		background-color: var(--color-primary-white);
+		max-height: 100%;
+		overflow-y: auto;
 	}
 	.editor-container {
 		padding: 10px;
 		border-radius: 10px;
 		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 
 	/* Standard selection styling */
@@ -298,20 +296,5 @@
 	/* Remove non-standard selectors that aren't supported */
 	/* Note: Only ::selection and ::-moz-selection are standard */
 
-	.iframe-wrapper {
-		position: relative;
-		padding-bottom: 10px;
-		height: 0;
-		overflow: hidden;
-		width: 100%;
-		height: auto;
-
-		iframe {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-		}
-	}
+	/* removed unused iframe styles */
 </style>

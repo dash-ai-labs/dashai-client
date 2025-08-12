@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { Node } from '@tiptap/core';
-	import Editor from './editor/index.svelte';
+	import EditorCmp from './editor/index.svelte';
 	import Bold from '@tiptap/extension-bold';
 	import { ComposeEmailMode, ToastType, type Email, type EmailData } from '$lib/types';
 	import ReplyButton from './ReplyButton.svelte';
@@ -21,11 +21,11 @@
 	const toastStore = getToastStore();
 
 	let {
-		email,
+		email = undefined,
 		height = $bindable(),
 		composeEmailMode
 	}: {
-		email: Email;
+		email?: Email;
 		height: number;
 		composeEmailMode: ComposeEmailMode;
 	} = $props();
@@ -181,7 +181,7 @@
 
 		const _sendEmail = async () => {
 			showToast(toastStore, 'Sending email...', ToastType.Info);
-			await sendEmail({ user: $user?.id, email: emailData });
+			await sendEmail({ user: $user?.id?.toString() || '', email: emailData });
 			showToast(toastStore, 'Email sent successfully', ToastType.Success);
 			_clearEmailData();
 			setShowComposeEmail(false);
@@ -238,7 +238,7 @@
 			];
 		}
 	});
-	const sanitizeHtml = (html) => {
+	const sanitizeHtml = (html: string) => {
 		// Configure DOMPurify to allow certain tags and attributes
 		// const config = {
 		// 	ALLOWED_TAGS: [
@@ -285,13 +285,13 @@
 
 		return DOMPurify.sanitize(html);
 	};
-	const formatThread = (thread) => {
+	const formatThread = (thread: { raw_content: string }) => {
 		const sanitizedContent = sanitizeHtml(thread.raw_content);
 
 		return `
         <div class="mt-4 mb-4 text-white">
             <blockquote data-type="email-quote" style="text-color: white;" class="pl-4 text-white border-l-4 border-gray-300">
-                ${email.raw_content}
+                ${email?.raw_content ?? ''}
             </blockquote>
         </div>
     `;
@@ -361,10 +361,10 @@
 			composeEmailMode === ComposeEmailMode.Reply ||
 			composeEmailMode === ComposeEmailMode.Forward
 		) {
-			if (composeEmailMode === ComposeEmailMode.Reply) {
+			if (composeEmailMode === ComposeEmailMode.Reply && email) {
 				setSubject(`Re: ${email.subject}`);
 			}
-			if (composeEmailMode === ComposeEmailMode.Forward) {
+			if (composeEmailMode === ComposeEmailMode.Forward && email) {
 				setSubject(`Fwd: ${email.subject}`);
 			}
 		} else {
@@ -379,7 +379,7 @@
 	});
 </script>
 
-<div class="compose-email-container">
+<div class="compose-email-container" style:height={`${(height ?? 600).toString()}px`}>
 	<div class="compose-email-header">
 		{#if emailData.subject === '' && composeEmailMode === ComposeEmailMode.NewEmail}
 			<div class="compose-email-title">New Email</div>
@@ -393,10 +393,10 @@
 		</div>
 	</div>
 	<div class="compose-email-address-header">
-		<AddressHeader {email} {composeEmailMode} />
+		<AddressHeader email={email ?? undefined} {composeEmailMode} />
 	</div>
 	<div class="compose-email-editor">
-		<Editor bind:editor />
+		<EditorCmp bind:editor />
 	</div>
 	<div class="compose-email-footer">
 		<Footer {onSend} bind:editor />
@@ -410,11 +410,13 @@
 		right: 0.5rem;
 		z-index: 50;
 		width: 50%;
-		height: 800px;
+		/* height is controlled via inline style bound to the height prop */
 		overflow: hidden;
 		border-radius: 1rem 1rem 0 0;
 		border: 1px solid var(--color-primary-gray);
 		background-color: var(--color-primary-black);
+		display: flex;
+		flex-direction: column;
 	}
 
 	.compose-email-header {
@@ -423,6 +425,7 @@
 		background-color: var(--color-primary-hazy-black);
 		padding: 0.25rem 0.75rem;
 		color: var(--color-secondary-light-blue);
+		flex-shrink: 0;
 	}
 
 	.compose-email-title {
@@ -447,10 +450,13 @@
 		justify-content: flex-start;
 		border-bottom: 1px solid var(--color-primary-gray);
 		color: var(--color-font-light-gray);
+		flex-shrink: 0;
 	}
 
 	.compose-email-editor {
-		height: 560px;
+		flex: 1;
+		min-height: 0;
+		overflow: hidden;
 	}
 
 	.compose-email-footer {
@@ -459,5 +465,6 @@
 		padding-inline: 10px;
 		padding-block: 5px;
 		bottom: 5px;
+		flex-shrink: 0;
 	}
 </style>

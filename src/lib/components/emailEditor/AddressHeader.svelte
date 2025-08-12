@@ -18,10 +18,10 @@
 		text: string;
 	};
 	const {
-		email,
+		email = undefined,
 		composeEmailMode
 	}: {
-		email: Email;
+		email?: Email;
 		composeEmailMode: ComposeEmailMode;
 	} = $props();
 
@@ -85,7 +85,7 @@
 		}));
 	};
 	$effect(() => {
-		if (composeEmailMode === ComposeEmailMode.Reply) {
+		if (composeEmailMode === ComposeEmailMode.Reply && email) {
 			toEmails = [email.sender[0]];
 			selectedAction = {
 				icon: ReplyOutline,
@@ -111,7 +111,7 @@
 			...state,
 			email: {
 				...state.email,
-				from_addr: selectedFromEmailAccount?.email
+				from_addr: selectedFromEmailAccount?.email || ''
 			}
 		}));
 	});
@@ -152,7 +152,7 @@
 		setToEmails(toEmails);
 	};
 
-	const handleEnterKey = (e) => {
+	const handleEnterKey = (e: KeyboardEvent) => {
 		if (e.key === 'Enter' || e.key === 'Tab') {
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 			if (emailRegex.test(toEmailsInput)) {
@@ -166,7 +166,7 @@
 		}
 	};
 
-	const handleSubjectEnterKey = (e) => {
+	const handleSubjectEnterKey = (_e: KeyboardEvent) => {
 		setSubject(subjectInput);
 	};
 </script>
