@@ -232,8 +232,11 @@
 
 <div class="mini-email-container">
 	<div class="email-list-container" bind:this={container} onscroll={handleScroll}>
-		<div class="email-list-container-header">
-			<h3>{category?.join(' / ').toLocaleUpperCase()}</h3>
+		<div class="email-list-container-header" role="banner">
+			<div class="header-title">
+				<h3>{(category && category.join(' / ').toLocaleUpperCase()) || 'Emails'}</h3>
+			</div>
+			<div class="header-count" aria-label="emails in list">{_emailList.length}</div>
 		</div>
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
@@ -298,10 +301,42 @@
 	}
 
 	.email-list-container-header {
+		position: sticky;
+		top: 0;
+		z-index: 5;
 		display: flex;
 		align-items: center;
+		justify-content: flex-start;
+		gap: 8px;
+		padding: 10px 12px;
+		background-color: var(--color-primary-container);
+		border-bottom: 1px solid var(--color-primary-dark-gray);
+		border-top-left-radius: 10px;
+		border-top-right-radius: 10px;
+	}
+
+	.header-title h3 {
+		margin: 0;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--color-primary-light-gray);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.header-count {
+		min-width: 24px;
+		height: 24px;
+		padding: 0 8px;
+		border-radius: 9999px;
+		background-color: var(--color-primary-button);
+		color: #fff;
+		font-size: 12px;
+		font-weight: 700;
+		display: inline-flex;
+		align-items: center;
 		justify-content: center;
-		padding: 5px;
+		border: 1px solid rgba(255, 255, 255, 0.12);
 	}
 
 	.email-list-container {
