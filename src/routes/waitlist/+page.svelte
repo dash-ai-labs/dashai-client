@@ -6,24 +6,40 @@
 	import { PUBLIC_STRIPE_PUBLISHABLE_KEY } from '$env/static/public';
 
 	let visible = false;
+	let isLoading = false;
+	let errorMessage: string | null = null;
 
-	onMount(async () => {
-		const stripe = await loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
+	onMount(() => {
+		visible = true;
+	});
 
+	async function startTrial() {
+		isLoading = true;
+		errorMessage = null;
 		try {
-			const data = await createCheckoutSession();
-			if (data) {
-				const { id } = data;
-				if (id && stripe) stripe.redirectToCheckout({ sessionId: id });
+			const stripe = await loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
+			const data: any = await createCheckoutSession();
+			const url = data?.url || data?.checkout_url || data?.sessionUrl;
+			const sessionId = data?.id || data?.sessionId;
+
+			if (url && typeof url === 'string') {
+				window.location.assign(url);
+				return;
 			}
 
-			// Fallback to showing the page if redirect info missing
-			visible = true;
+			if (sessionId && stripe) {
+				await stripe.redirectToCheckout({ sessionId });
+				return;
+			}
+
+			errorMessage = 'Unable to start checkout. Please try again.';
 		} catch (err) {
 			console.error('Failed to create Stripe checkout session', err);
-			visible = true;
+			errorMessage = 'Something went wrong. Please try again.';
+		} finally {
+			isLoading = false;
 		}
-	});
+	}
 </script>
 
 <div class="waitlist-page-container">
@@ -31,51 +47,20 @@
 		<div class="waitlist-card" in:fly={{ y: 20, duration: 600 }}>
 			<div class="waitlist-header">
 				<div class="waitlist-icon">🚀</div>
-				<h1 in:fade={{ delay: 300 }}>You're on the waitlist!</h1>
+				<h1 class="waitlist-title" in:fade={{ delay: 300 }}>Thanks for choosing Dash AI</h1>
 			</div>
 			<div class="waitlist-image-container">
 				<img class="waitlist-image" src="/images/group_dash.png" alt="waitlist" />
 			</div>
 			<div class="waitlist-content">
-				<p>
-					To ensure we can provide the best experience for you and our existing users, we're
-					currently onboarding users on a first-come, first-served basis.
-				</p>
-				<p>We'll notify you when you're approved.</p>
-
-				<div class="divider"></div>
-
-				<div class="waitlist-skip-container">
-					<h2>Want to skip the line?</h2>
-					<div class="waitlist-skip-info">
-						<p>
-							Post about what feature got you excited to join Dash AI on X (formerly Twitter) or
-							LinkedIn and we'll approve you instantly.
-						</p>
-						<p>
-							Tag <a href="https://twitter.com/getDashAI" target="_blank" rel="noopener noreferrer"
-								>@getDashAI</a
-							> so we can find you!
-						</p>
-					</div>
-
-					<a
-						href="https://twitter.com/intent/tweet?text=I'm excited to join @getDashAI because..."
-						class="twitter-btn"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Post on <img src="/images/x_logo.png" alt="X" class="twitter-logo" />
-					</a>
-
-					<a
-						href="https://www.linkedin.com/shareArticle?mini=true&url=https://getdash.ai"
-						class="linkedin-btn"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Post on <img src="/images/linkedin_logo.png" alt="LinkedIn" class="linkedin-logo" />
-					</a>
+				<p class="intro">Please start your free trial below to continue.</p>
+				<div class="cta-container">
+					<button class="cta-btn" on:click={startTrial} disabled={isLoading} aria-live="polite">
+						{isLoading ? 'Redirecting…' : 'Start free trial'}
+					</button>
+					{#if errorMessage}
+						<div class="error-text">{errorMessage}</div>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -125,7 +110,16 @@
 
 	.waitlist-header {
 		text-align: center;
-		padding: 40px 20px 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 30px 8px 16px;
+	}
+
+	.waitlist-title {
+		font-size: 32px;
+		line-height: 1.2;
 	}
 
 	.waitlist-icon {
@@ -135,10 +129,19 @@
 
 	.waitlist-content {
 		display: flex;
+		justify-content: center;
+		align-items: center;
 		flex-direction: column;
 		padding: 32px 40px 40px;
 		text-align: left;
 		line-height: 1.6;
+	}
+
+	.intro {
+		margin-top: 8px;
+		margin-bottom: 16px;
+		color: #e0e0e0;
+		font-size: 18px;
 	}
 
 	h1 {
@@ -151,110 +154,50 @@
 		background-clip: text;
 	}
 
-	h2 {
-		font-size: 20px;
-		font-weight: 600;
-		margin-bottom: 16px;
-		color: #f0f0f0;
-	}
-
 	p {
 		margin-bottom: 16px;
 		color: #e0e0e0;
 	}
 
-	.divider {
-		height: 1px;
-		background: linear-gradient(90deg, transparent, var(--color-primary-dark-gray), transparent);
-		margin: 24px 0;
+	.cta-container {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		align-items: flex-start;
 	}
 
-	.waitlist-skip-container {
-		background-color: rgba(255, 255, 255, 0.05);
+	.cta-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		padding: 14px 22px;
 		border-radius: 12px;
-		padding: 24px;
-		margin-top: 8px;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	.waitlist-skip-info {
-		margin-bottom: 24px;
-	}
-
-	a {
-		color: #3a9bf4;
-		text-decoration: none;
-		transition: color 0.2s;
-	}
-
-	a:hover {
-		color: #5daefd;
-		text-decoration: underline;
-	}
-
-	.twitter-btn {
-		display: inline-block;
-		background-color: var(--color-primary-hazy-black);
-		color: white;
-		padding: 12px 24px;
-		border-radius: 30px;
-		font-weight: 600;
-		text-align: center;
-		transition: all 0.2s;
-		text-decoration: none;
-		border: none;
+		font-weight: 700;
+		font-size: 16px;
+		color: #fff;
+		background: var(--color-primary-button);
+		border: 1px solid rgba(255, 255, 255, 0.12);
 		cursor: pointer;
-		display: flex;
-		width: fit-content;
-		justify-content: center;
-		align-items: center;
+		transition:
+			transform 0.15s ease,
+			box-shadow 0.2s ease,
+			opacity 0.2s ease;
 	}
 
-	.twitter-btn:hover {
-		color: white;
-		background-color: var(--color-primary-container);
-		transform: translateY(-2px);
-		box-shadow: 0 4px 8px var(--color-primary-dark-gray);
-		text-decoration: none;
+	.cta-btn:hover:enabled {
+		transform: translateY(-1px);
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
 	}
 
-	.twitter-logo {
-		width: 30px;
-		height: 30px;
-		margin-left: 6px;
+	.cta-btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
 	}
 
-	.linkedin-btn {
-		display: inline-block;
-		background-color: var(--color-primary-hazy-black);
-		color: white;
-		padding: 12px 24px;
-		border-radius: 30px;
-		font-weight: 600;
-		text-align: center;
-		transition: all 0.2s;
-		text-decoration: none;
-		border: none;
-		cursor: pointer;
-		display: flex;
-		width: fit-content;
-		justify-content: center;
-		align-items: center;
-		margin-top: 10px;
-	}
-
-	.linkedin-btn:hover {
-		color: white;
-		background-color: var(--color-primary-container);
-		transform: translateY(-2px);
-		box-shadow: 0 4px 8px var(--color-primary-dark-gray);
-		text-decoration: none;
-	}
-
-	.linkedin-logo {
-		width: 30px;
-		height: 30px;
-		margin-left: 6px;
+	.error-text {
+		color: #ffb4b4;
+		font-size: 14px;
 	}
 
 	@media (max-width: 768px) {
