@@ -1,11 +1,28 @@
 <script lang="ts">
+	import { createCheckoutSession } from '$lib/api/payment';
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
+	import { loadStripe } from '@stripe/stripe-js';
+	import { PUBLIC_STRIPE_PUBLISHABLE_KEY } from '$env/static/public';
 
 	let visible = false;
 
-	onMount(() => {
-		visible = true;
+	onMount(async () => {
+		const stripe = await loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+		try {
+			const data = await createCheckoutSession();
+			if (data) {
+				const { id } = data;
+				if (id && stripe) stripe.redirectToCheckout({ sessionId: id });
+			}
+
+			// Fallback to showing the page if redirect info missing
+			visible = true;
+		} catch (err) {
+			console.error('Failed to create Stripe checkout session', err);
+			visible = true;
+		}
 	});
 </script>
 

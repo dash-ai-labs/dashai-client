@@ -41,6 +41,7 @@
 		"@ai-sdk/svelte": "^1.1.21",
 		"@floating-ui/dom": "^1.6.13",
 		"@material/web": "^2.2.0",
+		"@stripe/stripe-js": "^7.8.0",
 		"@sveltejs/adapter-cloudflare": "^5.0.0",
 		"@sveltejs/adapter-vercel": "^5.5.2",
 		"@tabler/icons-svelte": "^3.29.0",
