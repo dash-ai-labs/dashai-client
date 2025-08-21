@@ -217,7 +217,7 @@
 			<div class="loading-indicator" transition:fade={{ duration: 500 }}>Loading...</div>
 		{:else}
 			{#each _emailList as email (email.id)}
-				{#if !category || (category && category.some((c) => email.categories?.includes(c)))}
+				{#if !category?.length || category.some((c) => email.categories?.includes(c))}
 					{#if !disableTransition}
 						<div transition:fade={{ duration: 300 }}>
 							<EmailListItem

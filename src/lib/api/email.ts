@@ -258,19 +258,24 @@ export const emailLabelAction = async ({
 
 export const getEmailFolderCount = async ({
 	user,
-	folder
+	folder,
+	category
 }: {
 	user: string;
 	folder: EmailFolder;
+	category?: EmailCategory[];
 }) => {
 	try {
-		const response = await apiRequest(`user/${user}/emails/${folder}/count`, {
-			method: 'GET',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json'
+		const response = await apiRequest(
+			`user/${user}/emails/${folder}/count` + (category ? `?category=${category.join(',')}` : ''),
+			{
+				method: 'GET',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				}
 			}
-		});
+		);
 		return response.json();
 	} catch (error) {
 		console.error('Error fetching email accounts:', error);

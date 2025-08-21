@@ -2,7 +2,7 @@
 	import { emailServiceState } from '$lib/store';
 	import EmailButton from '../EmailButton.svelte';
 	import UnreadMail from '$lib/assets/UnreadMail.svelte';
-	import type { Email, EmailServiceState } from '$lib/types';
+	import type { Email, EmailCategory, EmailServiceState } from '$lib/types';
 	import { IconArchive, IconChecklist, IconReload, IconTrash } from '@tabler/icons-svelte';
 	import { refreshEmailList } from '$lib/actions/email';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
@@ -18,10 +18,12 @@
 
 	const {
 		markEmailAsUnread,
-		folder
+		folder,
+		category
 	}: {
 		markEmailAsUnread: (email: Email) => void;
 		folder: EmailFolder;
+		category: EmailCategory[];
 	} = $props();
 	// const emailLabels = $derived(get(emailServiceState).emailLabels);
 	let email = $state<Email | undefined>(undefined);
@@ -42,10 +44,10 @@
 
 	const handleToggleChange = async (value: number) => {
 		if (toggleOptions[value] === 'All Mail') {
-			refreshEmailList([]);
+			refreshEmailList([], folder, category);
 			lastFilter = [];
 		} else if (toggleOptions[value] === 'Unread') {
-			refreshEmailList([{ key: 'is_read', value: 'false' }]);
+			refreshEmailList([{ key: 'is_read', value: 'false' }], folder, category);
 			lastFilter = [{ key: 'is_read', value: 'false' }];
 		}
 		await emailServiceState.update((state: EmailServiceState) => ({
@@ -100,7 +102,11 @@
 		</div>
 	{/if}
 	<div class="button-group">
-		<EmailButton onclick={() => refreshEmailList([], folder)} ariaLabel="Refresh" title="Refresh">
+		<EmailButton
+			onclick={() => refreshEmailList([], folder, category)}
+			ariaLabel="Refresh"
+			title="Refresh"
+		>
 			<IconReload size="22" color="var(--color-primary-light-gray)" />
 		</EmailButton>
 	</div>

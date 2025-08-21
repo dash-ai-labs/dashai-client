@@ -7,9 +7,11 @@
 	import { emailServiceState, user } from '$lib/store';
 	import EmailCommandBar from './emailCommandBar/EmailCommandBar.svelte';
 	import EmailList from '$lib/components/emailListContainer/EmailList.svelte';
-	import MiniEmailList from './emailListContainer/MiniEmailList.svelte';
 
-	let { folder = EmailFolder.INBOX }: { folder: EmailFolder } = $props();
+	let {
+		folder = EmailFolder.INBOX,
+		category = []
+	}: { folder: EmailFolder; category?: EmailCategory[] } = $props();
 	let email = $state<Email | null>(null);
 	let emailDetailView: EmailDetailView | undefined = undefined;
 	let showComposeEmail = $state(get(emailServiceState).showComposeEmail);
@@ -51,26 +53,9 @@
 
 <div class={folder === EmailFolder.HOME ? 'mini-email-container' : 'email-container'}>
 	<div class="email-section">
-		<EmailCommandBar {markEmailAsUnread} {folder} />
+		<EmailCommandBar {markEmailAsUnread} {folder} {category} />
 		<div class="content">
-			{#if folder === EmailFolder.HOME}
-				<div class="multiple-email-list-container">
-					<MiniEmailList
-						{selectEmail}
-						folder={EmailFolder.INBOX}
-						limit={40}
-						category={[EmailCategory.URGENT, EmailCategory.ACTIONABLE]}
-					/>
-					<MiniEmailList
-						{selectEmail}
-						folder={EmailFolder.INBOX}
-						limit={40}
-						category={[EmailCategory.INFORMATION]}
-					/>
-				</div>
-			{:else}
-				<EmailList {selectEmail} {folder} />
-			{/if}
+			<EmailList {selectEmail} {folder} {category} />
 			{#if showComposeEmail}
 				{#key showComposeEmail}
 					<ComposeEmail email={email ?? undefined} {composeEmailMode} height={600} />

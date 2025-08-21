@@ -3,26 +3,30 @@
 
 	interface Props {
 		active?: boolean;
-		icon?: SvelteComponent;
+		icon?: any;
 		path?: string;
 		handleNavigation?: any;
 		children?: import('svelte').Snippet;
 		isCollapsed?: boolean;
+		isSubItem?: boolean;
 	}
 
 	let {
 		active = false,
-		icon = null,
-		path = null,
+		icon = undefined,
+		path = '',
 		handleNavigation = (path: string) => {},
 		children,
-		isCollapsed = false
+		isCollapsed = false,
+		isSubItem = false
 	}: Props = $props();
 </script>
 
 <button
-	on:click={() => handleNavigation(path)}
-	class="sidebar-button {active ? 'active' : 'inactive'} {isCollapsed ? 'collapsed' : ''}"
+	onclick={() => handleNavigation(path)}
+	class="sidebar-button {active ? 'active' : 'inactive'} {isCollapsed ? 'collapsed' : ''} {isSubItem
+		? 'sub-item'
+		: ''}"
 >
 	{#if icon}
 		<!-- svelte-ignore svelte_component_deprecated -->
@@ -102,5 +106,15 @@
 
 	.content-inactive {
 		color: var(--color-secondary-inactive-button-highlight);
+	}
+
+	.sub-item {
+		font-size: 13px;
+		padding-left: 8px;
+	}
+
+	.sub-item .button-content {
+		padding-left: 8px;
+		font-size: 13px;
 	}
 </style>

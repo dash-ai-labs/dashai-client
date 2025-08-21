@@ -40,7 +40,7 @@ export const handleGoogleCallback = async (code: string, state: string) => {
 		if (response.json().waitlisted) {
 			goto('/waitlist');
 		} else {
-			goto('/inbox');
+			goto('/inbox/actionable');
 		}
 	} catch (error) {
 		console.error('Authentication error:', error);
@@ -64,7 +64,7 @@ export const handleOutlookCallback = async (
 		if (response.json().waitlisted) {
 			goto('/waitlist');
 		} else {
-			goto('/inbox');
+			goto('/inbox/actionable');
 		}
 	} catch (error) {
 		console.error('Authentication error:', error);

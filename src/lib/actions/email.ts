@@ -1,11 +1,12 @@
 import { get } from 'svelte/store';
 import { archive, getEmail, getEmailList, inbox, remove, spam } from '$lib/api/email';
 import { emailServiceState, user } from '$lib/store';
-import type { Email } from '$lib/types';
+import { EmailCategory, type Email } from '$lib/types';
 import { EmailFolder } from '$lib/types';
 const refreshEmailList = (
 	filter: { key: string; value: string }[],
-	folder: EmailFolder = EmailFolder.INBOX
+	folder: EmailFolder = EmailFolder.INBOX,
+	category?: EmailCategory[]
 ) => {
 	const _getEmailList = async () => {
 		const emailList = await getEmailList({
@@ -17,7 +18,8 @@ const refreshEmailList = (
 			limit: 30,
 			page: 1,
 			filter,
-			folder
+			folder,
+			category
 		});
 		emailServiceState.update((state) => ({
 			...state,

@@ -23,7 +23,7 @@ export function initializeLayout() {
 						if (response.waitlisted) {
 							goto('/waitlist');
 						} else {
-							goto('/inbox');
+							goto('/inbox/actionable');
 						}
 					}
 				} catch (error) {

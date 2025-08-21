@@ -13,7 +13,7 @@
 				if ($user.waitlisted) {
 					goto('/waitlist');
 				} else {
-					goto('/inbox');
+					goto('/inbox/actionable');
 				}
 				return;
 			}

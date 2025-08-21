@@ -18,10 +18,12 @@
 		IconSettings,
 		IconMessage2,
 		IconAlertTriangle,
-		IconHome
+		IconHome,
+		IconInfoCircle
 	} from '@tabler/icons-svelte';
+	import { IconChevronRight } from '@tabler/icons-svelte';
 	import { emailServiceState, user } from '$lib/store';
-	import { EmailFolder, type EmailServiceState, type Label } from '$lib/types';
+	import { EmailCategory, EmailFolder, type EmailServiceState, type Label } from '$lib/types';
 	import EditEmailLabel from './labelEditor/EditEmailLabel.svelte';
 	import { refreshEmailLabels } from '$lib/helpers';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
@@ -38,13 +40,15 @@
 	let sentCount = $state(0);
 	let trashCount = $state(0);
 	let spamCount = $state(0);
+	let actionableCount = $state(0);
+	let informationCount = $state(0);
 	let isSettingsActive = $state(false);
 
 	const user_id = $derived(get(user)?.id?.toString());
 
-	const getFolderCount = async (folder: EmailFolder) => {
+	const getFolderCount = async (folder: EmailFolder, category?: EmailCategory[]) => {
 		if (!get(user)?.id) return 0;
-		return await getEmailFolderCount({ user: user_id, folder });
+		return await getEmailFolderCount({ user: user_id || '', folder, category });
 	};
 
 	// Load counts when component initializes
@@ -55,15 +59,35 @@
 			getFolderCount(EmailFolder.SENT).then((count) => (sentCount = count));
 			getFolderCount(EmailFolder.SPAM).then((count) => (spamCount = count));
 			getFolderCount(EmailFolder.TRASH).then((count) => (trashCount = count));
+			getFolderCount(EmailFolder.INBOX, [EmailCategory.ACTIONABLE]).then(
+				(count) => (actionableCount = count)
+			);
+			getFolderCount(EmailFolder.INBOX, [EmailCategory.INFORMATION]).then(
+				(count) => (informationCount = count)
+			);
 		}
 	});
 
 	let navItems = $derived([
 		{
 			label: 'Home',
-			path: '/inbox',
+			path: '/home',
 			badge: 20,
-			icon: IconHome
+			icon: IconHome,
+			subItems: [
+				{
+					label: 'Actionable',
+					path: '/inbox/actionable',
+					icon: IconAlertTriangle,
+					count: actionableCount
+				},
+				{
+					label: 'Information',
+					path: '/inbox/information',
+					icon: IconInfoCircle,
+					count: informationCount
+				}
+			]
 		},
 		{
 			label: 'All Mail',
@@ -104,6 +128,7 @@
 
 	let isActive = $derived((path: string) => $page.url.pathname === path);
 	let isCollapsed = $state(false);
+	let expandedSections = $state<string[]>(['Home']); // Home is expanded by default
 
 	let email_labels: Label[] = $state([]);
 
@@ -125,7 +150,7 @@
 <div class={`nav-drawer ${isCollapsed ? 'collapsed' : ''}`}>
 	{#if !isCollapsed}
 		<div class={`nav-drawer-header ${isCollapsed ? 'collapsed' : ''}`}>
-			<Logo class="logo" {isCollapsed} />
+			<Logo {isCollapsed} />
 			<button class="collapse-icon" onclick={() => (isCollapsed = !isCollapsed)}>
 				<IconLayoutSidebarLeftCollapse color="var(--color-primary-gray)" />
 			</button>
@@ -135,7 +160,7 @@
 			<button class="collapse-icon" onclick={() => (isCollapsed = !isCollapsed)}>
 				<IconLayoutSidebarRightCollapse color="var(--color-primary-gray)" />
 			</button>
-			<Logo class="logo" {isCollapsed} />
+			<Logo {isCollapsed} />
 		</div>
 	{/if}
 
@@ -147,27 +172,85 @@
 
 	<div class="nav-drawer-items-container">
 		{#each navItems as item}
-			<SideBarButton
-				handleNavigation={() => {
-					isSettingsActive = false;
-					emailServiceState.update((state) => ({
-						...state,
-						showEmailHeader: true
-					}));
-					handleNavigation(item.path);
-				}}
-				path={item.path}
-				active={isActive(item.path)}
-				icon={item.icon}
-				{isCollapsed}
-			>
-				<div class="nav-drawer-item-label-container">
-					{item.label}
-					{#if item.count > 0}
-						<span class="badge">{item.count}</span>
+			{#if item.subItems}
+				<!-- Section with expandable sub-items -->
+				<div class="nav-section">
+					<SideBarButton
+						handleNavigation={() => {
+							if (expandedSections.includes(item.label)) {
+								expandedSections = expandedSections.filter((s) => s !== item.label);
+							} else {
+								expandedSections = [...expandedSections, item.label];
+							}
+						}}
+						path={item.path}
+						active={isActive(item.path)}
+						icon={item.icon}
+						{isCollapsed}
+					>
+						<div class="nav-drawer-item-label-container">
+							{item.label}
+							{#if !isCollapsed}
+								<span class="chevron {expandedSections.includes(item.label) ? 'expanded' : ''}">
+									<IconChevronRight size={16} />
+								</span>
+							{/if}
+						</div>
+					</SideBarButton>
+
+					{#if expandedSections.includes(item.label) && !isCollapsed}
+						<div class="sub-items">
+							{#each item.subItems as subItem}
+								<SideBarButton
+									handleNavigation={() => {
+										isSettingsActive = false;
+										emailServiceState.update((state) => ({
+											...state,
+											showEmailHeader: true
+										}));
+										handleNavigation(subItem.path);
+									}}
+									path={subItem.path}
+									active={isActive(subItem.path)}
+									icon={subItem.icon}
+									{isCollapsed}
+									isSubItem={true}
+								>
+									<div class="nav-drawer-item-label-container">
+										{subItem.label}
+										{#if subItem.count && subItem.count > 0}
+											<span class="badge">{subItem.count}</span>
+										{/if}
+									</div>
+								</SideBarButton>
+							{/each}
+						</div>
 					{/if}
 				</div>
-			</SideBarButton>
+			{:else}
+				<!-- Regular nav item -->
+				<SideBarButton
+					handleNavigation={() => {
+						isSettingsActive = false;
+						emailServiceState.update((state) => ({
+							...state,
+							showEmailHeader: true
+						}));
+						handleNavigation(item.path);
+					}}
+					path={item.path}
+					active={isActive(item.path)}
+					icon={item.icon}
+					{isCollapsed}
+				>
+					<div class="nav-drawer-item-label-container">
+						{item.label}
+						{#if item.count && item.count > 0}
+							<span class="badge">{item.count}</span>
+						{/if}
+					</div>
+				</SideBarButton>
+			{/if}
 		{/each}
 	</div>
 	<div class="labels-container">
@@ -527,5 +610,26 @@
 		display: flex;
 		justify-content: center;
 		margin-bottom: 12px;
+	}
+
+	.nav-section {
+		width: 100%;
+	}
+
+	.sub-items {
+		margin-left: 20px;
+		padding-left: 8px;
+		border-left: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.chevron {
+		transition: transform 0.2s ease;
+		display: flex;
+		align-items: center;
+		color: var(--color-primary-gray);
+	}
+
+	.chevron.expanded {
+		transform: rotate(90deg);
 	}
 </style>
