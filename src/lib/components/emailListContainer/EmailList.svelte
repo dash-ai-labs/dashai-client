@@ -215,6 +215,12 @@
 		{#if isToggleLoading}
 			<!-- Loading indicator when toggle is changing -->
 			<div class="loading-indicator" transition:fade={{ duration: 500 }}>Loading...</div>
+		{:else if isLoading}
+			<!-- Loading animation while fetching emails from API -->
+			<div class="loading-container" transition:fade={{ duration: 300 }}>
+				<div class="loading-spinner"></div>
+				<div class="loading-text">Loading emails...</div>
+			</div>
 		{:else}
 			{#each _emailList as email (email.id)}
 				{#if !category?.length || category.some((c) => email.categories?.includes(c))}
@@ -285,6 +291,39 @@
 		padding-top: 1rem;
 		padding-bottom: 1rem;
 		text-align: center;
+	}
+
+	.loading-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 3rem 1rem;
+		gap: 1rem;
+	}
+
+	.loading-spinner {
+		width: 40px;
+		height: 40px;
+		border: 3px solid var(--color-primary-dark-gray);
+		border-top: 3px solid var(--color-primary-button);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+	.loading-text {
+		color: var(--color-primary-light-gray);
+		font-size: 0.875rem;
+		font-weight: 500;
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 
 	.pagination-controls {
