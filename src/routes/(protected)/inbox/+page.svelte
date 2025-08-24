@@ -1,23 +1,37 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { PUBLIC_TAG_ID } from '$env/static/public';
+	import { PUBLIC_LINKEDIN_TAG_ID } from '$env/static/public';
 	import { onMount } from 'svelte';
 
-	const initializeGoogleAnalytics = () => {
-		window.dataLayer = window.dataLayer || [];
-		window.dataLayer.push({
-			'gtm.start': new Date().getTime(),
-			event: 'gtm.js'
-		});
-		var f = document.getElementsByTagName('script')[0],
-			j = document.createElement('script'),
-			dl = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
-		j.async = true;
-		j.src = 'https://www.googletagmanager.com/gtm.js?id=' + `GTM-${PUBLIC_TAG_ID}` + dl;
-		f.parentNode?.insertBefore(j, f);
+	// LinkedIn tracking setup
+	const initializeLinkedInTracking = () => {
+		// Declare global variables
+		(window as any)._linkedin_partner_id = PUBLIC_LINKEDIN_TAG_ID;
+		(window as any)._linkedin_data_partner_ids = (window as any)._linkedin_data_partner_ids || [];
+		(window as any)._linkedin_data_partner_ids.push(PUBLIC_LINKEDIN_TAG_ID);
+
+		// Initialize LinkedIn tracking
+		if (!(window as any).lintrk) {
+			(window as any).lintrk = function (a: any, b: any) {
+				(window as any).lintrk.q.push([a, b]);
+			};
+			(window as any).lintrk.q = [];
+		}
+
+		// Inject LinkedIn tracking script
+		const script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.async = true;
+		script.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+
+		const firstScript = document.getElementsByTagName('script')[0];
+		if (firstScript && firstScript.parentNode) {
+			firstScript.parentNode.insertBefore(script, firstScript);
+		}
 	};
+
 	onMount(() => {
-		initializeGoogleAnalytics();
+		initializeLinkedInTracking();
 	});
 
 	$effect(() => {
