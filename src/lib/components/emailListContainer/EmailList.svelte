@@ -12,7 +12,7 @@
 		selectEmail,
 		folder = EmailFolder.INBOX,
 		category,
-		limit = 50
+		limit = 30
 	}: {
 		selectEmail: (email: Email) => void;
 		folder?: EmailFolder;
