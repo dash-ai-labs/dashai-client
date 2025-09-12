@@ -29,7 +29,7 @@ const handleCSP: Handle = async ({ event, resolve }) => {
 	// Set security headers
 	response.headers.set(
 		'Content-Security-Policy',
-		`default-src 'self'; script-src 'self' 'nonce-${nonce}' 'strict-dynamic'; style-src 'self' 'unsafe-inline' https: data:; img-src 'self' data: https:; font-src 'self' https: data:; frame-src 'self' data:; child-src 'self' data:; connect-src 'self' https://api.getdash.ai; frame-ancestors 'none'; form-action 'self'`
+		`default-src 'self'; script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com https://q.stripe.com; style-src 'self' 'unsafe-inline' https: data:; img-src 'self' data: https: https://q.stripe.com https://m.stripe.com; font-src 'self' https: data:; frame-src 'self' data: https://js.stripe.com https://hooks.stripe.com; child-src 'self' data:; connect-src 'self' https://api.getdash.ai https://api.stripe.com https://q.stripe.com https://m.stripe.com; frame-ancestors 'none'; form-action 'self'`
 	);
 	response.headers.set('Access-Control-Allow-Origin', 'https://app.getdash.ai');
 	response.headers.set('X-Frame-Options', 'SAMEORIGIN');
